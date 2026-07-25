@@ -1083,22 +1083,40 @@ body.light-theme .party-total-bar .ptb-status-msg.status-pay{ color:#e0454a !imp
 body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 !important; }
 
 /* Backup restore css */
-/* Page ko full screen overlay banaya, display:none ke bajaye transform use kiya taaki smooth slide ho */
 .page {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    height: 100dvh; /* dynamic viewport height - Android browser bar ke hisaab se adjust hoga */
     background: #fff;      /* apne app ke background color se replace kar lena */
     z-index: 999;
     transform: translateX(100%);
     transition: transform 0.3s ease;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* smooth scroll Android/iOS pe */
+    box-sizing: border-box;
+
+    /* Notch/status bar wali screens ke liye safe padding */
+    padding-top: env(safe-area-inset-top, 16px);
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+    padding-left: env(safe-area-inset-left, 12px);
+    padding-right: env(safe-area-inset-right, 12px);
 }
 
 .page.active {
     transform: translateX(0);
+}
+
+/* Menu items thoda touch-friendly banane ke liye */
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    min-height: 48px; /* Android touch target guideline */
+    box-sizing: border-box;
 }
 
 </style>
