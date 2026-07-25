@@ -1082,6 +1082,24 @@ body.light-theme .party-total-bar .ptb-status-msg.status-settled{ color:#1fa863 
 body.light-theme .party-total-bar .ptb-status-msg.status-pay{ color:#e0454a !important; }
 body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 !important; }
 
+/* Backup restore css */
+/* Page ko full screen overlay banaya, display:none ke bajaye transform use kiya taaki smooth slide ho */
+.page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;      /* apne app ke background color se replace kar lena */
+    z-index: 999;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+}
+
+.page.active {
+    transform: translateX(0);
+}
 
 </style>
 </head>
@@ -1529,6 +1547,7 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
  <option>Food</option>
  <option>Doctor</option>>
  <option>Other investment</option>
+ <option>Other income</option>
   
  </select>
  </div>
@@ -1680,11 +1699,38 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
  <div class="menu-item" onclick="toggleSyncStatusPanel()"><div class="mico"><i class="ti ti-wallet"></i></div><div class="mtext">Manage Accounts</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
  <div class="menu-item" onclick="openPartyManager()"><div class="mico"><i class="ti ti-users"></i></div><div class="mtext">Manage / Add Party</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
  <div class="menu-item" onclick="openDeletedHistory()"><div class="mico"><i class="ti ti-history"></i></div><div class="mtext">Deleted Entry History</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
- <div class="menu-item" onclick="exportDataAsJSON()"><div class="mico"><i class="ti ti-cloud-upload"></i></div><div class="mtext">Backup Data</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
- <div class="menu-item" onclick="backupToGoogleDrive()"><div class="mico"><i class="ti ti-brand-google-drive"></i></div><div class="mtext">Backup to Google Drive</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
- <div class="menu-item" onclick="triggerRestore()"><div class="mico"><i class="ti ti-cloud-download"></i></div><div class="mtext">Restore Data</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
- 
+<!-- Main Backup Button -->
+<!-- Main menu item -->
+<div class="menu-item" onclick="openPage('backupPage')">
+    <div class="mico"><i class="ti ti-database"></i></div>
+    <div class="mtext">Backup</div>
+    <div class="chev"><i class="ti ti-chevron-right"></i></div>
+</div>
 
+<!-- Backup Page -->
+<div id="backupPage" class="page">
+    <div class="menu-item" onclick="closePage('backupPage')">
+        <div class="mico"><i class="ti ti-arrow-left"></i></div>
+        <div class="mtext">Back</div>
+    </div>
+    <div class="menu-item" onclick="exportDataAsJSON()">
+        <div class="mico"><i class="ti ti-cloud-upload"></i></div>
+        <div class="mtext">Backup Data</div>
+        <div class="chev"><i class="ti ti-chevron-right"></i></div>
+    </div>
+    <div class="menu-item" onclick="backupToGoogleDrive()">
+        <div class="mico"><i class="ti ti-brand-google-drive"></i></div>
+        <div class="mtext">Backup to Google Drive</div>
+        <div class="chev"><i class="ti ti-chevron-right"></i></div>
+    </div>
+    <div class="menu-item" onclick="triggerRestore()">
+        <div class="mico"><i class="ti ti-cloud-download"></i></div>
+        <div class="mtext">Restore Data</div>
+        <div class="chev"><i class="ti ti-chevron-right"></i></div>
+    </div>
+</div>
+
+</div>
  <div class="menu-item danger" onclick="openLogoutModal()"><div class="mtext">Log out</div><div class="chev"></div></div>
 
 </div>
@@ -1792,6 +1838,7 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
  <option>Food</option>
  <option>Doctor</option>>
  <option>Other investment</option>
+ <option>Other income</option>
  </select>
  </div>
  <div class="chev"><i class="ti ti-chevron-right"></i></div>
@@ -4974,6 +5021,13 @@ function logoutUser(){
 }
 
 // ===== BACKUP & RESTORE FUNCTIONS =====
+function openPage(id){
+    document.getElementById(id).classList.add('active');
+}
+function closePage(id){
+    document.getElementById(id).classList.remove('active');
+}
+
 function exportDataAsJSON() {
  const data = {
  entries: entries,
@@ -6147,7 +6201,7 @@ window.addEventListener('offline', () => {
   <label style="display:block;color:#ffffff85;font-size:12px;margin-bottom:6px;">Category</label>
   <select id="goalCategorySelect" style="width:100%;box-sizing:border-box;padding:11px 12px;margin-bottom:14px;border-radius:10px;border:1px solid #232838;background:#6b7280;color:#ffffff;font-size:14px;">
    <option value="">— Select category —</option>
-   <option value="Auto">Auto</option>
+   <option value="Auto">Auto 🛺</option>
    <option value="Food">Food</option>
    <option value="Medicine">Medicine</option>
    <option value="Travel">Travel</option>
@@ -6195,7 +6249,7 @@ window.addEventListener('offline', () => {
   <label style="display:block;color:#8b9099;font-size:11px;margin-bottom:4px;">Category</label>
   <select id="customGoalCategorySelect" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:10px;border-radius:8px;border:1px solid #232838;background:#6b7280;color:#e8eaf0;font-size:13.5px;cursor:pointer;">
   <option value="Auto">— Select category-</option>
-  <option value="Auto">Auto</option>
+  <option value="Auto">Auto 🛺</option>
    <option value="Food">Food</option>
    <option value="Medicin">Medicin</option>
    <option value="Travel">Travel</option>
