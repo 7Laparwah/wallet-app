@@ -103,7 +103,7 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
 .notif-toggle.is-off .notif-toggle-off{ color:#e8792e; }
 
 /* ===== Status / Top spacing ===== */
-.statusbar{height:14px;}
+.statusbar{height:5px;}
 
 /* ===== Firebase Connection Status Indicator ===== */
 #firebaseStatusIndicator {
@@ -188,7 +188,7 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
 .pinError{color:#e05050;font-size:12.5px;margin-top:16px;height:16px;font-weight:600;}
 
 /* ===== Screens ===== */
-.screen{display:none;padding:18px 18px 4px;animation:fadeUp .35s cubic-bezier(.22,1,.36,1) both;}
+.screen{display:none;padding:3px 6px 4px;animation:fadeUp .35s cubic-bezier(.22,1,.36,1) both;}
 .screen.active{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
@@ -986,8 +986,8 @@ body.light-theme #loadingPage .loader {
 /* ============  LIGHT THEME OVERRIDES (auto-generated)  ======= */
 /* ============================================================ */
 body.light-theme html, body.light-theme body { font-family:'Inter',sans-serif !important; background:#f4f6fb !important; color:#1a2340 !important; height:100% !important; -webkit-tap-highlight-color:transparent !important; }
-body.light-theme #firebaseStatusIndicator { position: fixed !important; top: 12px !important; right: 12px !important; z-index: 8888 !important; padding: 8px 14px !important; border-radius: 20px !important; font-size: 12px !important; font-weight: 600 !important; display: flex !important; align-items: center !important; gap: 6px !important; backdrop-filter: blur(10px) !important; transition: all 0.3s ease !important; border: 1px solid rgba(0,0,0,0.08) !important; box-shadow: 0 2px 10px rgba(30,60,120,.06) !important; }
-body.light-theme #pinLockScreen { background:linear-gradient(180deg, #f4f6fb, #f4f6fb) !important; }
+body.light-theme #firebaseStatusIndicator { position: fixed !important; top: 2px !important; right: 12px !important; z-index: 8888 !important; padding: 3px 4px !important; border-radius: 20px !important; font-size: 12px !important; font-weight: 600 !important; display: flex !important; align-items: center !important; gap: 6px !important; backdrop-filter: blur(10px) !important; transition: all 0.3s ease !important; border: 1px solid rgba(0,0,0,0.08) !important; box-shadow: 0 2px 10px rgba(30,60,120,.06) !important; }
+body.light-theme #pinLockScreen { background:linear-gradient(180deg, #e0e8f4, #eef1f7) !important; }
 body.light-theme #pinLockScreen .pinTitle { font-size:21px !important; font-weight:800 !important; color:#1a2340 !important; margin-bottom:6px !important; font-family:ui-sans-serif !important; letter-spacing:.2px !important; }
 body.light-theme #pinLockScreen .pinSub { font-size:15px !important; color:#64748b !important; margin-bottom:30px !important; }
 body.light-theme .pinDots span.filled { background:#ffef0c !important; border-color:#1a2340 !important; box-shadow:0 0 0 4px rgba(58,92,204,.15) !important; transform:scale(1.1) !important; }
@@ -1023,12 +1023,12 @@ body.light-theme .profile-head .pemail { color:#fcfcfc !important; font-size:12.
 body.light-theme .menu-item { background:#ffffff !important; border:1px solid #ffffff !important; border-radius:16px !important; padding:14px 16px !important; display:flex !important; align-items:center !important; gap:14px !important; margin-bottom:10px !important; cursor:pointer !important; transition:.2s !important; }
 body.light-theme .menu-item:hover { background:#ffffff !important; }
 body.light-theme .menu-item .mico { width:36px !important; height:36px !important; border-radius:10px !important; background:#eef1f7 !important; display:flex !important; align-items:center !important; justify-content:center !important; color:#e8b64c !important; font-size:16px !important; }
-body.light-theme .bottom-nav { position:fixed !important; bottom:6px !important; left:50% !important; transform:translateX(-50%) !important; width:calc(100% - 28px) !important; max-width:452px !important; background:#ffffff !important; border:1px solid #e2e8f2 !important; border-radius:24px !important; display:flex !important; align-items:center !important; justify-content:space-around !important; padding:10px 6px !important; box-shadow:0 18px 40px rgba(0,0,0,.5) !important; z-index:100 !important; }
+body.light-theme .bottom-nav { position:fixed !important; bottom:6px !important; left:50% !important; transform:translateX(-50%) !important; width:calc(100% - 28px) !important; max-width:452px !important; background:#ffffff !important; border:1px solid #e2e8f2 !important; border-radius:24px !important; display:flex !important; align-items:center !important; justify-content:space-around !important; padding:10px 6px !important; box-shadow:0 18px 40px rgb(148 196 192 / 71%) !important; z-index:100 !important; }
 body.light-theme .nav-plus { width:60px !important; height:60px !important; border-radius:50% !important; background:linear-gradient(135deg,#f0c060,#e8b64c) !important; display:flex !important; align-items:center !important; justify-content:center !important; color:#1a1305 !important; font-size:24px !important; box-shadow:0 10px 24px rgba(232,182,76,.45) !important; margin-top:-22px !important; flex:0 0 auto !important; border:4px solid #f4f6fb !important; transition:.2s !important; }
 body.light-theme .nav-btn.center-label { margin-top:2px !important; font-size:9px !important; color:#6b7280 !important; }
 body.light-theme .empty-state i { font-size:32px !important; color:#e2e8f2 !important; margin-bottom:12px !important; }
 body.light-theme .nav-btn { color:#6b7280 !important; }
-body.light-theme .lbl, body.light-theme .cat, body.light-theme .time, body.light-theme .flabel, body.light-theme .pemail, body.light-theme .label { color:#6b7280 !important; font-size: 11px !important; }
+body.light-theme .lbl, body.light-theme .cat, body.light-theme .time, body.light-theme .flabel, body.light-theme .pemail, body.light-theme .label { color:#ffffff !important; font-size: 12px !important; }
 body.light-theme .modal { background:#ffffff !important; border:1px solid #e2e8f2 !important; border-radius:20px !important; padding:24px !important; max-width:400px !important; width:90% !important; max-height:90vh !important; overflow-y:auto !important; }
 body.light-theme .modal-close { background:none !important; border:none !important; color:#6b7280 !important; font-size:24px !important; cursor:pointer !important; }
 body.light-theme .btn-secondary { padding:12px !important; border:1px solid #bbb5b5 !important; border-radius:12px !important; background:#ffffff !important; color:#6b7280 !important; font-weight:700 !important; cursor:pointer !important; transition:.2s !important; }
@@ -1085,12 +1085,12 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
 /* Backup restore css */
 .page {
     position: fixed;
-    top: 80px;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 80%;
-    height: 80dvh; /* dynamic viewport height - Android browser bar ke hisaab se adjust hoga */
-    background: #fff;      /* apne app ke background color se replace kar lena */
+    height: 100%;
+    background: #0b0e14;
+    color: #f5f6f8;
     z-index: 999;
     transform: translateX(100%);
     transition: transform 0.3s ease;
@@ -1099,14 +1099,20 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
     box-sizing: border-box;
 
     /* Notch/status bar wali screens ke liye safe padding */
-    padding-top: env(safe-area-inset-top, 16px);
-    padding-bottom: env(safe-area-inset-bottom, 16px);
-    padding-left: env(safe-area-inset-left, 12px);
-    padding-right: env(safe-area-inset-right, 12px);
+    padding: 20px;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    padding-left: calc(20px + env(safe-area-inset-left, 0px));
+    padding-right: calc(20px + env(safe-area-inset-right, 0px));
 }
 
 .page.active {
     transform: translateX(0);
+}
+
+body.light-theme .page{
+    background: #f4f6fb;
+    color: #1a2340;
 }
 
 /* Menu items thoda touch-friendly banane ke liye */
@@ -1118,6 +1124,167 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
     min-height: 48px; /* Android touch target guideline */
     box-sizing: border-box;
 }
+
+
+/* ============================================================
+   GOALS TAB — styles from goals-feature-2.html, scoped under
+   #screen-goals so they never leak into the rest of the app.
+   ============================================================ */
+  #screen-goals{
+    --bg:#0b0e14;
+    --card:#161a23;
+    --border:#1f2430;
+    --gold:#F5B301;
+    --text:#ffffff;
+    --muted:#9a9aa8;
+    --red:#f0596a;
+    --green:#3ee08a;
+    --blue:#5b9bf5;
+    --shadow: 0 4px 18px rgba(0,0,0,0.45);
+  }
+  body.light-theme #screen-goals{
+    --bg:#4b7472;
+    --card:#ffffff;
+    --border:#e2e8f2;
+    --gold:#e8b64c;
+    --text:#1a2340;
+    --muted:#7d9795;
+    --red:#d64545;
+    --green:#2fa860;
+    --blue:#3f7cd6;
+    --shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  #screen-goals *{box-sizing:border-box; min-width:0;}
+  #screen-goals ::-webkit-scrollbar{width:0;height:0;}
+  #goalsAppRoot{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    background:transparent;
+    position:relative;
+    transition:background .25s ease;
+  }
+#screen-goals .gfscreen{ padding:10px; display:none; }
+#screen-goals .gfscreen.active{ display:block; }
+
+#screen-goals h1{ color:#ffd88a; font-size:18px; font-weight:700; margin:0; }
+#screen-goals .header{ display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+#screen-goals .header.between{ justify-content:space-between; }
+#screen-goals .icon-btn{ background:none; border:none; cursor:pointer; color:var(--text); font-size:18px; display:flex; align-items:center; justify-content:center; }
+#screen-goals .fab{
+    width:40px; height:40px; border-radius:50%; background:var(--gold); border:none;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; color:#111; font-weight:700;
+  }
+
+#screen-goals .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; margin-bottom:16px; box-shadow:var(--shadow); transition:background .25s ease, border-color .25s ease; }
+#screen-goals .card-sm{ border-radius:12px; padding:14px; }
+
+/* #screen-goals .theme-btn{
+    width:38px; height:38px; border-radius:50%; background:var(--card); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; flex-shrink:0;
+    transition:background .25s ease, border-color .25s ease;
+  } */
+
+#screen-goals .row{ display:flex; gap:12px; }
+#screen-goals .row.between{ justify-content:space-between; align-items:center; }
+#screen-goals .row.center{ align-items:center; }
+
+#screen-goals .label{ color:var(--muted); font-size:13px; margin-bottom:6px; display:block; }
+#screen-goals input, #screen-goals textarea{
+    width:100%; background:var(--card); border:1px solid var(--border); border-radius:10px;
+    padding:12px 14px; color:var(--text); font-size:14px; outline:none; font-family:inherit; margin-bottom:16px;
+  }
+#screen-goals textarea{ min-height:70px; resize:vertical; }
+
+#screen-goals .tabs{ display:flex; background:var(--card); border-radius:10px; padding:4px; margin-bottom:20px; }
+#screen-goals .tab{
+    flex:1; padding:10px 0; border-radius:8px; border:none; cursor:pointer; font-weight:600; font-size:13px;
+    background:transparent; color:var(--muted);
+  }
+#screen-goals .tab.active{ background:var(--gold); color:#111; }
+
+#screen-goals .btn-primary{
+    width:100%; background:var(--gold); border:none; border-radius:12px; padding:14px 0; color:#111;
+    font-weight:700; font-size:15px; cursor:pointer;
+  }
+#screen-goals .btn-outline{
+    flex:1; background:transparent; border:1px solid var(--gold); border-radius:12px; padding:13px 0;
+    color:var(--gold); font-weight:700; cursor:pointer;
+  }
+#screen-goals .btn-danger-outline{
+    flex:1; background:transparent; border:1px solid var(--red); border-radius:12px; padding:13px 0;
+    color:var(--red); font-weight:700; cursor:pointer;
+  }
+#screen-goals .btn-solid{
+    flex:1; background:var(--gold); border:none; border-radius:12px; padding:13px 0;
+    color:#111; font-weight:700; cursor:pointer;
+  }
+#screen-goals .btn-ghost-card{
+    flex:1; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:13px 0;
+    color:var(--gold); font-weight:600; cursor:pointer;
+  }
+
+#screen-goals .goal-card{
+    width:100%; text-align:left; background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:14px 16px; margin-bottom:12px; cursor:pointer; display:block;
+    transition:background .25s ease, border-color .25s ease;
+  }
+#screen-goals .goal-top{ display:flex; justify-content:space-between; align-items:center; }
+#screen-goals .goal-icon{
+    width:38px; height:38px; border-radius:10px; background:#F5B30122; display:flex; align-items:center;
+    justify-content:center; font-size:18px; margin-right:12px;
+  }
+#screen-goals .goal-info{ min-width:0; flex:1; overflow:hidden; }
+#screen-goals .goal-name{ color:var(--text); font-weight:600; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#screen-goals .goal-sub{ color:var(--muted); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#screen-goals .progress-track{ height:6px; background:var(--border); border-radius:4px; overflow:hidden; margin-top:10px; }
+#screen-goals .progress-track.thick{ height:8px; }
+#screen-goals .progress-fill{ height:100%; background:var(--gold); }
+#screen-goals .progress-meta{ display:flex; justify-content:space-between; margin-top:6px; font-size:12px; }
+#screen-goals .progress-meta .pct{ color:var(--gold); }
+#screen-goals .progress-meta .days{ color:var(--muted); }
+
+#screen-goals .ring-wrap{ position:relative; display:inline-block; overflow:hidden; border-radius:50%; flex-shrink:0; }
+#screen-goals .ring-label{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:0 6px; line-height:1.1;
+  }
+#screen-goals .ring-label .pct{ color:var(--gold); font-weight:700; font-size:15px; }
+#screen-goals .ring-label .sub{ color:var(--muted); font-size:9px; margin-top:2px; }
+
+#screen-goals .row.stats{ display:flex; align-items:stretch; gap:10px; }
+#screen-goals .stat-box{
+    flex:1 1 0; min-width:0; background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:14px 6px 12px; text-align:center; min-height:76px; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    transition:background .25s ease, border-color .25s ease;
+  }
+#screen-goals .stat-box::before{ content:""; position:absolute; top:0; left:0; right:0; height:3px; border-radius:14px 14px 0 0; }
+#screen-goals .row.stats .stat-box:nth-child(4n+1){ background:linear-gradient(180deg, rgba(91,155,245,0.14), var(--card) 65%); border-color:rgba(91,155,245,0.30); }
+#screen-goals .row.stats .stat-box:nth-child(4n+1)::before{ background:var(--blue); }
+#screen-goals .row.stats .stat-box:nth-child(4n+2){ background:linear-gradient(180deg, rgba(240,89,106,0.14), var(--card) 65%); border-color:rgba(240,89,106,0.30); }
+#screen-goals .row.stats .stat-box:nth-child(4n+2)::before{ background:var(--red); }
+#screen-goals .row.stats .stat-box:nth-child(4n+3){ background:linear-gradient(180deg, rgba(62,224,138,0.14), var(--card) 65%); border-color:rgba(62,224,138,0.30); }
+#screen-goals .row.stats .stat-box:nth-child(4n+3)::before{ background:var(--green); }
+#screen-goals .row.stats .stat-box:nth-child(4n+4){ background:linear-gradient(180deg, rgba(245,179,1,0.16), var(--card) 65%); border-color:rgba(245,179,1,0.35); }
+#screen-goals .row.stats .stat-box:nth-child(4n+4)::before{ background:var(--gold); }
+#screen-goals .stat-val{
+    color:var(--text); font-weight:700; font-size:13px; line-height:1.2;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;
+  }
+#screen-goals .stat-label{ color:var(--muted); font-size:10.5px; line-height:1.25; margin-top:0; }
+
+#screen-goals .detail-row{ display:flex; justify-content:space-between; gap:12px; padding:6px 0; }
+#screen-goals .detail-row .k{ color:var(--muted); font-size:13px; flex-shrink:0; }
+#screen-goals .detail-row .v{ color:var(--text); font-size:13px; text-align:right; word-break:break-word; }
+
+#screen-goals .chart-box{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:12px; margin-bottom:20px; height:220px; }
+#screen-goals .chart-box.short{ height:180px; }
+
+#screen-goals .trophy{ font-size:64px; text-align:center; margin:30px 0 10px; }
+#screen-goals .celebrate-title{ color:var(--gold); font-size:22px; font-weight:800; text-align:center; margin:8px 0 2px; }
+#screen-goals .celebrate-sub{ color:var(--gold); font-size:14px; text-align:center; margin-bottom:24px; }
+#screen-goals .link-btn{ background:none; border:none; color:var(--muted); font-size:13px; cursor:pointer; display:block; margin:0 auto; }
 
 </style>
 </head>
@@ -1389,22 +1556,13 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
 <div id="pinLockScreen" style="display:none;">
  <div class="pinTitle" id="pinTitleText">Enter PIN</div>
  <div class="pinSub" id="pinSubText">Enter your 4-digit PIN</div>
- <div class="pinDots" id="pinDots">
+ <!-- App khulte hi yeh hidden input auto-focus hota hai, jisse phone ka
+      apna numeric keyboard khul jaata hai. Koi on-screen number-pad nahi —
+      user seedha apne phone ke keyboard se PIN type karta hai; digits/backspace
+      isi pinPress()/pinBackspace() logic mein jaate hain jo dots update karti hai. -->
+ <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="off" id="pinHiddenInput" style="position:absolute;opacity:0;height:1px;width:1px;border:none;padding:0;margin:0;pointer-events:none;">
+ <div class="pinDots" id="pinDots" onclick="focusPinHiddenInput()" style="cursor:pointer;">
  <span></span><span></span><span></span><span></span>
- </div>
- <div class="pinPad">
- <button onclick="pinPress('1')">1</button>
- <button onclick="pinPress('2')">2</button>
- <button onclick="pinPress('3')">3</button>
- <button onclick="pinPress('4')">4</button>
- <button onclick="pinPress('5')">5</button>
- <button onclick="pinPress('6')">6</button>
- <button onclick="pinPress('7')">7</button>
- <button onclick="pinPress('8')">8</button>
- <button onclick="pinPress('9')">9</button>
- <button class="pinClear" onclick="pinClear()">Clear</button>
- <button onclick="pinPress('0')">0</button>
- <button class="pinClear" onclick="pinBackspace()"><i class="ti ti-backspace"></i></button>
  </div>
  <div class="pinError" id="pinErrorText"></div>
 <div id="forgotPinLink" style="margin-top: 22px; color: #ffffff; font-size: 13.5px; cursor: pointer; font-weight:600; font-family: 'Inter', sans-serif;" onclick="openForgotPinPage()">Forgot PIN? Reset</div>
@@ -1420,7 +1578,10 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
 <div class="screen active" id="screen-wallet">
 
  <div class="top-row">
- <div class="greet">
+ <div class="icon-circle" id="profileMenuBtn" onclick="goTo('profile')" style="cursor:pointer;margin-right:10px;flex-shrink:0;">
+  <i class="ti ti-menu-2"></i>
+ </div>
+ <div class="greet" style="flex:1;">
  <div class="greet">
     <h1 id="greetingText">Morning Dharm</h1>
     <div class="sub">
@@ -1477,7 +1638,7 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
 <div class="screen" id="screen-analytics">
 
  <div class="top-row">
- <div class="page-title">Analytics</div>
+  <div class="page-title">Analytics</div>
  </div>
 
  <div class="month-select" id="monthDropdownBtn" onclick="openMonthDropdown()" style="cursor:pointer;position:relative;">
@@ -1519,7 +1680,7 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
 <div class="screen" id="screen-add">
 
  <div class="top-row">
- <div class="icon-circle" onclick="goTo('wallet')"><i class="ti ti-chevron-left"></i></div>
+ <div class="icon-circle" onclick="goBack()"><i class="ti ti-chevron-left"></i></div>
  <div class="page-title" style="font-size:17px;">Add Entry</div>
  <div style="width:40px;"></div>
  </div>
@@ -1561,6 +1722,7 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
  <option>Dividend</option>
  <option>Anjali</option>
  <option>Mammi</option>
+ <option>Medicine</option>
  <option>Auto 🛺</option>
  <option>Food</option>
  <option>Doctor</option>>
@@ -1693,7 +1855,10 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
 
  <div class="top-row">
  <div class="page-title">Profile</div>
- <div class="icon-circle"><i class="ti ti-settings"></i></div>
+ <div style="display:flex;align-items:center;gap:10px;">
+  <div class="icon-circle" id="profileThemeToggleBtn" onclick="toggleTheme()" style="width:38px;height:38px;border-radius:50%;background:#161a23;border:1px solid #1f2430;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;">🌙</div>
+  <!-- <div class="icon-circle"><i class="ti ti-settings"></i></div> -->
+ </div>
  </div>
 
  <div class="profile-head">
@@ -1703,7 +1868,7 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
  <div class="pemail" id="profileEmail">Loading...</div>
  </div>
 
- <div class="menu-item" onclick="openGoalsModal()"><div class="mico"><i class="ti ti-target"></i></div><div class="mtext">Savings &amp; Expense Goals</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
+ <!-- old "Savings & Expense Goals" menu item removed — use the bottom-nav Goals tab instead -->
  <div class="menu-item" style="cursor:default;">
   <div class="mico"><i class="ti ti-bell"></i></div>
   <div class="mtext">Notifications</div>
@@ -1718,18 +1883,22 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
  <div class="menu-item" onclick="openPartyManager()"><div class="mico"><i class="ti ti-users"></i></div><div class="mtext">Manage / Add Party</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
  <div class="menu-item" onclick="openDeletedHistory()"><div class="mico"><i class="ti ti-history"></i></div><div class="mtext">Deleted Entry History</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
 <!-- Main Backup Button -->
-<!-- Main menu item -->
-<div class="menu-item" onclick="openPage('backupPage')">
+<div class="menu-item" onclick="goTo('backup')">
     <div class="mico"><i class="ti ti-database"></i></div>
     <div class="mtext">Backup</div>
     <div class="chev"><i class="ti ti-chevron-right"></i></div>
 </div>
 
-<!-- Backup Page -->
-<div id="backupPage" class="page">
-    <div class="menu-item" onclick="closePage('backupPage')">
-        <div class="mico"><i class="ti ti-arrow-left"></i></div>
-        <div class="mtext">Back</div>
+ <div class="menu-item danger" onclick="openLogoutModal()"><div class="mtext">Log out</div><div class="chev"></div></div>
+
+</div>
+
+<!-- ============ SCREEN: BACKUP & RESTORE (proper full screen, same as every other tab) ============ -->
+<div class="screen" id="screen-backup">
+    <div class="top-row">
+        <div class="icon-circle" onclick="goBack()"><i class="ti ti-arrow-left"></i></div>
+        <div class="page-title" style="font-size:17px;">Backup &amp; Restore</div>
+        <div style="width:40px;"></div>
     </div>
     <div class="menu-item" onclick="exportDataAsJSON()">
         <div class="mico"><i class="ti ti-cloud-upload"></i></div>
@@ -1748,11 +1917,246 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
     </div>
 </div>
 
-</div>
- <div class="menu-item danger" onclick="openLogoutModal()"><div class="mtext">Log out</div><div class="chev"></div></div>
+<!-- ============ SCREEN: GOALS (goals-feature-2.html, merged inline — same DOM/localStorage as the rest of the app, so it always shows real, live data) ============ -->
+<div class="screen" id="screen-goals" style="padding:0;overflow-y:auto;height:100vh;">
+<div id="goalsAppRoot">
+
+  <!-- ============ LIST SCREEN ============ -->
+  <div class="gfscreen active" id="gfScreenList">
+    <div class="header between">
+      <h1>My Goals</h1>
+      <div class="row" style="gap:8px;">
+        <!-- <button class="theme-btn" id="goalsThemeToggleBtn" onclick="toggleTheme()">🌙</button> -->
+        <button class="fab" onclick="openCreate()">+</button>
+      </div>
+    </div>
+
+    <div class="card row between">
+      <div>
+        <div class="label" style="margin-bottom:4px;">Total Goal Progress</div>
+        <div style="color:#f0c060;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
+        <div class="label" style="margin:0;">of total goals</div>
+      </div>
+      <div class="ring-wrap">
+        <canvas id="ringTotal" width="84" height="84"></canvas>
+        <div class="ring-label">
+          <span class="pct" id="ringTotalPct">0%</span>
+          <span class="sub">Completed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-bottom:20px;">
+      <div class="card card-sm" style="flex:1;">
+        <div style="color:var(--red);font-size:12px;">Total Expenses</div>
+        <div style="color:var(--text);font-weight:700;font-size:17px;" id="totalExpenseGoalsText">₹0</div>
+      </div>
+      <div class="card card-sm" style="flex:1;">
+        <div style="color:var(--green);font-size:12px;">Total Savings</div>
+        <div style="color:var(--text);font-weight:700;font-size:17px;" id="totalSavingsGoalsText">₹0</div>
+      </div>
+    </div>
+
+    <div class="row between" style="margin-bottom:10px;">
+      <span style="color:#dac79e;font-weight:600;">My Goals</span>
+      <span style="color:var(--gold);font-size:13px;">View All</span>
+    </div>
+
+    <div id="goalsList"></div>
+  </div>
+
+  <!-- ============ CREATE / EDIT SCREEN ============ -->
+  <div class="gfscreen" id="gfScreenForm">
+    <div class="header">
+      <button class="icon-btn" onclick="backFromForm()">←</button>
+      <h1 id="formTitle">Create New Goal</h1>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="tabExpense" onclick="setGoalType('Expense Limit')">Expense Limit</button>
+      <button class="tab" id="tabSavings" onclick="setGoalType('Savings Goal')">Savings Goal</button>
+    </div>
+
+    <label class="label">Goal Name</label>
+    <input id="fName" placeholder="Enter goal name" />
+
+    <label class="label">Target Amount</label>
+    <input id="fTarget" type="number" placeholder="₹ 0.00" />
+
+    <label class="label">Current Amount</label>
+    <input id="fCurrent" type="number" placeholder="₹ 0.00" />
+
+    <div class="row">
+      <div style="flex:1;">
+        <label class="label">Start Date</label>
+        <input id="fStart" type="date" />
+      </div>
+      <div style="flex:1;">
+        <label class="label">End Date</label>
+        <input id="fEnd" type="date" />
+      </div>
+    </div>
+
+    <!-- <label class="label">Category</label>
+    <input id="fCategory" placeholder="Select category" /> -->
+  <label style="display:block;color:#fdfdfd85;font-size:12px;margin-bottom:6px;">Category</label>
+  <select id="goalCategorySelect" style="width:100%;box-sizing:border-box;padding:11px 12px;margin-bottom:14px;border-radius:10px;border:1px solid #232838;background:#ffffff;color:#080707;font-size:14px;">
+   <option value="">— Select category —</option>
+   <option value="Auto">Auto 🛺</option>
+   <option value="Food">Food</option>
+   <option value="Medicine">Medicine</option>
+   <option value="Travel">Travel</option>
+   <option value="Other Goal">Other Goal</option>
+  </select>
+
+
+    <label class="label">Notes (Optional)</label>
+    <textarea id="fNotes" placeholder="Add notes about your goal..."></textarea>
+
+    <button class="btn-primary" onclick="saveGoal()">＋ <span id="formSaveLabel">Save Goal</span></button>
+  </div>
+
+  <!-- ============ DETAILS SCREEN ============ -->
+  <div class="gfscreen" id="gfScreenDetails">
+    <div class="header">
+      <button class="icon-btn" onclick="showScreen('gfScreenList')">←</button>
+      <h1>Goal Details</h1>
+    </div>
+
+    <div class="card">
+      <div class="row center" style="margin-bottom:12px;">
+        
+        <div>
+          <div style="color:var(--text);font-weight:700;font-size:16px;" id="dName"></div>
+          <div style="color:var(--muted);font-size:12px;" id="dDates"></div>
+        </div>
+      </div>
+      <div style="color:#9fe6d1;font-size:24px;font-weight:700;margin-bottom:8px;" id="dAmounts"></div>
+      <div class="progress-track thick"><div class="progress-fill" id="dProgressFill"></div></div>
+      <div class="row stats" style="margin-top:16px;">
+        <div class="stat-box" id="dTargetBox"></div>
+        <div class="stat-box" id="dSpentBox"></div>
+        <div class="stat-box" id="dRemainingBox"></div>
+        <div class="stat-box" id="dDaysBox"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="color:var(--gold);font-weight:600;margin-bottom:10px;">Details</div>
+      <div class="detail-row"><span class="k">Category</span><span class="v" id="dCategory"></span></div>
+      <div class="detail-row"><span class="k">Type</span><span class="v" id="dType"></span></div>
+      <div class="detail-row"><span class="k">Notes</span><span class="v" id="dNotes"></span></div>
+    </div>
+
+    <div class="row" style="margin-bottom:12px;">
+      <button class="btn-ghost-card" onclick="openAnalytics()">📊 Analytics</button>
+      <button class="btn-ghost-card" onclick="openInsights()">✨ Insights</button>
+    </div>
+
+    <div class="row">
+      <button class="btn-solid" onclick="editCurrentGoal()">✎ Edit Goal</button>
+      <button class="btn-danger-outline" onclick="deleteCurrentGoal()">🗑 Delete Goal</button>
+    </div>
+  </div>
+
+  <!-- ============ ANALYTICS SCREEN ============ -->
+  <div class="gfscreen" id="gfScreenAnalytics">
+    <div class="header">
+      <button class="icon-btn" onclick="showScreen('gfScreenDetails')">←</button>
+      <h1>Goal Analytics</h1>
+    </div>
+
+    <div class="card card-sm" style="color:var(--gold);font-weight:600;" id="aName"></div>
+
+    <div class="row between" style="margin:16px 0;">
+      <div>
+        <div class="label" style="margin:0;">Spent</div>
+        <div style="color:var(--text);font-weight:700;font-size:20px;" id="aSpent"></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="label" style="margin:0;">Target Amount</div>
+        <div style="color:var(--text);font-weight:700;font-size:20px;" id="aTarget"></div>
+      </div>
+    </div>
+
+    <div class="label">Expense vs Target</div>
+    <div class="chart-box"><canvas id="analyticsChart"></canvas></div>
+
+    <div class="row stats">
+      <div class="stat-box"><div class="stat-val" id="aAvgDaily"></div><div class="stat-label">Average Daily Expense</div></div>
+      <div class="stat-box"><div class="stat-val" id="aDaysLeft"></div><div class="stat-label">Days Remaining</div></div>
+      <div class="stat-box"><div class="stat-val" id="aProjected"></div><div class="stat-label">Projected Expense</div></div>
+    </div>
+  </div>
+
+  <!-- ============ INSIGHTS SCREEN ============ -->
+  <div class="gfscreen" id="gfScreenInsights">
+    <div class="header">
+      <button class="icon-btn" onclick="showScreen('gfScreenDetails')">←</button>
+      <h1>Insights</h1>
+    </div>
+
+    <div class="card row between">
+      <div>
+        <div class="label" style="margin-bottom:8px;">Goal Completion</div>
+        <div class="ring-wrap">
+          <canvas id="ringInsights" width="76" height="76"></canvas>
+          <div class="ring-label">
+            <span class="pct" id="ringInsightsPct">0%</span>
+            <span class="sub">Completed</span>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div class="label" style="margin:0;">Total Spent</div>
+        <div style="color:#d9eb0b;font-weight:700;font-size:15px;margin-bottom:8px;" id="iSpent"></div>
+        <div class="label" style="margin:0;">Remaining</div>
+        <div style="color:#72ba85;font-weight:700;font-size:15px;margin-bottom:8px;" id="iRemaining"></div>
+        <div class="label" style="margin:0;">Days Left</div>
+        <div style="color:var(--text);font-weight:700;font-size:15px;" id="iDaysLeft"></div>
+      </div>
+    </div>
+
+    <div style="color:var(--text);font-weight:600;margin-bottom:8px;">Monthly Trend</div>
+    <div class="chart-box short"><canvas id="insightsChart"></canvas></div>
+
+    <div class="row stats">
+      <div class="stat-box"><div class="stat-val" id="iBest"></div><div class="stat-label">Best Month</div></div>
+      <div class="stat-box"><div class="stat-val" id="iHighest"></div><div class="stat-label">Highest Expense</div></div>
+      <div class="stat-box"><div class="stat-val" id="iLowest"></div><div class="stat-label">Lowest Expense</div></div>
+    </div>
+  </div>
+
+  <!-- ============ CELEBRATION SCREEN ============ -->
+  <div class="gfscreen" id="gfScreenCelebration">
+    <div class="trophy">🏆</div>
+    <div class="celebrate-title">Congratulations!</div>
+    <div class="celebrate-sub">You Achieved Your Goal!</div>
+
+    <div class="card" style="text-align:left;">
+      <div class="row center" style="margin-bottom:14px;">
+    
+        <div>
+          <div style="color:var(--text);font-weight:700;font-size:16px;" id="cName"></div>
+          <div style="color:var(--muted);font-size:12px;" id="cAmounts"></div>
+        </div>
+      </div>
+      <div class="progress-track thick" style="margin-bottom:14px;">
+        <div class="progress-fill" style="width:100%;background:var(--green);"></div>
+      </div>
+      <div class="detail-row"><span class="k">Total Saved</span><span class="v" id="cSaved"></span></div>
+      <div class="detail-row"><span class="k">Completion Date</span><span class="v" id="cDate"></span></div>
+    </div>
+
+    <div class="row" style="margin-bottom:12px;">
+      <button class="btn-outline" onclick="shareAchievement()">🔗 Share Achievement</button>
+      <button class="btn-solid" onclick="openCreate()">＋ Create New Goal</button>
+    </div>
+
+    <button class="link-btn" onclick="showScreen('gfScreenDetails')">Back to goal details</button>
+  </div>
 
 </div>
-
 </div>
 
 <!-- ============ BOTTOM NAV ============ -->
@@ -1767,8 +2171,8 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
  <button class="nav-btn" id="navEntries" onclick="goTo('entries')">
  <i class="ti ti-list"></i><span>Entries</span>
  </button>
- <button class="nav-btn" id="navProfile" onclick="goTo('profile')">
- <i class="ti ti-user"></i><span>Profile</span>
+ <button class="nav-btn" id="navGoals" onclick="goTo('goals')">
+ <i class="ti ti-target"></i><span>Goals</span>
  </button>
 </div>
 
@@ -1852,6 +2256,7 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
  <option>Dividend</option>
  <option>Anjali</option>
  <option>Mammi</option>
+ <option>Medicine</option>
  <option>Auto 🛺</option>
  <option>Food</option>
  <option>Doctor</option>>
@@ -1910,7 +2315,7 @@ body.light-theme .party-total-bar .ptb-status-msg.status-receive{ color:#c98a10 
 // Firebase Console -> Project Settings -> General -> Your apps -> Web app config
 // ===== FIREBASE CONFIG (initialized lazily after UI paints) =====
 const firebaseConfig = {
-apiKey: "AIzaSyBneDVwogH0WiEmAAvLHu_Tq862DmDOwmI",
+  apiKey: "AIzaSyBneDVwogH0WiEmAAvLHu_Tq862DmDOwmI",
   authDomain: "daytoday-e6646.firebaseapp.com",
   databaseURL: "https://daytoday-e6646-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "daytoday-e6646",
@@ -1919,7 +2324,6 @@ apiKey: "AIzaSyBneDVwogH0WiEmAAvLHu_Tq862DmDOwmI",
   appId: "1:125507121584:web:87dec9292e70d7a919e675",
   measurementId: "G-SK7GX8RVEH"
 };
-
 // 🔴 REPLACE THE VALUES ABOVE WITH YOUR REAL FIREBASE CONFIG
 // (Firebase Console → Project Settings → General → Your apps → Web app)
 // Without your real values here, cloud sync/login won't work, but the
@@ -2342,70 +2746,9 @@ function saveGoalsToLocalStorage() {
  localStorage.setItem('financialGoals', JSON.stringify(financialGoals));
 }
 
-let goalCategoryType = 'expense';
-function setGoalCategoryType(t) {
- goalCategoryType = t;
- const payBtn = document.getElementById('goalCatPaymentBtn');
- const recvBtn = document.getElementById('goalCatReceiveBtn');
- if (!payBtn || !recvBtn) return;
- if (t === 'expense') {
-  payBtn.style.border = '1.5px solid #fff'; payBtn.style.background = 'rgba(0,0,0,.35)'; payBtn.style.color = '#fff';
-  recvBtn.style.border = 'none'; recvBtn.style.background = 'rgba(0,0,0,.2)'; recvBtn.style.color = '#ffffffaa';
- } else {
-  recvBtn.style.border = '1.5px solid #fff'; recvBtn.style.background = 'rgba(0,0,0,.35)'; recvBtn.style.color = '#fff';
-  payBtn.style.border = 'none'; payBtn.style.background = 'rgba(0,0,0,.2)'; payBtn.style.color = '#ffffffaa';
- }
-}
-
-function openGoalsModal() {
- document.getElementById('goalSavingsInput').value = financialGoals.savingsTarget || '';
- document.getElementById('goalExpenseInput').value = financialGoals.expenseLimit || '';
- document.getElementById('goalNotifyToggle').checked = !!financialGoals.notify;
- document.getElementById('goalCategorySelect').value = '';
- setGoalCategoryType('expense');
- renderGoalsProgress();
- document.getElementById('goalsOverlay').style.display = 'flex';
-}
-
-function closeGoalsModal() {
- document.getElementById('goalsOverlay').style.display = 'none';
-}
-
-function saveGoals() {
- const savingsTarget = parseFloat(document.getElementById('goalSavingsInput').value || 0);
- const expenseLimit = parseFloat(document.getElementById('goalExpenseInput').value || 0);
- const notify = document.getElementById('goalNotifyToggle').checked;
- financialGoals = { savingsTarget, expenseLimit, notify };
- saveGoalsToLocalStorage();
- goalAlertsShownForMonth = null; // re-check alerts against the new targets
-
- // Category-based quick goal (Payment/Receive toggle + Category dropdown)
- const category = document.getElementById('goalCategorySelect').value;
- if (category) {
-  const targetAmount = goalCategoryType === 'expense' ? expenseLimit : savingsTarget;
-  if (targetAmount > 0) {
-   const goalType = goalCategoryType === 'expense' ? 'expense' : 'savings';
-   const existing = customGoals.find(g => g.title === category && g.type === goalType && !g.archived);
-   if (existing) {
-    existing.targetAmount = targetAmount;
-   } else {
-    customGoals.push({
-     id: Date.now().toString(),
-     title: category,
-     targetAmount: targetAmount,
-     type: goalType,
-     archived: false,
-     createdAt: new Date().toISOString()
-    });
-   }
-   saveCustomGoalsToLocalStorage();
-  }
- }
-
- renderGoalsProgress();
- checkGoalAlerts();
- showNotification('Goals saved ✓', 'success');
-}
+// NOTE: openGoalsModal / setGoalCategoryType / saveGoals (old quick-goal
+// popup) removed — Goals ab sirf bottom-nav "Goals" tab se hi manage hote
+// hain (goals-feature-2 UI), taaki sirf EK hi system rahe aur id clash na ho.
 
 // Recomputes this month's actual expense/savings the same way the
 // dashboard does, without touching renderDashboardTotals itself.
@@ -2663,158 +3006,13 @@ function saveCustomGoalsToLocalStorage() {
  localStorage.setItem('customGoals', JSON.stringify(customGoals));
 }
 
-// Opens the dedicated "All Goals" screen (separate from the quick-settings modal)
-function openGoalsListScreen() {
- const panel = document.getElementById('goalsListPanel');
- if (!panel) return;
- panel.style.display = 'block';
- showArchivedGoals = false;
- closeAddCustomGoalForm();
- renderCustomGoalsList();
-}
+// NOTE: openGoalsListScreen / openAddCustomGoalForm / saveCustomGoal /
+// archiveCustomGoal / unarchiveCustomGoal / deleteCustomGoal / renderCustomGoalsList
+// (old side-panel "All Goals" UI) removed -- consolidated into the single
+// bottom-nav Goals tab. loadCustomGoalsFromLocalStorage / saveCustomGoalsToLocalStorage /
+// getGoalCategoryStats stay because the new Goals tab (and checkCustomGoalCompletions
+// notifications) still use them.
 
-function closeGoalsListScreen() {
- const panel = document.getElementById('goalsListPanel');
- if (panel) panel.style.display = 'none';
- closeAddCustomGoalForm();
-}
-
-function openAddCustomGoalForm(goalId) {
- const box = document.getElementById('customGoalFormBox');
- if (!box) return;
- box.style.display = 'block';
- if (goalId) {
-  const g = customGoals.find(x => String(x.id) === String(goalId));
-  if (!g) return;
-  editingCustomGoalId = g.id;
-  document.getElementById('customGoalTitleInput').value = g.title;
-  document.getElementById('customGoalAmountInput').value = g.targetAmount;
-  setCustomGoalType(g.type);
-  document.getElementById('customGoalFormTitle').textContent = 'Edit Goal';
- } else {
-  editingCustomGoalId = null;
-  document.getElementById('customGoalTitleInput').value = '';
-  document.getElementById('customGoalAmountInput').value = '';
-  setCustomGoalType('savings');
-  document.getElementById('customGoalFormTitle').textContent = 'Add Goal';
- }
-}
-
-function closeAddCustomGoalForm() {
- const box = document.getElementById('customGoalFormBox');
- if (box) box.style.display = 'none';
- editingCustomGoalId = null;
-}
-
-function setCustomGoalType(t) {
- customGoalFormType = t;
- const sBtn = document.getElementById('customGoalTypeSavingsBtn');
- const eBtn = document.getElementById('customGoalTypeExpenseBtn');
- if (sBtn) sBtn.classList.toggle('active-goal-type', t === 'savings');
- if (eBtn) eBtn.classList.toggle('active-goal-type', t === 'expense');
-}
-
-function saveCustomGoal() {
- const title = (document.getElementById('customGoalTitleInput').value || '').trim();
- const amount = parseFloat(document.getElementById('customGoalAmountInput').value || 0);
- if (!title) { showNotification('Please enter a goal title', 'error'); return; }
- if (!amount || amount <= 0) { showNotification('Enter a valid target amount', 'error'); return; }
-
- if (editingCustomGoalId) {
-  const g = customGoals.find(x => String(x.id) === String(editingCustomGoalId));
-  if (g) { g.title = title; g.targetAmount = amount; g.type = customGoalFormType; }
-  showNotification('Goal updated ✓', 'success');
- } else {
-  customGoals.push({
-   id: Date.now().toString(),
-   title: title,
-   targetAmount: amount,
-   type: customGoalFormType,
-   archived: false,
-   createdAt: new Date().toISOString()
-  });
-  showNotification('Goal saved ✓', 'success');
- }
- saveCustomGoalsToLocalStorage();
- closeAddCustomGoalForm();
- renderCustomGoalsList();
-}
-
-function archiveCustomGoal(goalId) {
- const g = customGoals.find(x => String(x.id) === String(goalId));
- if (!g) return;
- g.archived = true;
- saveCustomGoalsToLocalStorage();
- renderCustomGoalsList();
- showNotification('Goal archived ✓', 'success');
-}
-
-function unarchiveCustomGoal(goalId) {
- const g = customGoals.find(x => String(x.id) === String(goalId));
- if (!g) return;
- g.archived = false;
- saveCustomGoalsToLocalStorage();
- renderCustomGoalsList();
- showNotification('Goal restored ✓', 'success');
-}
-
-function deleteCustomGoal(goalId) {
- if (!confirm('Delete this goal permanently?')) return;
- customGoals = customGoals.filter(x => String(x.id) !== String(goalId));
- saveCustomGoalsToLocalStorage();
- renderCustomGoalsList();
- showNotification('Goal deleted', 'success');
-}
-
-function toggleShowArchivedGoals() {
- showArchivedGoals = !showArchivedGoals;
- renderCustomGoalsList();
-}
-
-function renderCustomGoalsList() {
- const list = document.getElementById('customGoalsList');
- if (!list) return;
- const goalsToShow = customGoals.filter(g => !!g.archived === showArchivedGoals);
-
- const toggleBtn = document.getElementById('archivedToggleBtn');
- if (toggleBtn) toggleBtn.textContent = showArchivedGoals ? 'Show Active Goals' : 'Show Archived Goals';
-
- if (goalsToShow.length === 0) {
-  list.innerHTML = `<div style="color:#8b9099;font-size:12.5px;text-align:center;padding:24px 0;">${showArchivedGoals ? 'No archived goals' : 'No goals yet — tap "+ Add Goal" to create one'}</div>`;
-  return;
- }
-
- list.innerHTML = goalsToShow.map(g => {
-  // Har goal ki apni category (title) ke hisaab se alag progress —
-  // ab yahan koi bhi doosre goal ka total mix nahi hoga
-  const { expense, savings } = getGoalCategoryStats(g.title);
-  const current = g.type === 'savings' ? savings : expense;
-  const pct = Math.min(100, Math.round((current / g.targetAmount) * 100));
-  const barColor = g.type === 'expense'
-   ? (current > g.targetAmount ? '#f06464' : (pct > 80 ? '#f6b042' : '#e8b64c'))
-   : '#3ddc84';
-  return `
-  <div style="background:#1a1f29;border-radius:12px;padding:14px;margin-bottom:10px;">
-   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-    <div style="color:#f5f6f8;font-size:13.5px;font-weight:700;">${g.title}</div>
-    <div style="display:flex;gap:12px;">
-     ${!g.archived ? `<i class="ti ti-edit" style="color:#e8b64c;cursor:pointer;font-size:15px;" onclick="openAddCustomGoalForm('${g.id}')"></i>` : ''}
-     ${!g.archived
-       ? `<i class="ti ti-archive" style="color:#8b9099;cursor:pointer;font-size:15px;" onclick="archiveCustomGoal('${g.id}')"></i>`
-       : `<i class="ti ti-rotate" style="color:#8b9099;cursor:pointer;font-size:15px;" onclick="unarchiveCustomGoal('${g.id}')"></i>`}
-     <i class="ti ti-trash" style="color:#f06464;cursor:pointer;font-size:15px;" onclick="deleteCustomGoal('${g.id}')"></i>
-    </div>
-   </div>
-   <div style="display:flex;justify-content:space-between;color:#8b9099;font-size:11px;margin-bottom:6px;">
-    <span>${g.type === 'savings' ? 'Savings' : 'Expense'} this month</span>
-    <span>₹${current.toLocaleString('en-IN')} / ₹${g.targetAmount.toLocaleString('en-IN')}</span>
-   </div>
-   <div style="height:7px;border-radius:5px;background:#232838;overflow:hidden;">
-    <div style="height:100%;width:${pct}%;background:${barColor};"></div>
-   </div>
-  </div>`;
- }).join('');
-}
 
 let db = null;
 
@@ -3007,6 +3205,7 @@ function hideGoogleLoginPage() {
 
     appContainer.style.display = 'none';  // keep app hidden
     pinScreen.style.display = 'flex';     // show PIN screen
+    setTimeout(focusPinHiddenInput, 150); // open phone's native numeric keyboard
   } else {
     // fallback: go straight to app
     if (appContainer) appContainer.style.display = 'block';
@@ -3481,17 +3680,592 @@ function updateDateLabel(dateStr) {
 // ===== NAVIGATION =====
 
 let currentAppScreen = 'wallet';
+// ============================================================
+// GOALS TAB — script merged inline from goals-feature-2.html
+// (same DOM/localStorage as the rest of the app -> always real,
+// live data; no iframe, no base64, no encoding issues).
+// ============================================================
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+// Yeh goals ab localStorage me persist hote hain isi "customGoals" key ke
+// through jo index (DayToDay) app already use karta hai — taaki jab is page
+// ko index se connect kiya jaaye, dono ek hi data share karein aur goal
+// yahan banaya ho ya index me, dono jagah dikhega.
+//
+// Storage format thoda "translate" hota hai kyunki index ki apni customGoals
+// list simpler schema use karti hai (title/targetAmount/type:'savings'|'expense'/
+// archived/createdAt), aur yeh naya UI extra fields bhi rakhta hai
+// (category/startDate/endDate/notes). Dono ek saath compatible rehne ke liye
+// goalToStorage() / goalFromStorage() beech me convert karte hain.
+const GOALS_STORAGE_KEY = "customGoals";
+
+let goals = [];
+let activeGoal = null;
+let editingType = "Expense Limit";
+let analyticsChart = null;
+let insightsChart = null;
+
+function todayStr(){
+  return new Date().toISOString().slice(0,10);
+}
+function addDaysToDateStr(dateStr, days){
+  const d = dateStr ? new Date(dateStr) : new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0,10);
+}
+
+// Is UI ke andar type hamesha "Expense Limit" / "Savings Goal" (readable) rehta
+// hai, lekin localStorage me index ke saath compatible rehne ke liye
+// "expense" / "savings" (lowercase) me save hota hai.
+function typeToInternal(t){ return (t === "savings" || t === "Savings Goal") ? "Savings Goal" : "Expense Limit"; }
+function typeToStorage(t){ return (t === "Savings Goal") ? "savings" : "expense"; }
+
+function goalFromStorage(raw){
+  const title = raw.name || raw.title || "Goal";
+  return {
+    id: raw.id != null ? raw.id : Date.now(),
+    name: title,
+    type: typeToInternal(raw.type),
+    category: raw.category || title,          // real entries isi naam/category se match hongi
+    target: Number(raw.target != null ? raw.target : raw.targetAmount) || 0,
+    manualCurrent: Number(raw.current) || 0,   // sirf demo/standalone fallback ke liye
+    current: 0,                                 // hamesha refreshGoalLiveData() se recompute hota hai
+    startDate: raw.startDate || (raw.createdAt ? raw.createdAt.slice(0,10) : todayStr()),
+    endDate: raw.endDate || addDaysToDateStr(raw.startDate, 30),
+    daysLeft: 0,                                // hamesha refreshGoalLiveData() se recompute hota hai
+    notes: raw.notes || "",
+    archived: !!raw.archived,
+    createdAt: raw.createdAt || new Date().toISOString()
+  };
+}
+
+function goalToStorage(g){
+  return {
+    id: g.id,
+    title: g.name,
+    name: g.name,
+    targetAmount: g.target,
+    target: g.target,
+    type: typeToStorage(g.type),
+    archived: !!g.archived,
+    createdAt: g.createdAt || new Date().toISOString(),
+    // extra fields jo sirf yeh richer UI use karta hai — purana/simple
+    // customGoals code inhe ignore kar dega, isse kuch nahi tootega.
+    category: g.category,
+    startDate: g.startDate,
+    endDate: g.endDate,
+    notes: g.notes,
+    current: g.manualCurrent || 0
+  };
+}
+
+function loadGoalsFromStorage(){
+  let raw = [];
+  try { raw = JSON.parse(localStorage.getItem(GOALS_STORAGE_KEY) || "[]"); } catch(err){ raw = []; }
+  if (!Array.isArray(raw)) raw = [];
+
+  if (raw.length === 0){
+    // Pehli baar khola gaya / abhi tak koi real goal nahi — sirf standalone
+    // preview ke liye chaar demo goals dikhate hain. Yeh localStorage me
+    // save NAHI hote jab tak user khud inhe edit/save na kare.
+    goals = [
+      { id:1, name:"Monthly Expense Limit", type:"Expense Limit", target:20000, manualCurrent:15000, current:0, daysLeft:0, startDate:"2025-07-18", endDate:"2025-08-18", category:"Food & Dining", notes:"", archived:false, createdAt:new Date().toISOString() },
+      { id:2, name:"Monthly Savings Goal", type:"Savings Goal", target:15000, manualCurrent:10000, current:0, daysLeft:0, startDate:"2025-07-08", endDate:"2025-07-18", category:"Savings", notes:"", archived:false, createdAt:new Date().toISOString() },
+      { id:3, name:"Emergency Fund", type:"Savings Goal", target:20000, manualCurrent:8000, current:0, daysLeft:0, startDate:"2025-06-25", endDate:"2025-07-25", category:"Savings", notes:"", archived:false, createdAt:new Date().toISOString() },
+      { id:4, name:"Vacation Fund", type:"Savings Goal", target:30000, manualCurrent:12000, current:0, daysLeft:0, startDate:"2025-06-10", endDate:"2025-08-10", category:"Travel", notes:"", archived:false, createdAt:new Date().toISOString() }
+    ];
+  } else {
+    goals = raw.map(goalFromStorage).filter(g => !g.archived);
+  }
+}
+
+function saveGoalsToStorage(){
+  try { localStorage.setItem(GOALS_STORAGE_KEY, JSON.stringify(goals.map(goalToStorage))); }
+  catch(err){ console.warn("Failed to save goals:", err); }
+}
+
+// ---------------------------------------------------------------------------
+// Real data connection (index app ki "entries" localStorage key se)
+// ---------------------------------------------------------------------------
+function getRealEntries(){
+  try { return JSON.parse(localStorage.getItem("entries") || "[]"); }
+  catch(err){ return []; }
+}
+
+// Index ke getGoalCategoryStats() jaisa hi logic — party/category name match
+// karke current month ki expense/income sum nikalta hai.
+function computeGoalCurrent(goal){
+  const allEntries = getRealEntries();
+  if (allEntries.length === 0){
+    // Abhi index se koi real entry connect nahi hui — standalone demo value dikhao
+    return Number(goal.manualCurrent) || 0;
+  }
+  const now = new Date();
+  const curMonth = now.getMonth(), curYear = now.getFullYear();
+  const targetName = String(goal.category || goal.name || "").trim().toLowerCase();
+  let expense = 0, savings = 0;
+  allEntries.forEach(e => {
+    const d = new Date(e.date);
+    if (d.getFullYear() !== curYear || d.getMonth() !== curMonth) return;
+    const partyName = String(e.party || "Unknown").trim().toLowerCase();
+    if (partyName !== targetName) return;
+    const amt = Number(e.amount) || 0;
+    if (e.type === "expense") expense += amt;
+    else if (e.type === "income") savings += amt;
+  });
+  return goal.type === "Savings Goal" ? savings : expense;
+}
+
+function computeDaysLeft(goal){
+  if (!goal.endDate) return 0;
+  const end = new Date(goal.endDate);
+  const startOfToday = new Date();
+  startOfToday.setHours(0,0,0,0);
+  const diff = Math.ceil((end - startOfToday) / 86400000);
+  return Math.max(0, diff);
+}
+
+// Har render se pehle yeh call karo taaki current/daysLeft hamesha
+// real (ya demo) data ke hisaab se fresh rahe.
+function refreshGoalLiveData(){
+  goals.forEach(g => {
+    g.current = computeGoalCurrent(g);
+    g.daysLeft = computeDaysLeft(g);
+  });
+}
+
+// Ek goal ki real daily/monthly trend nikalta hai — agar index se real
+// entries connect hain to unse, warna standalone demo curve dikhata hai.
+function buildGoalTrend(goal){
+  const allEntries = getRealEntries();
+  if (allEntries.length === 0){
+    return [
+      { date:"1 Jul", spent:0, target:0 },
+      { date:"7 Jul", spent: Math.round(goal.target*0.12), target: Math.round(goal.target*0.23) },
+      { date:"13 Jul", spent: Math.round(goal.target*0.26), target: Math.round(goal.target*0.46) },
+      { date:"19 Jul", spent: Math.round(goal.target*0.40), target: Math.round(goal.target*0.69) },
+      { date:"25 Jul", spent: Math.round(goal.target*0.52), target: Math.round(goal.target*0.92) },
+      { date:"31 Jul", spent: goal.current, target: goal.target }
+    ];
+  }
+  const wantType = goal.type === "Savings Goal" ? "income" : "expense";
+  const targetName = String(goal.category || goal.name || "").trim().toLowerCase();
+  const start = goal.startDate ? new Date(goal.startDate) : new Date();
+  const end = goal.endDate ? new Date(goal.endDate) : new Date();
+  const relevant = allEntries.filter(e => {
+    if (String(e.party || "Unknown").trim().toLowerCase() !== targetName) return false;
+    if (e.type !== wantType) return false;
+    const d = new Date(e.date);
+    return d >= start && d <= end;
+  }).sort((a,b) => new Date(a.date) - new Date(b.date));
+
+  let running = 0;
+  const points = relevant.map(e => {
+    running += Number(e.amount) || 0;
+    return { date: new Date(e.date).toLocaleDateString("en-IN",{ day:"numeric", month:"short" }), spent: running };
+  });
+  if (points.length === 0){
+    points.push({ date: start.toLocaleDateString("en-IN",{ day:"numeric", month:"short" }), spent:0 });
+  }
+  return points.map((p,i) => ({
+    date: p.date,
+    spent: p.spent,
+    target: Math.round(goal.target * ((i+1) / points.length))
+  }));
+}
+
+// Pichle 6 mahino ki monthly totals (Insights screen ke liye)
+function buildGoalMonthlyTrend(goal){
+  const allEntries = getRealEntries();
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--){
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ year: d.getFullYear(), month: d.getMonth(), label: d.toLocaleDateString("en-IN",{month:"short"}), value: 0 });
+  }
+  if (allEntries.length === 0){
+    return [
+      { month:"Feb", value:9000 }, { month:"Mar", value:6500 }, { month:"Apr", value:10200 },
+      { month:"May", value:18200 }, { month:"Jun", value:15600 }, { month:"Jul", value: goal.current }
+    ];
+  }
+  const wantType = goal.type === "Savings Goal" ? "income" : "expense";
+  const targetName = String(goal.category || goal.name || "").trim().toLowerCase();
+  allEntries.forEach(e => {
+    if (String(e.party || "Unknown").trim().toLowerCase() !== targetName) return;
+    if (e.type !== wantType) return;
+    const d = new Date(e.date);
+    const m = months.find(mm => mm.year === d.getFullYear() && mm.month === d.getMonth());
+    if (m) m.value += Number(e.amount) || 0;
+  });
+  return months.map(m => ({ month: m.label, value: m.value }));
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+function currency(n){ return "₹" + Math.round(n || 0).toLocaleString("en-IN"); }
+function pct(current, target){ return target > 0 ? Math.min(100, Math.round((current/target)*100)) : 0; }
+function showScreen(id){
+  document.querySelectorAll("#screen-goals .gfscreen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function cssVar(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+// ---------------------------------------------------------------------------
+// THEME (light / dark) — ab yeh mini-app seedha index.html ke DOM ke andar
+// hi rehta hai (iframe nahi), isliye theme control 100% index.html ke apne
+// toggleTheme() se hota hai (body.light-theme class). Colors CSS variables
+// (scoped under #screen-goals) se automatically follow ho jaate hain — sirf
+// canvas-drawn visuals (rings/charts) ko naye colors ke saath redraw karna
+// padta hai, jo index.html ka toggleTheme() is function ko call karke karta hai.
+function refreshGoalsScreenTheme(){
+  const btn = document.getElementById("goalsThemeToggleBtn");
+  if (btn) btn.textContent = document.body.classList.contains("light-theme") ? "☀️" : "🌙";
+  renderList();
+  const activeScreenEl = document.querySelector("#screen-goals .gfscreen.active");
+  const activeScreen = activeScreenEl ? activeScreenEl.id : "";
+  if(activeScreen === "gfScreenAnalytics" && activeGoal) openAnalytics();
+  if(activeScreen === "gfScreenInsights" && activeGoal) openInsights();
+}
+
+function drawRing(canvasId, percent){
+  const c = document.getElementById(canvasId);
+  const ctx = c.getContext("2d");
+  const size = c.width, stroke = 9, r = (size - stroke) / 2, cx = size/2, cy = size/2;
+  ctx.clearRect(0,0,size,size);
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.strokeStyle = cssVar("--border"); ctx.lineWidth = stroke; ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx,cy,r, -Math.PI/2, -Math.PI/2 + (percent/100)*Math.PI*2);
+  ctx.strokeStyle = cssVar("--gold"); ctx.lineWidth = stroke; ctx.lineCap = "round"; ctx.stroke();
+}
+
+// ---------------------------------------------------------------------------
+// LIST SCREEN
+// ---------------------------------------------------------------------------
+function renderList(){
+  refreshGoalLiveData();
+  const totalTarget = goals.reduce((s,g)=>s+g.target,0);
+  const totalCurrent = goals.reduce((s,g)=>s+g.current,0);
+  const overall = pct(totalCurrent, totalTarget);
+
+  document.getElementById("totalCurrentText").textContent = currency(totalCurrent);
+  document.getElementById("ringTotalPct").textContent = overall + "%";
+  drawRing("ringTotal", overall);
+
+  // Total Expenses card = sum of what's been spent so far across all
+  // "Expense Limit" goals. Total Savings card = sum saved across all
+  // "Savings Goal" goals. Both real, live numbers — not placeholder text.
+  const totalExpenseGoals = goals.filter(g => g.type === "Expense Limit").reduce((s,g)=>s+g.current,0);
+  const totalSavingsGoals = goals.filter(g => g.type === "Savings Goal").reduce((s,g)=>s+g.current,0);
+  const expEl = document.getElementById("totalExpenseGoalsText");
+  const savEl = document.getElementById("totalSavingsGoalsText");
+  if (expEl) expEl.textContent = currency(totalExpenseGoals);
+  if (savEl) savEl.textContent = currency(totalSavingsGoals);
+
+  const list = document.getElementById("goalsList");
+  list.innerHTML = "";
+  goals.forEach(g => {
+    const p = pct(g.current, g.target);
+    const card = document.createElement("button");
+    card.className = "goal-card";
+    card.onclick = () => openDetails(g.id);
+    card.innerHTML = `
+      <div class="goal-top">
+        <div class="row center">
+          <div class="goal-icon"></div>
+          <div class="goal-info">
+            <div class="goal-name">${g.name}</div>
+            <div class="goal-sub">${currency(g.current)} / ${currency(g.target)}</div>
+          </div>
+        </div>
+        <div style="color:var(--muted);flex-shrink:0;margin-left:8px;font-size:18px;">›</div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" style="width:${p}%;"></div></div>
+      <div class="progress-meta">
+        <span class="pct">${p}%</span>
+        <span class="days">${g.daysLeft} Days Left</span>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+// ---------------------------------------------------------------------------
+// CREATE / EDIT SCREEN
+// ---------------------------------------------------------------------------
+function setGoalType(type){
+  editingType = type;
+  document.getElementById("tabExpense").classList.toggle("active", type === "Expense Limit");
+  document.getElementById("tabSavings").classList.toggle("active", type === "Savings Goal");
+}
+
+function openCreate(){
+  activeGoal = null;
+  document.getElementById("formTitle").textContent = "Create New Goal";
+  document.getElementById("formSaveLabel").textContent = "Save Goal";
+  setGoalType("Expense Limit");
+  ["fName","fTarget","fCurrent","fStart","fEnd","fNotes"].forEach(id => document.getElementById(id).value = "");
+  document.getElementById("goalCategorySelect").value = "";
+  showScreen("gfScreenForm");
+}
+
+function editCurrentGoal(){
+  if(!activeGoal) return;
+  document.getElementById("formTitle").textContent = "Edit Goal";
+  document.getElementById("formSaveLabel").textContent = "Save Changes";
+  setGoalType(activeGoal.type);
+  document.getElementById("fName").value = activeGoal.name;
+  document.getElementById("fTarget").value = activeGoal.target;
+  document.getElementById("fCurrent").value = activeGoal.manualCurrent || 0;
+  document.getElementById("fStart").value = activeGoal.startDate;
+  document.getElementById("fEnd").value = activeGoal.endDate;
+  document.getElementById("goalCategorySelect").value = activeGoal.category;
+  document.getElementById("fNotes").value = activeGoal.notes;
+  showScreen("gfScreenForm");
+}
+
+function backFromForm(){
+  showScreen(activeGoal ? "gfScreenDetails" : "gfScreenList");
+}
+
+function saveGoal(){
+  const name = document.getElementById("fName").value.trim();
+  if(!name){ alert("Please enter a goal name"); return; }
+
+  const wasComplete = activeGoal ? activeGoal.current >= activeGoal.target : false;
+
+  const category = document.getElementById("goalCategorySelect").value.trim() || name;
+  const goal = {
+    id: activeGoal ? activeGoal.id : Date.now(),
+    name,
+    type: editingType,
+    category,
+    target: Number(document.getElementById("fTarget").value) || 0,
+    // "Current Amount" field sirf tab use hota hai jab index se koi real
+    // entries connect na hui ho — jaise hi real entries milengi, current
+    // apne aap unse (category ke naam se match karke) calculate hoga.
+    manualCurrent: Number(document.getElementById("fCurrent").value) || 0,
+    current: 0,
+    startDate: document.getElementById("fStart").value || todayStr(),
+    endDate: document.getElementById("fEnd").value || addDaysToDateStr(document.getElementById("fStart").value, 30),
+    notes: document.getElementById("fNotes").value,
+    daysLeft: 0,
+    archived: false,
+    createdAt: activeGoal ? activeGoal.createdAt : new Date().toISOString()
+  };
+
+  const idx = goals.findIndex(g => g.id === goal.id);
+  if(idx >= 0) goals[idx] = goal; else goals.push(goal);
+
+  saveGoalsToStorage();
+  activeGoal = goal;
+  refreshGoalLiveData();
+  renderList();
+
+  const isNowComplete = goal.target > 0 && goal.current >= goal.target;
+  if(isNowComplete && !wasComplete){
+    renderCelebration();
+    showScreen("gfScreenCelebration");
+  } else {
+    renderDetails();
+    showScreen("gfScreenDetails");
+  }
+}
+
+// ---------------------------------------------------------------------------
+// DETAILS SCREEN
+// ---------------------------------------------------------------------------
+function openDetails(id){
+  activeGoal = goals.find(g => g.id === id);
+  if (!activeGoal) return;
+  activeGoal.current = computeGoalCurrent(activeGoal);
+  activeGoal.daysLeft = computeDaysLeft(activeGoal);
+  renderDetails();
+  showScreen("gfScreenDetails");
+}
+
+function renderDetails(){
+  const g = activeGoal;
+  const p = pct(g.current, g.target);
+  const remaining = Math.max(0, g.target - g.current);
+
+  document.getElementById("dName").textContent = g.name;
+  document.getElementById("dDates").textContent = `${g.startDate} - ${g.endDate}`;
+  document.getElementById("dAmounts").innerHTML = `${currency(g.current)} <span style="color:var(--muted);font-size:16px;">/ ${currency(g.target)}</span>`;
+  document.getElementById("dProgressFill").style.width = p + "%";
+
+  document.getElementById("dTargetBox").innerHTML = `<div class="stat-val">${currency(g.target)}</div><div class="stat-label">Target Amount</div>`;
+  document.getElementById("dSpentBox").innerHTML = `<div class="stat-val">${currency(g.current)}</div><div class="stat-label">Spent</div>`;
+  document.getElementById("dRemainingBox").innerHTML = `<div class="stat-val">${currency(remaining)}</div><div class="stat-label">Remaining</div>`;
+  document.getElementById("dDaysBox").innerHTML = `<div class="stat-val">${g.daysLeft}</div><div class="stat-label">Days Left</div>`;
+
+  document.getElementById("dCategory").textContent = g.category || "—";
+  document.getElementById("dType").textContent = g.type;
+  document.getElementById("dNotes").textContent = g.notes || "—";
+}
+
+function deleteCurrentGoal(){
+  if(!activeGoal) return;
+  if(!confirm(`Delete "${activeGoal.name}"?`)) return;
+  goals = goals.filter(g => g.id !== activeGoal.id);
+  saveGoalsToStorage();
+  activeGoal = null;
+  renderList();
+  showScreen("gfScreenList");
+}
+
+// ---------------------------------------------------------------------------
+// ANALYTICS SCREEN
+// ---------------------------------------------------------------------------
+function openAnalytics(){
+  const g = activeGoal;
+  g.current = computeGoalCurrent(g);
+  g.daysLeft = computeDaysLeft(g);
+  document.getElementById("aName").textContent = g.name;
+  document.getElementById("aSpent").textContent = currency(g.current);
+  document.getElementById("aTarget").textContent = currency(g.target);
+
+  const avgDaily = Math.round(g.current / Math.max(1, 30 - g.daysLeft));
+  const projected = Math.round(g.current + avgDaily * g.daysLeft);
+  document.getElementById("aAvgDaily").textContent = currency(avgDaily);
+  document.getElementById("aDaysLeft").textContent = g.daysLeft;
+  document.getElementById("aProjected").textContent = currency(projected);
+
+  showScreen("gfScreenAnalytics");
+
+  const trend = buildGoalTrend(g);
+  if(analyticsChart) analyticsChart.destroy();
+  analyticsChart = new Chart(document.getElementById("analyticsChart"), {
+    type: "line",
+    data: {
+      labels: trend.map(d => d.date),
+      datasets: [
+        { label:"Target", data: trend.map(d=>d.target), borderColor: cssVar("--blue"), backgroundColor:"transparent", tension:0.3, pointRadius:0 },
+        { label:"Spent", data: trend.map(d=>d.spent), borderColor: cssVar("--gold"), backgroundColor:"transparent", tension:0.3, pointRadius:3 }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color: cssVar("--muted") } } },
+      scales:{
+        x:{ ticks:{ color: cssVar("--muted") }, grid:{ color: cssVar("--border") } },
+        y:{ ticks:{ color: cssVar("--muted") }, grid:{ color: cssVar("--border") } }
+      }
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// INSIGHTS SCREEN
+// ---------------------------------------------------------------------------
+function openInsights(){
+  const g = activeGoal;
+  g.current = computeGoalCurrent(g);
+  g.daysLeft = computeDaysLeft(g);
+  const p = pct(g.current, g.target);
+  const remaining = Math.max(0, g.target - g.current);
+
+  document.getElementById("ringInsightsPct").textContent = p + "%";
+  drawRing("ringInsights", p);
+  document.getElementById("iSpent").textContent = currency(g.current);
+  document.getElementById("iRemaining").textContent = currency(remaining);
+  document.getElementById("iDaysLeft").textContent = g.daysLeft;
+
+  const monthlyTrend = buildGoalMonthlyTrend(g);
+  const best = monthlyTrend.reduce((a,b)=> a.value < b.value ? a : b);
+  const highest = monthlyTrend.reduce((a,b)=> a.value > b.value ? a : b);
+  const lowest = monthlyTrend.reduce((a,b)=> a.value < b.value ? a : b);
+  document.getElementById("iBest").textContent = best.month;
+  document.getElementById("iHighest").textContent = currency(highest.value);
+  document.getElementById("iLowest").textContent = currency(lowest.value);
+
+  showScreen("gfScreenInsights");
+
+  if(insightsChart) insightsChart.destroy();
+  insightsChart = new Chart(document.getElementById("insightsChart"), {
+    type: "bar",
+    data: {
+      labels: monthlyTrend.map(d=>d.month),
+      datasets: [{ data: monthlyTrend.map(d=>d.value), backgroundColor: cssVar("--gold"), borderRadius:4 }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        x:{ ticks:{ color: cssVar("--muted") }, grid:{ display:false } },
+        y:{ ticks:{ color: cssVar("--muted") }, grid:{ color: cssVar("--border") } }
+      }
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// CELEBRATION SCREEN
+// ---------------------------------------------------------------------------
+function renderCelebration(){
+  const g = activeGoal;
+  document.getElementById("cName").textContent = g.name;
+  document.getElementById("cAmounts").textContent = `${currency(g.current)} / ${currency(g.target)}`;
+  document.getElementById("cSaved").textContent = currency(g.current);
+  document.getElementById("cDate").textContent = g.endDate || "—";
+}
+
+function shareAchievement(){
+  const g = activeGoal;
+  const text = `I just hit my "${g.name}" goal of ${currency(g.target)}!`;
+  if(navigator.share){
+    navigator.share({ title:"Goal achieved!", text }).catch(()=>{});
+  } else {
+    alert(text);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Init — runs once when index.html loads. The bottom-nav Goals tab (goTo())
+// also calls loadGoalsFromStorage() + renderList() again every time it opens,
+// so the list always reflects the latest real entries/customGoals data.
+// ---------------------------------------------------------------------------
+loadGoalsFromStorage();
+renderList();
+
+// Screen navigation history — jab bhi ek NAYE screen par jaate hain, purana
+// screen is stack mein push ho jaata hai. Back button dabane par (goBack ya
+// hardware/browser back) hamesha sirf EK step peeche jaata hai — jahan pehle
+// the wahi wapas aata hai, seedha Wallet/home pe nahi kudta.
+let screenHistoryStack = [];
+
 function goTo(name, fromPopState){
+ if (!fromPopState && typeof currentAppScreen !== 'undefined' && currentAppScreen && currentAppScreen !== name) {
+   screenHistoryStack.push(currentAppScreen);
+ }
  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
  document.getElementById("screen-"+name).classList.add("active");
  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
- const map={wallet:"navWallet",analytics:"navAnalytics",entries:"navEntries",profile:"navProfile"};
+ const map={wallet:"navWallet",analytics:"navAnalytics",entries:"navEntries",goals:"navGoals"};
  if(map[name]) document.getElementById(map[name]).classList.add("active");
  if(name==="analytics") { setTimeout(renderAnalytics, 30); }
  if(name==="entries") renderEntries();
  if(name==="wallet") renderRecent();
+ if(name==="goals") {
+   // Ab yeh mini-app isi page ke DOM/script me hai (koi iframe nahi),
+   // isliye localStorage("entries"/"customGoals") turant fresh padh
+   // ke render hota hai — 100% real, live data, har baar tab khulte hi.
+   if (typeof loadGoalsFromStorage === 'function') loadGoalsFromStorage();
+   if (typeof renderList === 'function') renderList();
+ }
  currentAppScreen = name;
  if (!fromPopState) history.pushState({ screen: name }, '');
+}
+
+// Ek step peeche — jis screen se aaye the wahi khulta hai. Sabhi on-screen
+// "back" arrows aur hardware/browser back button dono isi se hoke guzarte hain.
+function goBack(){
+ history.back();
 }
 
 // ===== RENDER FUNCTIONS =====
@@ -3948,6 +4722,7 @@ async function saveEntry(evt){
  showNotification('Entry saved ✓', 'success');
  checkGoalAlerts();
  checkCustomGoalCompletions();
+ if (typeof renderList === "function") renderList(); // keep Goals tab live if entries change
 
  // Unlock
  setTimeout(() => {
@@ -4063,6 +4838,7 @@ async function deleteEntry(){
  renderWallet();
  renderEntries();
  renderAnalytics();
+ if (typeof renderList === 'function') renderList(); // keep Goals tab live
  showNotification('Entry deleted ✓', 'success');
 
  // BACKGROUND: Delete from Firebase without blocking UI
@@ -4636,6 +5412,8 @@ document.addEventListener('DOMContentLoaded', () => {
      document.body.classList.add("light-theme");
      const iconEl = document.getElementById('themeToggleIcon');
      if (iconEl) iconEl.className = "ti ti-sun";
+     const profileBtn = document.getElementById('profileThemeToggleBtn');
+     if (profileBtn) profileBtn.textContent = "☀️";
    }
  } catch(e){}
 
@@ -4650,6 +5428,7 @@ document.addEventListener('DOMContentLoaded', () => {
  loadCustomGoalsFromLocalStorage();
  checkGoalAlerts();
  checkCustomGoalCompletions();
+ if (typeof renderList === "function") renderList(); // keep Goals tab live if entries change
  checkAndShowReminderPopup(); // due/overdue payment reminders check (in-app popup + real notification)
  requestNotificationPermission(); // pehli baar permission maango, taaki phone-style notifications kaam karein
  updateNotifStatusLabel(); // "Enable Notifications" menu item ka status turant sahi dikhaye
@@ -4982,9 +5761,13 @@ function toggleTheme(){
  showNotification(isLight ? "Light mode on" : "Dark mode on", "success");
  const iconEl = document.getElementById('themeToggleIcon');
  if (iconEl) iconEl.className = isLight ? "ti ti-sun" : "ti ti-moon";
+ const profileBtn = document.getElementById('profileThemeToggleBtn');
+ if (profileBtn) profileBtn.textContent = isLight ? "☀️" : "🌙";
  // Refresh canvas-based charts so their colors match the new theme (CSS can't reach into canvas)
  if (typeof renderMiniChart === 'function') renderMiniChart();
  if (typeof renderCharts === 'function' && document.getElementById('donutChart')) renderCharts();
+ // Keep the Goals tab (now inline, same page) in sync too, in case it's already open
+ if (typeof refreshGoalsScreenTheme === 'function') refreshGoalsScreenTheme();
 }
 
 // ===== PROFILE EMAIL FROM FIREBASE AUTH =====
@@ -5419,6 +6202,27 @@ function pinBackspace(){
  pinEntered = pinEntered.slice(0,-1);
  pinUpdateDots();
 }
+
+// ===== Native phone keyboard support for the PIN screen =====
+// Focuses the hidden numeric input so the device's own number-pad keyboard
+// opens. Digits typed there flow into the same pinPress() logic as the
+// on-screen pad, so both entry methods stay in sync.
+function focusPinHiddenInput(){
+ const inp = document.getElementById('pinHiddenInput');
+ if(inp){ inp.value = ""; inp.focus(); }
+}
+(function setupPinHiddenInput(){
+ const inp = document.getElementById('pinHiddenInput');
+ if(!inp) return;
+ inp.addEventListener('input', function(){
+  const digit = this.value.replace(/[^0-9]/g, '').slice(-1);
+  this.value = "";
+  if(digit) pinPress(digit);
+ });
+ inp.addEventListener('keydown', function(e){
+  if(e.key === 'Backspace') pinBackspace();
+ });
+})();
 
 function pinSubmit(){
  const storedPin = localStorage.getItem('appPin');
@@ -5973,6 +6777,7 @@ function fpinConfirmPinPress(num) {
     const fpinLink3 = document.getElementById('forgotPinLink');
     if (fpinLink3) fpinLink3.style.display = '';
     document.getElementById('pinLockScreen').style.display = 'flex';
+    setTimeout(focusPinHiddenInput, 150);
    } else {
     document.getElementById('fpinConfirmPinError').textContent = "PIN didn't match, please try again";
     fpinConfirmPin = '';
@@ -6045,7 +6850,48 @@ window.addEventListener('offline', () => {
 });
 
 // ═══════════════════════════════════════════════════════════════════════
-// BACK BUTTON FIX — keep the Android/browser back button inside the app.
+// SWIPE BETWEEN BOTTOM-NAV SCREENS — swipe left/right anywhere on the main
+// tabs (Wallet / Analytics / Entries / Goals) to move to the next/previous
+// tab, same order as the bottom nav bar.
+// ═══════════════════════════════════════════════════════════════════════
+(function() {
+ const swipeOrder = ['wallet', 'analytics', 'entries', 'goals'];
+ const appEl = document.getElementById('app');
+ if (!appEl) return;
+
+ let touchStartX = 0, touchStartY = 0, touchActive = false;
+
+ appEl.addEventListener('touchstart', function(e) {
+  if (e.touches.length !== 1) return;
+  // Sirf tab screens ke beech swipe kaam kare — Add Entry, Backup, Profile
+  // jaisi sub-screens par swipe se accidental navigation na ho.
+  if (swipeOrder.indexOf(currentAppScreen) === -1) { touchActive = false; return; }
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  touchActive = true;
+ }, { passive: true });
+
+ appEl.addEventListener('touchend', function(e) {
+  if (!touchActive) return;
+  touchActive = false;
+  const touch = e.changedTouches[0];
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+  const THRESHOLD = 60;
+  // Horizontal swipe hi count ho, vertical scroll se confuse na ho
+  if (Math.abs(dx) < THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.3) return;
+
+  const idx = swipeOrder.indexOf(currentAppScreen);
+  if (idx === -1) return;
+  if (dx < 0 && idx < swipeOrder.length - 1) {
+   goTo(swipeOrder[idx + 1]);   // swipe left -> next tab
+  } else if (dx > 0 && idx > 0) {
+   goTo(swipeOrder[idx - 1]);   // swipe right -> previous tab
+  }
+ }, { passive: true });
+})();
+
+
 // Wraps the existing open/close functions for every modal & panel so that
 // opening one pushes a history entry, and popping that entry (back button)
 // closes the topmost open modal/panel instead of exiting the whole app.
@@ -6108,7 +6954,6 @@ window.addEventListener('offline', () => {
  wrapOpenClose('openEditModal', 'closeEditModal');
  wrapOpenClose('openFilterModal', 'closeFilterModal');
  wrapOpenClose('openLogoutModal', 'closeLogoutModal');
- wrapOpenClose('openGoalsListScreen', 'closeGoalsListScreen');
 
  window.addEventListener('popstate', function() {
   handlingPop = true;
@@ -6116,6 +6961,9 @@ window.addEventListener('offline', () => {
    const fnName = overlayStack.pop();
    const fn = window[fnName];
    if (typeof fn === 'function') fn();
+  } else if (screenHistoryStack.length > 0) {
+   const prevScreen = screenHistoryStack.pop();
+   goTo(prevScreen, true);
   } else if (typeof currentAppScreen !== 'undefined' && currentAppScreen !== 'wallet') {
    goTo('wallet', true);
   }
@@ -6203,95 +7051,6 @@ window.addEventListener('offline', () => {
  </div>
 </div>
 
-<!-- ===== Savings & Expense Goals Modal ===== -->
-<div id="goalsOverlay" style="display:none;position:fixed;inset:0;background:rgba(16, 44, 19, 0.55);z-index:9700;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this) closeGoalsModal()">
- <div style="width:100%;max-width:340px;max-height:88vh;overflow-y:auto;background: #2b3039;border-radius:18px;padding:20px;">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-   <div style="color:var(--panel-text);font-size:16px;font-weight:600;">Savings &amp; Expense Goals</div>
-   <i class="ti ti-x" style="color:#ffffff;cursor:pointer;font-size:18px;" onclick="closeGoalsModal()"></i>
-  </div>
-
-  <div style="display:flex;gap:8px;margin-bottom:12px;">
-   <button type="button" id="goalCatPaymentBtn" onclick="setGoalCategoryType('expense')" style="flex:1;padding:9px 0;border-radius:8px;border:1.5px solid #fff;background:rgba(0,0,0,.35);color:#fff;font-size:12.5px;font-weight:700;cursor:pointer;">Payment</button>
-   <button type="button" id="goalCatReceiveBtn" onclick="setGoalCategoryType('income')" style="flex:1;padding:9px 0;border-radius:8px;border:none;background:rgba(0,0,0,.2);color:#ffffffaa;font-size:12.5px;font-weight:700;cursor:pointer;">Receive</button>
-  </div>
-
-  <label style="display:block;color:#ffffff85;font-size:12px;margin-bottom:6px;">Category</label>
-  <select id="goalCategorySelect" style="width:100%;box-sizing:border-box;padding:11px 12px;margin-bottom:14px;border-radius:10px;border:1px solid #232838;background:#6b7280;color:#ffffff;font-size:14px;">
-   <option value="">— Select category —</option>
-   <option value="Auto">Auto 🛺</option>
-   <option value="Food">Food</option>
-   <option value="Medicine">Medicine</option>
-   <option value="Travel">Travel</option>
-   <option value="Other Goal">Other Goal</option>
-  </select>
-
-  <label style="display:block;color:#ffffff85;font-size:12px;margin-bottom:6px;">Monthly Savings Goal (₹)</label>
-  <input id="goalSavingsInput" type="number" placeholder="e.g. 5000" style="width:100%;box-sizing:border-box;padding:11px 12px;margin-bottom:14px;border-radius:10px;border:1px solid #232838;background:#6b7280;color:#ffffff;font-size:14px;">
-
-  <label style="display:block;color:#ffffff85;font-size:12px;margin-bottom:6px;">Monthly Expense Limit (₹)</label>
-  <input id="goalExpenseInput" type="number" placeholder="e.g. 20000" style="width:100%;box-sizing:border-box;padding:11px 12px;margin-bottom:14px;border-radius:10px;border:1px solid #232838;background:#6b7280;color:#ffffff;font-size:14px;">
-
-  <label style="display:flex;align-items:center;gap:8px;margin-bottom:18px;cursor:pointer;">
-   <input id="goalNotifyToggle" type="checkbox" style="accent-color:#e8b64c;width:16px;height:16px;">
-   <span style="color:#bcbdbe;font-size:12.5px;">Notify me when I'm close to or over my goals</span>
-  </label>
-
-  <button type="button" onclick="saveGoals()" style="width:100%;padding:12px 0;border-radius:10px;border:none;background:#f4a700;color:#1a1305;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:14px;">Save Goals</button>
-
-  <button type="button" onclick="openGoalsListScreen()" style="width:100%;padding:12px 0;border-radius:10px;border:1.5px solid #ffffff55;background:transparent;color:#ffffff;font-size:13.5px;font-weight:700;cursor:pointer;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:6px;">
-   <i class="ti ti-list-details"></i> View All Goals
-  </button>
-
-  <div id="goalsProgressBox"></div>
- </div>
-</div>
-
-<!-- ===== All Goals — dedicated full screen (list, add, edit, delete, archive) ===== -->
-<div id="goalsListPanel" style="display:none;position:fixed;top:0;right:0;bottom:0;width:88%;max-width:340px;background:#11151c;z-index:9800;box-shadow:-8px 0 24px rgba(0,0,0,.4);overflow-y:auto;">
- <div style="padding:18px 16px;border-bottom:1px solid #1f2430;display:flex;align-items:center;justify-content:space-between;">
-  <div style="color:#fff;font-weight:700;font-size:16px;">All Goals</div>
-  <div style="display:flex;align-items:center;gap:14px;">
-   <i class="ti ti-plus" style="color:#e8b64c;cursor:pointer;font-size:19px;" onclick="openAddCustomGoalForm()"></i>
-   <i class="ti ti-x" style="color:#8b9099;cursor:pointer;font-size:18px;" onclick="closeGoalsListScreen()"></i>
-  </div>
- </div>
-
- <!-- Add / edit custom goal form (hidden by default) -->
- <div id="customGoalFormBox" style="display:none;padding:16px;border-bottom:1px solid #1f2430;">
-  <div id="customGoalFormTitle" style="color:#e8eaf0;font-size:13px;font-weight:700;margin-bottom:10px;">Add Goal</div>
-  <div style="display:flex;gap:8px;margin-bottom:10px;">
-   <button type="button" id="customGoalTypeSavingsBtn" class="active-goal-type" onclick="setCustomGoalType('savings')" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid #232838;background:transparent;color:#8b9099;font-size:12.5px;font-weight:600;cursor:pointer;">Receive</button>
-   <button type="button" id="customGoalTypeExpenseBtn" onclick="setCustomGoalType('expense')" style="flex:1;padding:9px 0;border-radius:8px;border:1px solid #f6b042;background:rgba(246,176,66,.12);color:#f6b042;font-size:12.5px;font-weight:600;cursor:pointer;">Payment</button>
-  </div>
-  <label style="display:block;color:#8b9099;font-size:11px;margin-bottom:4px;">Category</label>
-  <select id="customGoalCategorySelect" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:10px;border-radius:8px;border:1px solid #232838;background:#6b7280;color:#e8eaf0;font-size:13.5px;cursor:pointer;">
-  <option value="Auto">— Select category-</option>
-  <option value="Auto">Auto 🛺</option>
-   <option value="Food">Food</option>
-   <option value="Medicin">Medicin</option>
-   <option value="Travel">Travel</option>
-   <option value="Other goal">Other goal</option>
-  </select>
-  <input id="customGoalTitleInput" type="text" placeholder="Goal title (e.g. New Laptop Fund)" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:8px;border-radius:8px;border:1px solid #232838;background:#0d1117;color:#e8eaf0;font-size:13.5px;">
-  <input id="customGoalAmountInput" type="number" placeholder="Target amount (₹)" style="width:100%;box-sizing:border-box;padding:10px 12px;margin-bottom:10px;border-radius:8px;border:1px solid #232838;background:#0d1117;color:#e8eaf0;font-size:13.5px;">
-  <div style="display:flex;gap:8px;">
-   <button type="button" onclick="closeAddCustomGoalForm()" style="flex:1;padding:10px 0;border-radius:8px;border:1px solid #232838;background:transparent;color:#8b9099;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
-   <button type="button" onclick="saveCustomGoal()" style="flex:1;padding:10px 0;border-radius:8px;border:none;background:#e8b64c;color:#11151c;font-size:13px;font-weight:700;cursor:pointer;">Save Goal</button>
-  </div>
- </div>
-
- <div style="padding:12px 16px 4px;display:flex;justify-content:flex-end;">
-  <span id="archivedToggleBtn" onclick="toggleShowArchivedGoals()" style="color:#8b9099;font-size:12px;cursor:pointer;text-decoration:underline;">Show Archived Goals</span>
- </div>
-
- <div id="customGoalsList" style="padding:6px 16px 24px;"></div>
-</div>
-
-<style>
-#customGoalTypeSavingsBtn.active-goal-type { border-color:#3ddc84 !important; background:rgba(61,220,132,.12) !important; color:#3ddc84 !important; }
-#customGoalTypeExpenseBtn.active-goal-type { border-color:#f6b042 !important; background:rgba(246,176,66,.12) !important; color:#f6b042 !important; }
-</style>
 
 </body>
 </html>
