@@ -267,7 +267,7 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
 /* ===== Top bars ===== */
-.top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.top-row{display:flex;align-items:stretch;justify-content:space-between;margin-bottom:18px;}
 .greet h1{font-size:20px;font-weight:700;}
 .greet .sub{color:#8b9099;font-size:13px;margin-top:4px;display:flex;align-items:center;gap:4px;}
 .icon-circle{
@@ -277,7 +277,9 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
 }
 .icon-circle.active-filter{background:linear-gradient(135deg,#f0c060,#e8b64c);color:#1a1305;border-color:transparent;}
 #dateFrom::-webkit-calendar-picker-indicator,#dateTo::-webkit-calendar-picker-indicator{opacity:0;}
-.page-title{font-size:24px;font-weight:700;}
+.page-title{font-family: 'Playfair Display', serif !important;
+    color: #c26100 !important;
+    font-weight: 700 !important;}
 
 /* ===== Balance Card ===== */
 .balance-card{
@@ -1068,8 +1070,8 @@ body.light-theme .pinDots span.filled { background:#7a4a1f !important; box-shado
 body.light-theme .pinPad button { width: 64px !important; height: 64px !important; margin: 0 auto !important; border-radius: 20% !important; border: 1px solid #e2e8f2 !important; background:#ffffff !important; color:#1a2340 !important; font-size: 20px !important; font-weight: 600 !important; cursor: pointer !important; font-family: 'Inter', sans-serif !important; }
 body.light-theme .pinPad button:hover { background:#eef1f7 !important; border-color:#e2e8f2 !important; }
 body.light-theme .pinPad button.pinClear { font-size:18px !important; color:#6b7280 !important; background:transparent !important; border:none !important; box-shadow:none !important; font-weight:600 !important; }
-body.light-theme .greet .sub { color:#fafafa !important; font-size:13px !important; margin-top:4px !important; display:flex !important; align-items:center !important; gap:4px !important; }
-body.light-theme .icon-circle { width:40px !important; height:40px !important; border-radius:50% !important; background:transparent !important; display:flex !important; align-items:right !important; justify-content:center !important; color:#e8ce64 !important; font-size:18px !important; !important; }
+body.light-theme .greet .sub { color:#8d6363 !important; font-size:13px !important; margin-top:4px !important; display:flex !important; align-items:center !important; gap:4px !important; }
+body.light-theme .icon-circle { width:40px !important; height:40px !important; border-radius:50% !important; background:transparent !important; display:flex !important; align-items:right !important; justify-content:center !important; color:#8c4007 !important; font-size:18px !important; !important; }
 body.light-theme .balance-card { background:linear-gradient(135deg,#ffffff 0%,#f4f7fc 100%) !important; border:1px solid #e2e8f2 !important; box-shadow:0 8px 24px rgba(30,60,120,.06) !important; border-radius:20px !important; padding:20px !important; margin-bottom:16px !important; position:relative !important; overflow:hidden !important; }
 body.light-theme .balance-card .label { color:#64748b !important; font-size:12px !important; font-weight:600 !important; letter-spacing:.3px !important; text-transform:uppercase !important; }
 body.light-theme .stat-card { background:#ffffff !important; border:1px solid #e2e8f2 !important; border-radius:16px !important; padding:12px 10px !important; }
@@ -1077,7 +1079,7 @@ body.light-theme .stat-card .lbl { color:#64748b !important; font-size:11px !imp
 body.light-theme .txn { background:#ffffff !important; border:1px solid #e2e8f2 !important; border-radius:16px !important; padding:12px 14px !important; display:flex !important; align-items:center !important; gap:12px !important; animation:slideIn .4s cubic-bezier(.22,1,.36,1) both !important; }
 body.light-theme .txn-info .cat { color:#6b7280 !important; font-size:12px !important; margin-top:2px !important; }
 body.light-theme .txn-right .time { color:#6b7280 !important; font-size:11px !important; margin-top:2px !important; }
-body.light-theme .date-divider { color:#c2bb5b!important; font-size:12px !important; font-weight:600 !important; margin:14px 0 8px !important; }
+body.light-theme .date-divider { color:#767127 !important; font-size:12px !important; font-weight:600 !important; margin:14px 0 8px !important; }
 body.light-theme .pill-toggle { display:flex !important; background:#ffffff !important; border:1px solid #e2e8f2 !important; border-radius:14px !important; padding:4px !important; margin-bottom:16px !important; }
 body.light-theme .pill-toggle button { flex:1 !important; padding:10px !important; border:none !important; background:transparent !important; color:#64748b !important; font-weight:700 !important; font-size:13px !important; border-radius:11px !important; cursor:pointer !important; font-family:'Inter',sans-serif !important; transition:.2s !important; }
 body.light-theme .pill-toggle button.active { background:linear-gradient(135deg,#f0c060,#e8b64c) !important; color:#1a1305 !important; box-shadow:0 2px 8px rgba(232,182,76,.35) !important; }
@@ -1102,8 +1104,8 @@ body.light-theme .nav-plus { width:60px !important; height:60px !important; bord
 body.light-theme .nav-btn.center-label { margin-top:2px !important; font-size:9px !important; color:#6b7280 !important; }
 body.light-theme .empty-state i { font-size:32px !important; color:#e2e8f2 !important; margin-bottom:12px !important; }
 body.light-theme .nav-btn { color:#6b7280 !important; }
-body.light-theme .lbl, body.light-theme .cat, body.light-theme .time, body.light-theme .flabel, body.light-theme .pemail, body.light-theme .label { color:#ffffff !important; font-size: 12px !important; }
-body.light-theme .modal { background:#ffffff !important; border:1px solid #e2e8f2 !important; border-radius:20px !important; padding:24px !important; max-width:400px !important; width:90% !important; max-height:90vh !important; overflow-y:auto !important; }
+body.light-theme .lbl, body.light-theme .cat, body.light-theme .time, body.light-theme .flabel, body.light-theme .pemail, body.light-theme .label { color:#572121 !important; font-size: 12px !important; }
+body.light-theme .modal { background:#ffffff00 !important; border:1px solid #e2e8f200 !important; border-radius:20px !important; padding:24px !important; max-width:400px !important; width:90% !important; max-height:90vh !important; overflow-y:auto !important; }
 body.light-theme .modal-close { background:none !important; border:none !important; color:#6b7280 !important; font-size:24px !important; cursor:pointer !important; }
 body.light-theme .btn-secondary { padding:12px !important; border:1px solid #bbb5b5 !important; border-radius:12px !important; background:#ffffff !important; color:#6b7280 !important; font-weight:700 !important; cursor:pointer !important; transition:.2s !important; }
 body.light-theme #loadingPage { background:#f4f6fb !important; }
@@ -1241,7 +1243,7 @@ body.light-theme .page{
 #screen-goals .gfscreen{ padding:10px; display:none; }
 #screen-goals .gfscreen.active{ display:block; }
 
-#screen-goals h1{ color:#ffd88a; font-size:18px; font-weight:700; margin:0; }
+#screen-goals h1{ color:#9e6b06; font-size:18px; font-weight:700; margin:0; }
 #screen-goals .header{ display:flex; align-items:center; gap:12px; margin-bottom:20px; }
 #screen-goals .header.between{ justify-content:space-between; }
 #screen-goals .icon-btn{ background:none; border:none; cursor:pointer; color:var(--text); font-size:18px; display:flex; align-items:center; justify-content:center; }
@@ -1401,6 +1403,9 @@ body.light-theme .page{
 #screen-goals .celebrate-sub{ color:var(--gold); font-size:14px; text-align:center; margin-bottom:24px; }
 #screen-goals .link-btn{ background:none; border:none; color:var(--muted); font-size:13px; cursor:pointer; display:block; margin:0 auto; }
 
+.sec-head h3::before{
+  content:"❀"; color:#A84F22; margin-right:6px; font-size:12px; opacity:.85;
+}
 </style>
 </head>
 <body>
@@ -1564,14 +1569,14 @@ body.light-theme .page{
      <div class="auth-sub">For your security, please log in again with your email and password before setting a new PIN.</div>
 
      <!-- Show logged-in user info -->
-     <!-- <div class="auth-user-card" style="margin-bottom:22px;">
+     <div class="auth-user-card" style="margin-bottom:22px;">
       <img id="fpinUserPhoto" src="" alt="Profile" style="display:none;">
       <div class="avatar-placeholder" id="fpinAvatarFallback" style="font-size:18px;">?</div>
       <div>
        <div class="uname" id="fpinUserName">Loading...</div>
        <div class="uemail" id="fpinUserEmail">Loading...</div>
       </div>
-     </div> -->
+     </div> 
 
      <div class="auth-field">
       <label>Your Email</label>
@@ -1805,7 +1810,7 @@ body.light-theme .page{
  <canvas id="trendChart" height="140"></canvas>
  </div>
 
- <div class="card">
+<div class="card">
  <div class="sec-head" style="margin-bottom:14px;">
   <h3 style="font-size:14px;">Top Parties</h3>
  <div class="see-all" onclick="showAllCategories()">See All →</div>
@@ -1995,8 +2000,8 @@ body.light-theme .page{
  <div class="top-row">
  <div class="page-title">Profile</div>
  <div style="display:flex;align-items:center;gap:10px;">
-  <div class="icon-circle" id="profileThemeToggleBtn" onclick="toggleTheme()" style="width:38px;height:38px;border-radius:50%;background:#161a23;border:1px solid #1f2430;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;">🌙</div>
-  <!-- <div class="icon-circle"><i class="ti ti-settings"></i></div> -->
+  <div class="icon-circle" id="profileThemeToggleBtn" onclick="toggleTheme()" style="width:38px;height:38px;border-radius:50%;background:rgba(30, 60, 120, 0);;border:1px solid #1f2430;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;">🌙</div>
+  <div class="icon-circle"><i class="ti ti-settings"></i></div>
  </div>
  </div>
 
@@ -2093,7 +2098,7 @@ body.light-theme .page{
     </div>
 
     <div class="row between" style="margin-bottom:10px;">
-      <span style="color:#ff5107;font-weight:600;">My Goals</span>
+      <span style="color:#af3a08;font-weight:600;">My Target</span>
       <span style="color:var(--gold);font-size:13px;cursor:pointer;" id="viewAllGoalsBtn" onclick="toggleViewAllGoals()">View All</span>
     </div>
 
@@ -2361,19 +2366,14 @@ body.light-theme .page{
 </div>
 
 <!-- ============ QUICK ADD ENTRY POPUP (long-press the + nav button) ============ -->
-<div class="modal-bg" id="quickAddModal">
+<div class="modal-bg" id="quickAddModal" style="backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);">
  <div class="modal" style="padding:0;overflow:hidden;max-width:340px;animation:quickAddPop .18s ease-out;">
-  <div style="background:#fdf6d8;padding:16px 20px;position:relative;border-bottom:1px solid #f0e4a8;">
-   <h3 style="margin:0;text-align:center;font-size:17px;color:#222;">Quick Add Entry</h3>
+  <div style="background:rgba(30,60,120,.06);padding:16px 20px;position:relative;border-bottom:1px solid 1px solid rgba(30,60,120,.06);">
+   <!-- <h3 style="margin:0;text-align:center;font-size:17px;color:#222;">Quick Add Entry</h3> -->
    <button onclick="closeQuickAdd()" style="position:absolute;top:12px;right:14px;width:26px;height:26px;border-radius:50%;background:#F5B301;color:#fff;border:none;font-size:14px;cursor:pointer;">&times;</button>
   </div>
   <div style="padding:18px 20px;">
-   <!-- Manual typing bar disabled for now, per request — sirf voice entry
-        chalu hai abhi. Wapas chahiye ho to neeche wale div ka
-        display:none hata dena, koi aur code change nahi lagega. -->
-   <div style="display:none;gap:8px;margin-bottom:6px;">
-    <input id="qaLine" type="text" placeholder="2000,ritesh,29-7-26,cash,notes" style="flex:1;padding:12px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;color:#222;">
-   </div>
+   <input id="qaLine" type="text" style="display:none;">
 
    <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 6px;">
     <button onclick="startQuickAddVoice()" id="qaMicBtn" title="Voice se bharo" style="width:64px;height:64px;border-radius:50%;background:#5b9bf5;color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 6px 16px rgba(91,155,245,.4);transition:box-shadow .2s;">🎤</button>
@@ -2382,11 +2382,11 @@ body.light-theme .page{
 
    <!-- Live caption: Google Voice Search jaisa — bolte waqt yahan text
         real-time me dikhta rehta hai, final hote hi confirm ho jaata hai. -->
-   <div id="qaLiveCaption" style="min-height:44px;font-size:16px;color:#222;text-align:center;padding:8px 4px;font-weight:500;line-height:1.4;"></div>
+   <div id="qaLiveCaption" style="min-height:44px;font-size:16px;color:#fffc40;text-align:center;padding:8px 4px;font-weight:500;line-height:1.4;"></div>
 
    <div id="qaVoiceStatus" style="font-size:11.5px;color:#888;margin:2px 0 12px;min-height:14px;text-align:center;"></div>
 
-   <button onclick="submitQuickAdd()" style="width:100%;padding:12px 0;border:none;border-radius:8px;background:#F5B301;color:#fff;font-weight:700;font-size:15px;cursor:pointer;">Confirm & Save</button>
+   <button onclick="submitQuickAdd()" style="width:100%;padding:12px 0;border:none;border-radius:8px;background:rgba(30, 60, 120, .06);color:#fff;font-weight:700;font-size:15px;cursor:pointer;">Confirm</button>
   </div>
  </div>
 </div>
@@ -2520,6 +2520,7 @@ const firebaseConfig = {
   appId: "1:125507121584:web:87dec9292e70d7a919e675",
   measurementId: "G-SK7GX8RVEH"
 };
+
 // 🔴 REPLACE THE VALUES ABOVE WITH YOUR REAL FIREBASE CONFIG
 // (Firebase Console → Project Settings → General → Your apps → Web app)
 // Without your real values here, cloud sync/login won't work, but the
@@ -3424,7 +3425,7 @@ function hideLoadingPage() {
 // ===== PWA: Service Worker (offline support) =====
 if ('serviceWorker' in navigator) {
  navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW registration failed:', err));
-}
+ }
 
 
 // ===== GOOGLE DRIVE BACKUP =====
@@ -5138,6 +5139,7 @@ function openQuickAdd(){
 
 // ===== Voice entry: Google Voice Search jaisa — bolte waqt text live
 // screen pe dikhta rehta hai (interim results), rukte hi final ho jaata hai. =====
+let quickAddActiveRecognition = null; // ek waqt me sirf ek hi session chalega
 function startQuickAddVoice(){
  const statusEl = document.getElementById('qaVoiceStatus');
  const captionEl = document.getElementById('qaLiveCaption');
@@ -5145,10 +5147,24 @@ function startQuickAddVoice(){
  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
  if (!SR) { statusEl.textContent = "⚠️ Ye browser voice input support nahi karta"; return; }
 
+ // Chrome/Web Speech API sirf secure context (https:// ya localhost) me
+ // mic allow karta hai — file:// ya plain http:// pe hamesha "not-allowed"
+ // milega, permission dene ke baad bhi.
+ if (!window.isSecureContext) {
+  statusEl.textContent = "⚠️ Voice sirf HTTPS pe chalta hai (file:// ya http:// pe nahi). App ko https:// se kholo.";
+  return;
+ }
+
+ // Pehle se koi session active hai to use pehle rokho — ek se zyada session
+ // ek saath chalne se "not-allowed" error aata hai chahe permission ho.
+ if (quickAddActiveRecognition) { try { quickAddActiveRecognition.abort(); } catch(e){} quickAddActiveRecognition = null; }
+
  captionEl.textContent = "";
+ statusEl.textContent = "";
  micBtn.style.boxShadow = "0 0 0 8px rgba(91,155,245,.25), 0 6px 16px rgba(91,155,245,.4)";
 
  const rec = new SR();
+ quickAddActiveRecognition = rec;
  rec.lang = "hi-IN";
  rec.interimResults = true;   // live, typing-as-you-speak effect
  rec.continuous = false;
@@ -5172,12 +5188,21 @@ function startQuickAddVoice(){
  };
 
  rec.onerror = (e) => {
-  statusEl.textContent = "Error: " + e.error;
+  if (e.error === 'not-allowed') {
+   statusEl.textContent = "⚠️ Mic blocked hai — browser ke address bar me 🔒/site-settings me mic 'Allow' karo, phir mic dabao.";
+  } else if (e.error === 'no-speech') {
+   statusEl.textContent = "Kuch suna nahi — mic dabake dobara bolo.";
+  } else {
+   statusEl.textContent = "Error: " + e.error;
+  }
   micBtn.style.boxShadow = "0 6px 16px rgba(91,155,245,.4)";
  };
- rec.onend = () => { micBtn.style.boxShadow = "0 6px 16px rgba(91,155,245,.4)"; };
+ rec.onend = () => {
+  micBtn.style.boxShadow = "0 6px 16px rgba(91,155,245,.4)";
+  if (quickAddActiveRecognition === rec) quickAddActiveRecognition = null;
+ };
 
- rec.start();
+ try { rec.start(); } catch(err) { statusEl.textContent = "Error: " + err.message; }
 }
 
 // Bola gaya sentence ("200 auto ke liye cash diye") ko amount/party/method
@@ -5216,6 +5241,7 @@ function parseVoiceToQuickAddLine(said){
 
 function closeQuickAdd(){
  document.getElementById("quickAddModal").classList.remove("active");
+ if (quickAddActiveRecognition) { try { quickAddActiveRecognition.abort(); } catch(e){} quickAddActiveRecognition = null; }
 }
 
 // "DD-MM-YY" ya "DD-MM-YYYY" -> "YYYY-MM-DD". Agar date na di ho ya galat
@@ -5338,8 +5364,18 @@ async function submitQuickAdd(){
  if (!btn) return;
  let pressTimer = null;
  let isLongPress = false;
+ let touchFired = false; // BUGFIX: real touch devices fire BOTH touchstart
+ // and a synthetic mousedown for the same physical press. Previously both
+ // were wired to start(), which created TWO separate 500ms timers — both
+ // firing openQuickAdd(), which started TWO overlapping SpeechRecognition
+ // sessions. Chrome refuses a 2nd concurrent session with "not-allowed",
+ // even though mic permission was actually granted. Ignoring the mousedown
+ // that immediately follows a touchstart fixes this.
 
- function start(){
+ function start(e){
+  if (e.type === 'mousedown' && touchFired) { touchFired = false; return; }
+  if (e.type === 'touchstart') touchFired = true;
+  clearTimeout(pressTimer);
   isLongPress = false;
   pressTimer = setTimeout(() => {
    isLongPress = true;
