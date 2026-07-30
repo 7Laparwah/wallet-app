@@ -12,8 +12,8 @@
 <!-- Fonts: preconnect + display=swap so text shows instantly with fallback font -->
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" onload="this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" onload="this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"></noscript>
 
 <!-- Icons: async load (non-blocking) -->
 <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.29.0/dist/tabler-icons.min.css" onload="this.rel='stylesheet'">
@@ -458,7 +458,7 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
 }
 
 /* ===== Light Theme ===== */
-body.light-theme{ background:#4b7472; color:#cfbb9d; }
+body.light-theme{ background:#F3E7D3; color:#3E2A16; }
 body.light-theme .balance-card,
 body.light-theme .stat-card,
 body.light-theme .txn,
@@ -1059,7 +1059,9 @@ body.light-theme #loadingPage .loader {
 /* ============================================================ */
 /* ============  LIGHT THEME OVERRIDES (auto-generated)  ======= */
 /* ============================================================ */
-body.light-theme html, body.light-theme body { font-family:'Inter',sans-serif !important; background:#f4f6fb !important; color:#1a2340 !important; height:100% !important; -webkit-tap-highlight-color:transparent !important; }
+body.light-theme html, body.light-theme body { font-family:'Inter',sans-serif !important; background:#F3E7D3 !important; color:#3E2A16 !important; height:100% !important; -webkit-tap-highlight-color:transparent !important; }
+body.light-theme .app { background:#F3E7D3 !important; }
+body.light-theme h1, body.light-theme h2, body.light-theme h3, body.light-theme .brand, body.light-theme .amount-big { font-family:'Playfair Display',serif !important; }
 body.light-theme #firebaseStatusIndicator { position: fixed !important; top: 2px !important; right: 12px !important; z-index: 8888 !important; padding: 3px 4px !important; border-radius: 20px !important; font-size: 12px !important; font-weight: 600 !important; display: flex !important; align-items: center !important; gap: 6px !important; backdrop-filter: blur(10px) !important; transition: all 0.3s ease !important; border: 1px solid rgba(0,0,0,0.08) !important; box-shadow: 0 2px 10px rgba(30,60,120,.06) !important; }
 /* PIN screen keeps the artwork background and its own pill styling in both themes. */
 body.light-theme .pinDots span.filled { background:#7a4a1f !important; box-shadow:0 0 0 3px rgba(122,74,31,.22) !important; transform:scale(1.05) !important; }
@@ -1248,10 +1250,10 @@ body.light-theme .page{
     display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; color:#111; font-weight:700;
   }
 /* Floating "+ Create Goal" button pinned to the bottom of the Goals list
-   screen (moved down from the top header, per request) — sits just above
-   the app's fixed bottom nav bar. */
+   screen — moved to the right side so it doesn't sit on top of goal cards
+   or overlap the bottom nav's own + button (which is centered). */
 #screen-goals .fab-bottom{
-    position:fixed; left:50%; transform:translateX(-50%);
+    position:fixed; right:18px; left:auto; transform:none;
     bottom:100px; z-index:90;
     width:56px; height:56px; border-radius:50%; background:var(--gold); border:none;
     display:flex; align-items:center; justify-content:center; cursor:pointer;
@@ -1726,6 +1728,14 @@ body.light-theme .page{
  </div>
  </div>
 
+ <!-- Backup reminder banner: shown when it's been 30+ days since last backup -->
+ <div id="backupReminderBanner" style="display:none;align-items:center;justify-content:space-between;gap:10px;background:#2a1a1a;border:1px solid #6b2c2c;border-radius:14px;padding:12px 14px;margin-bottom:14px;">
+  <div style="font-size:12.5px;color:#ff8f8f;flex:1;" id="backupReminderText">⚠️ Backup lena bhool gaye?</div>
+  <button onclick="goTo('backup')" style="background:#F5B301;color:#111;border:none;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;">Backup karo</button>
+  <button onclick="hideBackupReminder()" style="background:none;border:none;color:#8b9099;font-size:16px;cursor:pointer;flex-shrink:0;">&times;</button>
+ </div>
+
+
  <div class="balance-card" style="position:relative;">
  <div class="label">Total Balance</div>
  <div class="balance-row">
@@ -1852,7 +1862,7 @@ body.light-theme .page{
  <option>Anjali</option>
  <option>Mammi</option>
  <option>Medicine</option>
- <option>Auto 🛺</option>
+ <option>Auto</option>
  <option>Food</option>
  <option>Doctor</option>>
  <option>Other investment</option>
@@ -2053,14 +2063,14 @@ body.light-theme .page{
   <!-- ============ LIST SCREEN ============ -->
   <div class="gfscreen active" id="gfScreenList">
     <div class="header between">
-      <h1>My Goals</h1>
+      <h1>My Target</h1>
     </div>
 
     <div class="card row between">
       <div>
-        <div class="label" style="margin-bottom:4px;">Total Goal Progress</div>
-        <div style="color:#f0c060;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
-        <div class="label" style="margin:0;">of total goals</div>
+        <div class="label" style="margin-bottom:4px;">Total Target Progress</div>
+        <div style="color:#eba926;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
+        <div class="label" style="margin:0;">of total Target</div>
       </div>
       <div class="ring-wrap">
         <canvas id="ringTotal" width="84" height="84"></canvas>
@@ -2083,7 +2093,7 @@ body.light-theme .page{
     </div>
 
     <div class="row between" style="margin-bottom:10px;">
-      <span style="color:#dac79e;font-weight:600;">My Goals</span>
+      <span style="color:#ff5107;font-weight:600;">My Goals</span>
       <span style="color:var(--gold);font-size:13px;cursor:pointer;" id="viewAllGoalsBtn" onclick="toggleViewAllGoals()">View All</span>
     </div>
 
@@ -2096,7 +2106,7 @@ body.light-theme .page{
   <div class="gfscreen" id="gfScreenForm">
     <div class="header">
       <button class="icon-btn" onclick="backFromForm()">←</button>
-      <h1 id="formTitle">Create New Goal</h1>
+      <h1 id="formTitle">Create New Target</h1>
     </div>
 
     <div class="tabs">
@@ -2104,7 +2114,7 @@ body.light-theme .page{
       <button class="tab" id="tabSavings" onclick="setGoalType('Savings Goal')">Savings Goal</button>
     </div>
 
-    <label class="label">Goal Name</label>
+    <label class="label">Target Name</label>
     <input id="fName" placeholder="Enter goal name" />
 
     <label class="label">Target Amount</label>
@@ -2126,10 +2136,10 @@ body.light-theme .page{
 
     <!-- <label class="label">Category</label>
     <input id="fCategory" placeholder="Select category" /> -->
-  <label style="display:block;color:#fdfdfd85;font-size:12px;margin-bottom:6px;">Category</label>
+  <label style="display:block;color:#fffefe85;font-size:12px;margin-bottom:6px;">Category</label>
   <select id="goalCategorySelect" style="width:100%;box-sizing:border-box;padding:11px 12px;margin-bottom:14px;border-radius:10px;border:1px solid #232838;background:#ffffff;color:#080707;font-size:14px;">
    <option value="">— Select category —</option>
-   <option value="Auto">Auto 🛺</option>
+   <option value="Auto">Auto</option>
    <option value="Food">Food</option>
    <option value="Medicine">Medicine</option>
    <option value="Travel">Travel</option>
@@ -2147,7 +2157,7 @@ body.light-theme .page{
   <div class="gfscreen" id="gfScreenDetails">
     <div class="header">
       <button class="icon-btn" onclick="goBackGf('gfScreenList')">←</button>
-      <h1>Goal Details</h1>
+      <h1>Target Details</h1>
     </div>
 
     <div class="card">
@@ -2190,7 +2200,7 @@ body.light-theme .page{
   <div class="gfscreen" id="gfScreenAnalytics">
     <div class="header">
       <button class="icon-btn" onclick="goBackGf('gfScreenDetails')">←</button>
-      <h1>Goal Analytics</h1>
+      <h1>Target Analytics</h1>
     </div>
 
     <div class="card card-sm" style="color:var(--gold);font-weight:600;" id="aName"></div>
@@ -2225,7 +2235,7 @@ body.light-theme .page{
 
     <div class="card row between">
       <div>
-        <div class="label" style="margin-bottom:8px;">Goal Completion</div>
+        <div class="label" style="margin-bottom:8px;">Target Completion</div>
         <div class="ring-wrap">
           <canvas id="ringInsights" width="76" height="76"></canvas>
           <div class="ring-label">
@@ -2236,7 +2246,7 @@ body.light-theme .page{
       </div>
       <div style="text-align:right;">
         <div class="label" style="margin:0;">Total Spent</div>
-        <div style="color:#d9eb0b;font-weight:700;font-size:15px;margin-bottom:8px;" id="iSpent"></div>
+        <div style="color:#ebc802;font-weight:700;font-size:15px;margin-bottom:8px;" id="iSpent"></div>
         <div class="label" style="margin:0;">Remaining</div>
         <div style="color:#72ba85;font-weight:700;font-size:15px;margin-bottom:8px;" id="iRemaining"></div>
         <div class="label" style="margin:0;">Days Left</div>
@@ -2280,7 +2290,7 @@ body.light-theme .page{
       </svg>
     </div>
     <div class="celebrate-title">Congratulations!</div>
-    <div class="celebrate-sub">You Achieved Your Goal!</div>
+    <div class="celebrate-sub">You Achieved Your Target!</div>
 
     <div class="card" style="text-align:left;">
       <div class="row center" style="margin-bottom:14px;">
@@ -2321,7 +2331,7 @@ body.light-theme .page{
  <i class="ti ti-list"></i><span>Entries</span>
  </button>
  <button class="nav-btn" id="navGoals" onclick="goTo('goals')">
- <i class="ti ti-target"></i><span>Goals</span>
+ <i class="ti ti-target"></i><span>Target</span>
  </button>
 </div>
 
@@ -2358,8 +2368,25 @@ body.light-theme .page{
    <button onclick="closeQuickAdd()" style="position:absolute;top:12px;right:14px;width:26px;height:26px;border-radius:50%;background:#F5B301;color:#fff;border:none;font-size:14px;cursor:pointer;">&times;</button>
   </div>
   <div style="padding:18px 20px;">
-   <input id="qaLine" type="text" placeholder="2000,ritesh,29-7-26,cash,notes" style="width:100%;padding:12px 12px;margin-bottom:16px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;color:#222;">
-   <button onclick="submitQuickAdd()" style="width:100%;padding:12px 0;border:none;border-radius:8px;background:#F5B301;color:#fff;font-weight:700;font-size:15px;cursor:pointer;">Submit!</button>
+   <!-- Manual typing bar disabled for now, per request — sirf voice entry
+        chalu hai abhi. Wapas chahiye ho to neeche wale div ka
+        display:none hata dena, koi aur code change nahi lagega. -->
+   <div style="display:none;gap:8px;margin-bottom:6px;">
+    <input id="qaLine" type="text" placeholder="2000,ritesh,29-7-26,cash,notes" style="flex:1;padding:12px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;color:#222;">
+   </div>
+
+   <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 6px;">
+    <button onclick="startQuickAddVoice()" id="qaMicBtn" title="Voice se bharo" style="width:64px;height:64px;border-radius:50%;background:#5b9bf5;color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 6px 16px rgba(91,155,245,.4);transition:box-shadow .2s;">🎤</button>
+    <div style="font-size:11.5px;color:#999;margin-top:8px;" id="qaMicHint">Bolo: "200 adarsh ko cash pay kiye"</div>
+   </div>
+
+   <!-- Live caption: Google Voice Search jaisa — bolte waqt yahan text
+        real-time me dikhta rehta hai, final hote hi confirm ho jaata hai. -->
+   <div id="qaLiveCaption" style="min-height:44px;font-size:16px;color:#222;text-align:center;padding:8px 4px;font-weight:500;line-height:1.4;"></div>
+
+   <div id="qaVoiceStatus" style="font-size:11.5px;color:#888;margin:2px 0 12px;min-height:14px;text-align:center;"></div>
+
+   <button onclick="submitQuickAdd()" style="width:100%;padding:12px 0;border:none;border-radius:8px;background:#F5B301;color:#fff;font-weight:700;font-size:15px;cursor:pointer;">Confirm & Save</button>
   </div>
  </div>
 </div>
@@ -2386,6 +2413,9 @@ body.light-theme .page{
  </div>
  <div class="modal-body" style="max-height:480px;overflow-y:auto;">
  <div id="partyDetailSummary"></div>
+ <button onclick="sharePartySummaryOnWhatsApp()" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:10px;padding:11px 0;font-weight:700;font-size:13px;cursor:pointer;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:6px;">
+  <i class="ti ti-brand-whatsapp"></i> Share Summary on WhatsApp
+ </button>
  <div id="partyDetailBody"></div>
  </div>
  </div>
@@ -2423,7 +2453,7 @@ body.light-theme .page{
  <option>Anjali</option>
  <option>Mammi</option>
  <option>Medicine</option>
- <option>Auto 🛺</option>
+ <option>Auto</option>
  <option>Food</option>
  <option>Doctor</option>>
  <option>Other investment</option>
@@ -3489,6 +3519,8 @@ async function uploadBackupToDrive(){
  return;
  }
  showNotification('Backed up to Google Drive ✓', 'success');
+ localStorage.setItem('lastBackupDate', new Date().toISOString());
+ if (typeof hideBackupReminder === 'function') hideBackupReminder();
  } catch(err) {
  console.error('Drive backup error:', err);
  showNotification('Drive backup failed, please try again', 'error');
@@ -5096,8 +5128,90 @@ async function saveEntry(evt){
 
 function openQuickAdd(){
  document.getElementById("qaLine").value = "";
+ document.getElementById("qaVoiceStatus").textContent = "";
+ document.getElementById("qaLiveCaption").textContent = "";
+ quickAddVoiceType = null;
  document.getElementById("quickAddModal").classList.add("active");
- setTimeout(() => document.getElementById("qaLine").focus(), 50);
+ // Voice-only mode: mic khud-ba-khud chaalu ho jata hai, extra tap nahi karna padta.
+ setTimeout(() => startQuickAddVoice(), 150);
+}
+
+// ===== Voice entry: Google Voice Search jaisa — bolte waqt text live
+// screen pe dikhta rehta hai (interim results), rukte hi final ho jaata hai. =====
+function startQuickAddVoice(){
+ const statusEl = document.getElementById('qaVoiceStatus');
+ const captionEl = document.getElementById('qaLiveCaption');
+ const micBtn = document.getElementById('qaMicBtn');
+ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+ if (!SR) { statusEl.textContent = "⚠️ Ye browser voice input support nahi karta"; return; }
+
+ captionEl.textContent = "";
+ micBtn.style.boxShadow = "0 0 0 8px rgba(91,155,245,.25), 0 6px 16px rgba(91,155,245,.4)";
+
+ const rec = new SR();
+ rec.lang = "hi-IN";
+ rec.interimResults = true;   // live, typing-as-you-speak effect
+ rec.continuous = false;
+
+ rec.onstart = () => statusEl.textContent = "🔴 Sun raha hoon...";
+
+ rec.onresult = (e) => {
+  let interim = "", final = "";
+  for (let i = 0; i < e.results.length; i++) {
+   const said = e.results[i][0].transcript;
+   if (e.results[i].isFinal) final += said;
+   else interim += said;
+  }
+  // Live caption update — dikhta hai chahe abhi final hua ho ya nahi
+  captionEl.textContent = final || interim;
+
+  if (final) {
+   document.getElementById('qaLine').value = parseVoiceToQuickAddLine(final);
+   statusEl.textContent = `✅ "${final.trim()}" — theek hai to Confirm & Save dabao`;
+  }
+ };
+
+ rec.onerror = (e) => {
+  statusEl.textContent = "Error: " + e.error;
+  micBtn.style.boxShadow = "0 6px 16px rgba(91,155,245,.4)";
+ };
+ rec.onend = () => { micBtn.style.boxShadow = "0 6px 16px rgba(91,155,245,.4)"; };
+
+ rec.start();
+}
+
+// Bola gaya sentence ("200 auto ke liye cash diye") ko amount/party/method
+// me todta hai. Party sirf existing list se hi match hota hai (matchPartyName
+// ke through) — voice se bhi kabhi naya party create nahi hota.
+let quickAddVoiceType = null; // 'income' | 'expense' | null (voice se detect hua)
+function parseVoiceToQuickAddLine(said){
+ const raw = said.trim();
+ const lower = raw.toLowerCase();
+
+ const amtMatch = raw.match(/(\d+(\.\d+)?)/);
+ const amount = amtMatch ? amtMatch[1] : "";
+
+ let method = "Cash";
+ if (/upi/.test(lower)) method = "UPI";
+ else if (/bank|online/.test(lower)) method = "Bank";
+ else if (/cash/.test(lower)) method = "Cash";
+
+ // "recd/received/mila/mile" -> paisa aaya (income); "pay/paid/diye/de diye" -> paisa gaya (expense)
+ if (/\b(recd|received|mila|mile|receive)\b/.test(lower)) quickAddVoiceType = "income";
+ else if (/\b(pay|paid|diye|de diye|dede|kharch)\b/.test(lower)) quickAddVoiceType = "expense";
+ else quickAddVoiceType = null;
+
+ // Amount aur jaane-pehchane filler/keyword words hata ke jo bacha usme se
+ // pehla shabd hi party ka naam hone ka best guess hai.
+ let stripped = raw
+  .replace(amtMatch ? amtMatch[0] : "", "")
+  .replace(/₹|rs\.?|rupaye|rupees/gi, "")
+  .replace(/\b(cash|upi|bank|online|ke|liye|diye|de|do|pay|paid|recd|received|mila|mile|kiye|kiya|kar|karo|hai|the|ka|ki|ko|se|aur|and|for)\b/gi, "")
+  .trim();
+ const partyGuess = stripped.split(/\s+/).filter(Boolean)[0] || "";
+ const matchedParty = matchPartyName(partyGuess) || partyGuess;
+
+ return `${amount},${matchedParty},,${method},${raw}`;
 }
 
 function closeQuickAdd(){
@@ -5188,7 +5302,7 @@ async function submitQuickAdd(){
   party: party,
   method: method,
   amount: amt,
-  type: entryType,
+  type: quickAddVoiceType || entryType,
   date: quickAddParseDate(parts[2]),
   time: new Date().toLocaleTimeString("en-IN", {hour:'2-digit', minute:'2-digit'}),
   notes: notes,
@@ -5484,6 +5598,8 @@ function closeAllCatModal(){
 }
 
 // ===== PARTY DETAIL (click on pie chart / legend / top party) =====
+let currentPartyDetailName = null;
+let currentPartyDetailEntries = [];
 function openPartyDetail(partyName){
  const partyEntries = entries.filter(e => (e.party||'Unknown') === partyName);
  let totalIncome = 0, totalExpense = 0;
@@ -5493,6 +5609,8 @@ function openPartyDetail(partyName){
  });
 
  const sorted = [...partyEntries].sort((a,b)=> new Date(b.timestamp) - new Date(a.timestamp));
+ currentPartyDetailName = partyName;
+ currentPartyDetailEntries = sorted;
 
  document.getElementById("partyDetailTitle").textContent = partyName;
  document.getElementById("partyDetailSummary").innerHTML = `
@@ -5515,6 +5633,27 @@ function openPartyDetail(partyName){
 }
 function closePartyDetailModal(){
  document.getElementById("partyDetailModal").classList.remove("active");
+}
+
+// ===== WhatsApp party-wise summary share =====
+function sharePartySummaryOnWhatsApp(){
+ if (!currentPartyDetailName) return;
+ let totalIncome = 0, totalExpense = 0;
+ currentPartyDetailEntries.forEach(e=>{
+  if(e.type==='income') totalIncome += Number(e.amount||0);
+  else if(e.type==='expense') totalExpense += Number(e.amount||0);
+ });
+
+ let text = `📋 ${currentPartyDetailName} — Summary\n\n`;
+ currentPartyDetailEntries.slice(0, 25).forEach(e => {
+  const sign = e.type === 'income' ? '+' : '-';
+  text += `${e.date}  ${sign}₹${Number(e.amount||0).toLocaleString("en-IN")}  ${e.notes || ''}\n`;
+ });
+ if (currentPartyDetailEntries.length > 25) text += `...and ${currentPartyDetailEntries.length - 25} more\n`;
+ text += `\nTotal Receive: ₹${totalIncome.toLocaleString("en-IN")}`;
+ text += `\nTotal Payment: ₹${totalExpense.toLocaleString("en-IN")}`;
+
+ window.open("https://wa.me/?text=" + encodeURIComponent(text), "_blank");
 }
 
 // ===== FILTER FUNCTIONS =====
@@ -6357,6 +6496,8 @@ function exportDataAsJSON() {
  a.click();
  URL.revokeObjectURL(url);
  showNotification('Backup downloaded!', 'success');
+ localStorage.setItem('lastBackupDate', new Date().toISOString());
+ if (typeof hideBackupReminder === 'function') hideBackupReminder();
 }
 
 function triggerRestore() {
@@ -6864,6 +7005,37 @@ window.addEventListener('pagehide', () => { autoLockPending = true; triggerAutoL
 function renderWallet() {
     renderDashboardTotals();
     renderRecent();
+    checkBackupReminder();
+}
+
+// ===== BACKUP REMINDER (30+ din se backup nahi liya to banner dikhao) =====
+function checkBackupReminder(){
+ const banner = document.getElementById('backupReminderBanner');
+ if (!banner) return;
+
+ const lastBackupStr = localStorage.getItem('lastBackupDate');
+ let daysSince;
+ if (!lastBackupStr) {
+   // Kabhi backup nahi liya — sirf tab dikhao jab kaafi entries ho chuki hon,
+   // taaki bilkul naye users ko turant hi warning na mile.
+   if (!entries || entries.length < 5) { banner.style.display = 'none'; return; }
+   daysSince = Infinity;
+ } else {
+   daysSince = Math.floor((Date.now() - new Date(lastBackupStr).getTime()) / 86400000);
+ }
+
+ if (daysSince >= 30) {
+   document.getElementById('backupReminderText').textContent =
+     lastBackupStr ? `⚠️ ${daysSince} din ho gaye — aapne backup nahi liya` : `⚠️ Aapne abhi tak koi backup nahi liya`;
+   banner.style.display = 'flex';
+ } else {
+   banner.style.display = 'none';
+ }
+}
+function hideBackupReminder(){
+ document.getElementById('backupReminderBanner').style.display = 'none';
+ // Agli baar app khulne pe phir dikhega (sirf isi session ke liye chhupaya),
+ // permanently band karne ke liye backup hi le lo.
 }
 
 // ===== MONTH DROPDOWN FUNCTIONS =====
