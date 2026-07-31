@@ -1872,6 +1872,7 @@ body.light-theme .page{
  <option>Doctor</option>>
  <option>Other investment</option>
  <option>Other income</option>
+ <option>Other Goal</option>
   
  </select>
  </div>
@@ -2376,13 +2377,35 @@ body.light-theme .page{
    <input id="qaLine" type="text" style="display:none;">
 
    <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 6px;">
-    <button onclick="startQuickAddVoice()" id="qaMicBtn" title="Voice se bharo" style="width:64px;height:64px;border-radius:50%;background:#5b9bf5;color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 6px 16px rgba(91,155,245,.4);transition:box-shadow .2s;">🎤</button>
-    <div style="font-size:11.5px;color:#999;margin-top:8px;" id="qaMicHint">Bolo: "200 adarsh ko cash pay kiye"</div>
+    <div style="position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;">
+     <div id="qaMicHalo" style="position:absolute;width:88px;height:88px;border-radius:50%;background:rgba(230,40,40,.15);pointer-events:none;"></div>
+     <button onclick="startQuickAddVoice()" id="qaMicBtn" title="Voice se bharo" style="position:relative;width:64px;height:64px;border-radius:50%;background:#e63232;color:#fff;border:none;cursor:pointer;box-shadow:0 6px 16px rgba(230,50,50,.4);transition:box-shadow .2s,transform .2s,background .2s;display:flex;align-items:center;justify-content:center;">
+      <i class="ti ti-microphone" id="qaMicIcon" style="font-size:28px;line-height:1;"></i>
+     </button>
+    </div>
+    <!-- Saaf saaf ON/OFF indicator — blinking dot + text, taaki confusion na
+         ho ki mic chalu hai ya band ho gaya. qaVoiceStatus (neeche) sirf
+         result/error jaise messages ke liye hai, ye ek hamesha-visible
+         state label hai. -->
+    <div id="qaMicState" style="font-size:12px;font-weight:600;margin-top:8px;display:flex;align-items:center;gap:6px;justify-content:center;color:#888;">
+     <span id="qaMicStateDot" style="width:8px;height:8px;border-radius:50%;background:#888;display:inline-block;"></span>
+     <span id="qaMicStateText">Mic band hai</span>
+    </div>
+    <div style="font-size:11.5px;color:#999;margin-top:4px;" id="qaMicHint">Bolo: "200 adarsh ko cash pay kiye"</div>
    </div>
 
    <!-- Live caption: Google Voice Search jaisa — bolte waqt yahan text
-        real-time me dikhta rehta hai, final hote hi confirm ho jaata hai. -->
-   <div id="qaLiveCaption" style="min-height:44px;font-size:16px;color:#fffc40;text-align:center;padding:8px 4px;font-weight:500;line-height:1.4;"></div>
+        real-time me dikhta rehta hai, final hote hi confirm ho jaata hai.
+        Ab ye ek editable <input> hai — user ispe tap karke cursor rakh
+        sakta hai aur text ko haath se theek kar sakta hai (jaise party ka
+        naam sahi karna ho to). Edit karte hi onQaLiveCaptionEdit() dobara
+        amount/party/method nikal leta hai. -->
+   <div style="position:relative;">
+    <input id="qaLiveCaption" type="text" autocomplete="off" oninput="onQaLiveCaptionEdit()"
+     placeholder="Yahan voice text aayega, tap karke edit bhi kar sakte ho"
+     style="width:100%;box-sizing:border-box;min-height:44px;font-size:16px;color:#fffc40;text-align:center;padding:8px 26px 8px 4px;font-weight:500;line-height:1.4;background:transparent;border:none;border-bottom:1px solid rgba(255,252,64,.25);outline:none;">
+    <i class="ti ti-pencil" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:14px;color:#888;pointer-events:none;"></i>
+   </div>
 
    <div id="qaVoiceStatus" style="font-size:11.5px;color:#888;margin:2px 0 12px;min-height:14px;text-align:center;"></div>
 
@@ -2392,6 +2415,11 @@ body.light-theme .page{
 </div>
 <style>
 @keyframes quickAddPop{ from{opacity:0;transform:scale(.9);} to{opacity:1;transform:scale(1);} }
+@keyframes qaMicPulse{ 0%{transform:scale(1);opacity:.6;} 70%{transform:scale(1.6);opacity:0;} 100%{transform:scale(1.6);opacity:0;} }
+#qaMicHalo.listening{ animation:qaMicPulse 1.4s ease-out infinite; }
+#qaMicBtn.qa-listening{ background:#ff3b3b; transform:scale(1.08); }
+@keyframes qaDotBlink{ 0%,100%{opacity:1;} 50%{opacity:.2;} }
+#qaMicStateDot.on{ background:#e63232; animation:qaDotBlink 1s ease-in-out infinite; }
 </style>
 
 <!-- ============ ALL CATEGORIES MODAL ============ -->
@@ -2458,6 +2486,7 @@ body.light-theme .page{
  <option>Doctor</option>>
  <option>Other investment</option>
  <option>Other income</option>
+ <option>Other Goal</option>
  </select>
  </div>
  <div class="chev"><i class="ti ti-chevron-right"></i></div>
@@ -5130,11 +5159,69 @@ async function saveEntry(evt){
 function openQuickAdd(){
  document.getElementById("qaLine").value = "";
  document.getElementById("qaVoiceStatus").textContent = "";
- document.getElementById("qaLiveCaption").textContent = "";
+ document.getElementById("qaLiveCaption").value = "";
  quickAddVoiceType = null;
  document.getElementById("quickAddModal").classList.add("active");
  // Voice-only mode: mic khud-ba-khud chaalu ho jata hai, extra tap nahi karna padta.
  setTimeout(() => startQuickAddVoice(), 150);
+}
+
+// ===== Devanagari -> Roman (Hinglish) transliteration =====
+// Web Speech API ka "en-IN" mode English hi samajhta hai — pure Hindi bola
+// hua sunta hi nahi (isliye mic "sun" raha tha lekin kuch bhi type nahi ho
+// raha tha). Hindi ko sahi se sunne/samajhne ke liye "hi-IN" hi chahiye,
+// lekin hi-IN result Devanagari (हिंदी लिपि) me deta hai. Isliye hum hi-IN
+// se sunte hain (taaki bolti hui Hindi sahi pakड़ी jaaye) aur result ko
+// yahan khud Roman/Hinglish letters me convert kar dete hain.
+const DEVANAGARI_CONSONANTS = {
+ 'क':'k','ख':'kh','ग':'g','घ':'gh','ङ':'ng',
+ 'च':'ch','छ':'chh','ज':'j','झ':'jh','ञ':'ny',
+ 'ट':'t','ठ':'th','ड':'d','ढ':'dh','ण':'n',
+ 'त':'t','थ':'th','द':'d','ध':'dh','न':'n',
+ 'प':'p','फ':'ph','ब':'b','भ':'bh','म':'m',
+ 'य':'y','र':'r','ल':'l','ळ':'l','व':'v',
+ 'श':'sh','ष':'sh','स':'s','ह':'h',
+ 'क़':'k','ख़':'kh','ग़':'g','ज़':'z','ड़':'r','ढ़':'rh','फ़':'f','य़':'y'
+};
+const DEVANAGARI_INDEP_VOWELS = {
+ 'अ':'a','आ':'aa','इ':'i','ई':'ee','उ':'u','ऊ':'oo','ऋ':'ri',
+ 'ए':'e','ऐ':'ai','ओ':'o','औ':'au','ऑ':'o','ऍ':'e'
+};
+const DEVANAGARI_MATRAS = {
+ 'ा':'aa','ि':'i','ी':'ee','ु':'u','ू':'oo','ृ':'ri',
+ 'े':'e','ै':'ai','ो':'o','ौ':'au','ॉ':'o','ॅ':'e'
+};
+const DEVANAGARI_SIGNS = { 'ं':'n', 'ः':'h', 'ँ':'n' };
+const DEVANAGARI_DIGITS = { '०':'0','१':'1','२':'2','३':'3','४':'4','५':'5','६':'6','७':'7','८':'8','९':'9' };
+
+function transliterateDevanagariToRoman(text){
+ if (!text) return text;
+ const chars = Array.from(text);
+ let out = '';
+ for (let i = 0; i < chars.length; i++) {
+  const c = chars[i];
+  const next = chars[i+1];
+  if (DEVANAGARI_CONSONANTS[c]) {
+   const base = DEVANAGARI_CONSONANTS[c];
+   if (next === '्') { out += base; i++; }                    // halant -> no vowel
+   else if (next && DEVANAGARI_MATRAS[next]) { out += base + DEVANAGARI_MATRAS[next]; i++; }
+   else if (next && DEVANAGARI_SIGNS[next]) { out += base + 'a' + DEVANAGARI_SIGNS[next]; i++; }
+   else out += base + 'a';                                     // inherent "a"
+  } else if (DEVANAGARI_INDEP_VOWELS[c]) {
+   out += DEVANAGARI_INDEP_VOWELS[c];
+  } else if (DEVANAGARI_MATRAS[c]) {
+   out += DEVANAGARI_MATRAS[c];                                 // stray matra (rare)
+  } else if (DEVANAGARI_SIGNS[c]) {
+   out += DEVANAGARI_SIGNS[c];
+  } else if (DEVANAGARI_DIGITS[c]) {
+   out += DEVANAGARI_DIGITS[c];
+  } else if (c === '्') {
+   // stray halant, skip
+  } else {
+   out += c;                                                    // Latin letters, digits, spaces, punctuation pass through
+  }
+ }
+ return out;
 }
 
 // ===== Voice entry: Google Voice Search jaisa — bolte waqt text live
@@ -5159,16 +5246,30 @@ function startQuickAddVoice(){
  // ek saath chalne se "not-allowed" error aata hai chahe permission ho.
  if (quickAddActiveRecognition) { try { quickAddActiveRecognition.abort(); } catch(e){} quickAddActiveRecognition = null; }
 
- captionEl.textContent = "";
+ captionEl.value = "";
  statusEl.textContent = "";
- micBtn.style.boxShadow = "0 0 0 8px rgba(91,155,245,.25), 0 6px 16px rgba(91,155,245,.4)";
+ micBtn.style.boxShadow = "0 0 0 8px rgba(230,50,50,.25), 0 6px 16px rgba(230,50,50,.4)";
+ micBtn.classList.add('qa-listening');
+ const stateDotEl = document.getElementById('qaMicStateDot');
+ const stateTextEl = document.getElementById('qaMicStateText');
+ if (stateDotEl) stateDotEl.classList.add('on');
+ if (stateTextEl) { stateTextEl.textContent = "Mic ON — sun raha hoon"; stateTextEl.style.color = "#e63232"; }
 
  const rec = new SR();
  quickAddActiveRecognition = rec;
+ // hi-IN use kiya hai kyunki ye hi actually bola gaya Hindi audio sunta/
+ // samajhta hai (en-IN Hindi bolne par kuch sunta hi nahi tha — isiliye
+ // mic "on" dikhta tha par text aata hi nahi tha). hi-IN ka result
+ // Devanagari script me aata hai, jisko hum neeche khud Roman/Hinglish me
+ // convert kar dete hain (transliterateDevanagariToRoman) taaki screen par
+ // Hinglish text dikhe aur party names (jo Roman letters me stored hain)
+ // se bhi match ho sake.
  rec.lang = "hi-IN";
  rec.interimResults = true;   // live, typing-as-you-speak effect
  rec.continuous = false;
 
+ const haloEl = document.getElementById('qaMicHalo');
+ if (haloEl) haloEl.classList.add('listening');
  rec.onstart = () => statusEl.textContent = "🔴 Sun raha hoon...";
 
  rec.onresult = (e) => {
@@ -5178,12 +5279,20 @@ function startQuickAddVoice(){
    if (e.results[i].isFinal) final += said;
    else interim += said;
   }
-  // Live caption update — dikhta hai chahe abhi final hua ho ya nahi
-  captionEl.textContent = final || interim;
+  // hi-IN se jo Devanagari text aaya hai, use Roman/Hinglish me convert
+  // karke hi screen par dikhate hain aur usi se amount/party/method nikalte
+  // hain — taaki dikhta bhi Hinglish me hai aur party match bhi sahi chale.
+  const interimRoman = transliterateDevanagariToRoman(interim);
+  const finalRoman = transliterateDevanagariToRoman(final);
+
+  // Live caption update — dikhta hai chahe abhi final hua ho ya nahi.
+  // captionEl ab ek editable <input> hai (textContent nahi, .value use hota
+  // hai) taaki user chahe to cursor rakh ke ise haath se edit kar sake.
+  captionEl.value = finalRoman || interimRoman;
 
   if (final) {
-   document.getElementById('qaLine').value = parseVoiceToQuickAddLine(final);
-   statusEl.textContent = `✅ "${final.trim()}" — theek hai to Confirm & Save dabao`;
+   document.getElementById('qaLine').value = parseVoiceToQuickAddLine(finalRoman);
+   statusEl.textContent = `✅ "${finalRoman.trim()}" — theek hai to Confirm & Save dabao (ya upar text edit karo)`;
   }
  };
 
@@ -5195,10 +5304,18 @@ function startQuickAddVoice(){
   } else {
    statusEl.textContent = "Error: " + e.error;
   }
-  micBtn.style.boxShadow = "0 6px 16px rgba(91,155,245,.4)";
+  micBtn.style.boxShadow = "0 6px 16px rgba(230,50,50,.4)";
+  micBtn.classList.remove('qa-listening');
+  if (haloEl) haloEl.classList.remove('listening');
+  if (stateDotEl) stateDotEl.classList.remove('on');
+  if (stateTextEl) { stateTextEl.textContent = "Mic band ho gaya"; stateTextEl.style.color = "#888"; }
  };
  rec.onend = () => {
-  micBtn.style.boxShadow = "0 6px 16px rgba(91,155,245,.4)";
+  micBtn.style.boxShadow = "0 6px 16px rgba(230,50,50,.4)";
+  micBtn.classList.remove('qa-listening');
+  if (haloEl) haloEl.classList.remove('listening');
+  if (stateDotEl) stateDotEl.classList.remove('on');
+  if (stateTextEl) { stateTextEl.textContent = "Mic band hai — dabao dobara bolne ke liye"; stateTextEl.style.color = "#888"; }
   if (quickAddActiveRecognition === rec) quickAddActiveRecognition = null;
  };
 
@@ -5237,6 +5354,23 @@ function parseVoiceToQuickAddLine(said){
  const matchedParty = matchPartyName(partyGuess) || partyGuess;
 
  return `${amount},${matchedParty},,${method},${raw}`;
+}
+
+// Jab user live caption box me khud type/edit karta hai (cursor rakh ke
+// text badalta hai), tab bhi wahi parsing dobara chalti hai jo voice final
+// result par chalti thi — taaki edited text se hi amount/party/method sahi
+// nikle aur Confirm & Save us par kaam kare.
+function onQaLiveCaptionEdit(){
+ const captionEl = document.getElementById('qaLiveCaption');
+ const statusEl = document.getElementById('qaVoiceStatus');
+ const text = captionEl.value.trim();
+ if (!text) {
+  document.getElementById('qaLine').value = "";
+  statusEl.textContent = "";
+  return;
+ }
+ document.getElementById('qaLine').value = parseVoiceToQuickAddLine(text);
+ statusEl.textContent = `✅ "${text}" — theek hai to Confirm & Save dabao`;
 }
 
 function closeQuickAdd(){
