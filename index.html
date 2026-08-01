@@ -46,13 +46,6 @@ html,body{
  touch-action:manipulation; /* double-tap se accidental zoom rokta hai */
  -webkit-text-size-adjust:100%;
  text-size-adjust:100%;
- /* Chrome/WebView ka native edge-swipe back/forward navigation gesture band
-    karta hai. Iske bina, left/right swipe karne par browser apna history
-    navigation gesture start kar deta tha jisme purani screen (jaise PIN
-    lock screen) aadhi-adhoori peek/preview me dikhne lagti thi — isse app
-    ka data bhi lock screen ke peeche se dikh jata tha. */
- overscroll-behavior-x:none;
- overscroll-behavior-y:none;
 }
 /* Mobile browsers input font-size 16px se kam hone par khud-ba-khud zoom kar dete hain.
    Ye rule sabhi input/textarea/select ka effective font-size 16px+ force karta hai,
@@ -237,7 +230,7 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
 #pinLockScreen #pinErrorText{
  position:absolute;top:45dvh;left:50%;transform:translateX(-50%);
  white-space:nowrap;
- background:rgba(255, 255, 255, 0);
+ background:rgba(255,255,255,.8);
  padding:3px 12px;border-radius:12px;
  margin-top:0;
 }
@@ -285,7 +278,6 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
    header ki asli height ke hisaab se — taaki content header ke peeche
    chhup na jaaye. */
 .top-row{
- position: fixed !important;
  display:flex;align-items:stretch;justify-content:space-between;
  position:fixed;top:0;left:50%;transform:translateX(-50%);
  width:100%;max-width:480px;box-sizing:border-box;
@@ -1289,37 +1281,14 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
 /* Floating "+ Create Goal" button pinned to the bottom of the Goals list
    screen — moved to the right side so it doesn't sit on top of goal cards
    or overlap the bottom nav's own + button (which is centered). */
-/* #screen-goals .fab-bottom{ */
-    /* position:fixed; right:18px; left:auto; transform:none;
+#screen-goals .fab-bottom{
+    position:fixed; right:18px; left:auto; transform:none;
     bottom:100px; z-index:90;
     width:56px; height:56px; border-radius:50%; background:var(--gold); border:none;
     display:flex; align-items:center; justify-content:center; cursor:pointer;
     font-size:26px; color:#111; font-weight:700;
     box-shadow:0 10px 24px rgba(0,0,0,.35);
-  } */
-#screen-goals .fab-bottom {
-    position: fixed !important; /* Forcefully screen par fix rakhne ke liye */
-    right: 18px;
-    left: auto; /* 'inherit' ki jagah 'auto' use karein taaki left side clear rahe */
-    transform: none !important; /* Kisi bhi transform animation ko rokne ke liye */
-    bottom: 100px;
-    z-index: 999; /* Isko sabse upar rakhne ke liye z-index badha diya hai */
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #256a7e7a;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 26px;
-    color: #020102;
-    font-weight: 700;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
-}
-
-
+  }
 
 #screen-goals .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; margin-bottom:16px; box-shadow:var(--shadow); transition:background .25s ease, border-color .25s ease; }
 #screen-goals .card-sm{ border-radius:12px; padding:14px; }
@@ -1331,7 +1300,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
   } */
 
 #screen-goals .row{ display:flex; gap:12px; }
-#screen-goals .row.between{font-family: 'Inter', sans-serif; justify-content:space-between; align-items:center; }
+#screen-goals .row.between{ justify-content:space-between; align-items:center; }
 #screen-goals .row.center{ align-items:center; }
 
 #screen-goals .label{ color:var(--muted); font-size:13px; margin-bottom:6px; display:block; }
@@ -1686,7 +1655,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
      <div class="pinError" id="fpinNewPinError"></div>
     </div>
 
-    <!--Step 4: Confirm New PIN -->
+    <!-- Step 4: Confirm New PIN -->
     <div id="fpinStep4" style="display:none;text-align:center;">
      <div style="width:52px;height:52px;border-radius:16px;background:rgba(58,92,204,.10);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;margin-left:auto;margin-right:auto;">✅</div>
      <div class="auth-heading" style="text-align:center;">Confirm PIN</div>
@@ -1773,7 +1742,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
 
  <div class="top-row">
  <div class="icon-circle" id="profileMenuBtn" onclick="goTo('profile')" style="cursor:pointer;margin-right:10px;flex-shrink:0;">
-  <i class="ti ti-menu-2" style="font-size: 24px;"></i>
+  <i class="ti ti-menu-2"></i>
  </div>
  <div class="greet" style="flex:1;">
  <div class="greet">
@@ -2133,7 +2102,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
     <div class="card row between">
       <div>
         <div class="label" style="margin-bottom:4px;">Total Target Progress</div>
-        <div style="color:#cf8e0d;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
+        <div style="color:#eba926;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
         <div class="label" style="margin:0;">of total Target</div>
       </div>
       <div class="ring-wrap">
@@ -2156,8 +2125,8 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
       </div>
     </div>
 
-    <div class="row between" style="margin-bottom:10px; font-family: 'Poppins', sans-serif !important;">
-      <span style="color:#af3a08;font-weight:600;">All Target</span>
+    <div class="row between" style="margin-bottom:10px;">
+      <span style="color:#af3a08;font-weight:600;">My Target</span>
       <span style="color:var(--gold);font-size:13px;cursor:pointer;" id="viewAllGoalsBtn" onclick="toggleViewAllGoals()">View All</span>
     </div>
 
@@ -2447,7 +2416,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
          state label hai. -->
     <div id="qaMicState" style="font-size:12px;font-weight:600;margin-top:8px;display:flex;align-items:center;gap:6px;justify-content:center;color:#888;">
      <span id="qaMicStateDot" style="width:8px;height:8px;border-radius:50%;background:#888;display:inline-block;"></span>
-     <span id="qaMicStateText">Mic is off</span>
+     <span id="qaMicStateText">Mic band hai</span>
     </div>
     <div style="font-size:11.5px;color:#999;margin-top:4px;" id="qaMicHint">Bolo: "200 adarsh ko cash pay kiye"</div>
    </div>
@@ -4149,12 +4118,13 @@ function computeGoalCurrent(goal){
     // Abhi index se koi real entry connect nahi hui — standalone demo value dikhao
     return Number(goal.manualCurrent) || 0;
   }
+  const now = new Date();
+  const curMonth = now.getMonth(), curYear = now.getFullYear();
   const targetName = goalMatchKey(goal);
   let expense = 0, savings = 0;
-  // Ab month-restriction hata di — goal ka progress shuru se ab tak (continue/
-  // all-time) ki sabhi matching entries se calculate hota hai, sirf current
-  // month ki entries se nahi.
   allEntries.forEach(e => {
+    const d = new Date(e.date);
+    if (d.getFullYear() !== curYear || d.getMonth() !== curMonth) return;
     const partyName = String(e.party || "Unknown").trim().toLowerCase();
     if (partyName !== targetName) return;
     const amt = Number(e.amount) || 0;
@@ -4794,9 +4764,8 @@ function renderDashboardTotals(){
  if(e.type==='income') totalBalance+=amt;
  else if(e.type==='expense') totalBalance-=amt;
 
- // Continue/lifetime totals for the Receive, Payment, Savings boxes —
- // ab yeh sirf current month tak limited nahi, balki HAR entry (all-time,
- // shuru se ab tak) count/sum hoti hai.
+ // Monthly calculations
+ if(d.getFullYear()===curYear && d.getMonth()===curMonth){
  if(e.type==='income') {
   income+=amt;
   if(toSavingsParty) savings -= amt; // withdrawing from an investment reduces savings
@@ -4804,10 +4773,7 @@ function renderDashboardTotals(){
   expense+=amt;
   if(toSavingsParty) savings += amt; // paying into an investment grows savings
  }
-
- // Growth % label ke liye previous-month totals alag se track (isme koi
- // change nahi — yeh sirf "% from last month" trend ke liye hai).
- if(d.getFullYear()===prevYear && d.getMonth()===prevMonth){
+ } else if(d.getFullYear()===prevYear && d.getMonth()===prevMonth){
  if(e.type==='income') prevIncome+=amt; else if(e.type==='expense') prevExpense+=amt;
  }
  });
@@ -5290,12 +5256,16 @@ function transliterateDevanagariToRoman(text){
 let quickAddActiveRecognition = null; // ek waqt me sirf ek hi session chalega
 let qaAutoRestarts = 0;
 let qaRestarting = false;
-// Jab silent auto-restart hota hai (no-speech ki wajah se), ek naya `rec`
-// object banta hai jiska apna khaali e.results shuru se start hota hai.
-// Pehle is wajah se pichhle session me jo bhi final text ban chuka tha,
-// wo naye session ke pehle onresult par poori tarah overwrite ho ke kho
-// jaata tha — isiliye lambe sentence beech me hi katta hua lagta tha.
-// Ab qaAccumulatedFinal isko restarts ke paar bhi save rakhta hai.
+let qaUserStopped = false;   // true jab user khud mic dabake roke
+let qaChainCount = 0;
+const QA_MAX_CHAIN = 30;     // safety cap — kabhi bhi hamesha ke liye loop na ho
+// Jab session restart hota hai (chahe no-speech ki wajah se ho ya normal
+// pause ki wajah se), ek naya `rec` object banta hai jiska apna khaali
+// e.results shuru se start hota hai. Pehle is wajah se pichhle session me
+// jo bhi final text ban chuka tha, wo naye session ke pehle onresult par
+// poori tarah overwrite ho ke kho jaata tha — isiliye lambe sentence beech
+// me hi katta hua lagta tha. Ab qaAccumulatedFinal isko restarts ke paar
+// bhi save rakhta hai.
 let qaAccumulatedFinal = "";
 
 function startQuickAddVoice(){
@@ -5303,7 +5273,7 @@ function startQuickAddVoice(){
  const captionEl = document.getElementById('qaLiveCaption');
  const micBtn = document.getElementById('qaMicBtn');
  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
- if (!SR) { statusEl.textContent = "⚠️This browser does not support voice input."; return; }
+ if (!SR) { statusEl.textContent = "⚠️ Ye browser voice input support nahi karta"; return; }
 
  // Chrome/Web Speech API sirf secure context (https:// ya localhost) me
  // mic allow karta hai — file:// ya plain http:// pe hamesha "not-allowed"
@@ -5318,10 +5288,13 @@ function startQuickAddVoice(){
  // decide kar sakta hai ki bolna kab khatam hua, naya session shuru nahi
  // hoga.
  if (quickAddActiveRecognition) {
+  qaUserStopped = true;
   try { quickAddActiveRecognition.stop(); } catch(e){}
   return;
  }
 
+ qaUserStopped = false;
+ qaChainCount = 0;
  qaAutoRestarts = 0;
  qaAccumulatedFinal = "";
  captionEl.value = "";
@@ -5335,29 +5308,30 @@ function runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR){
  const stateDotEl = document.getElementById('qaMicStateDot');
  const stateTextEl = document.getElementById('qaMicStateText');
  if (stateDotEl) stateDotEl.classList.add('on');
- if (stateTextEl) { stateTextEl.textContent = "Mic ON — I'm listening..."; stateTextEl.style.color = "#e63232"; }
+ if (stateTextEl) { stateTextEl.textContent = "Mic ON — sun raha hoon"; stateTextEl.style.color = "#e63232"; }
 
  const rec = new SR();
  quickAddActiveRecognition = rec;
  // hi-IN use kiya hai kyunki ye hi actually bola gaya Hindi audio sunta/
- // samajhta hai (en-IN Hindi bolne par kuch sunta hi nahi tha — isiliye
- // mic "on" dikhta tha par text aata hi nahi tha). hi-IN ka result
- // Devanagari script me aata hai, jisko hum neeche khud Roman/Hinglish me
- // convert kar dete hain (transliterateDevanagariToRoman) taaki screen par
- // Hinglish text dikhe aur party names (jo Roman letters me stored hain)
- // se bhi match ho sake.
+ // samajhta hai. hi-IN ka result Devanagari script me aata hai, jisko hum
+ // neeche khud Roman/Hinglish me convert kar dete hain
+ // (transliterateDevanagariToRoman) taaki screen par Hinglish text dikhe
+ // aur party names (jo Roman letters me stored hain) se bhi match ho sake.
  rec.lang = "hi-IN";
  rec.interimResults = true;   // live, typing-as-you-speak effect
- // continuous=true — pehle false tha, jiski wajah se bolte waqt beech me
- // thoda sa bhi ruko to engine turant session khatam kar deta tha aur
- // aage ka bola hua kuch bhi capture nahi hota tha. continuous=true poore
- // sentence ke liye sunta rehta hai jab tak khud na roko (mic dubara tap
- // karke) ya lambi khamoshi na ho.
- rec.continuous = true;
+ // continuous=false — YE JAAN-BOOJH KAR false rakha hai. continuous:true
+ // Android Chrome me ek jaana-mana bug trigger karta hai: engine wahi
+ // pichla suna hua shabd/phrase baar-baar khud hi repeat karke bolta rehta
+ // hai (jaise "aaraesa 20 aaraesa 20 aaraesa 20..." — exactly wahi problem
+ // jo screenshot me dikhi). Fix: har utterance ek chhota, bounded session
+ // hai (continuous=false), aur neeche onend me hum khud usse turant naya
+ // session chain kar dete hain — isse "continuous sunte rehna" wala UX
+ // milta hai lekin bina us repeat-loop bug ke.
+ rec.continuous = false;
 
  const haloEl = document.getElementById('qaMicHalo');
  if (haloEl) haloEl.classList.add('listening');
- rec.onstart = () => statusEl.textContent = "🔴 listening...";
+ rec.onstart = () => statusEl.textContent = "🔴 Sun raha hoon...";
 
  rec.onresult = (e) => {
   let interim = "", sessionFinal = "";
@@ -5372,8 +5346,8 @@ function runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR){
   const interimRoman = transliterateDevanagariToRoman(interim);
   const sessionFinalRoman = transliterateDevanagariToRoman(sessionFinal);
 
-  // Pichhle (agar koi restart hua ho) + is session ka final text jodo —
-  // taaki koi hissa khoye nahi.
+  // Pichhle chained session(s) ka final + is session ka final jodo — taaki
+  // koi hissa khoye nahi.
   const combinedFinal = (qaAccumulatedFinal + " " + sessionFinalRoman).trim();
 
   // Live caption update — dikhta hai chahe abhi final hua ho ya nahi.
@@ -5384,46 +5358,60 @@ function runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR){
   if (sessionFinal) {
    qaAccumulatedFinal = combinedFinal;
    document.getElementById('qaLine').value = parseVoiceToQuickAddLine(qaAccumulatedFinal);
-   statusEl.textContent = `✅ "${qaAccumulatedFinal}" — Okay, tap Confirm(or edit text above).`;
+   statusEl.textContent = `✅ "${qaAccumulatedFinal}" — theek hai to Confirm & Save dabao (ya upar text edit karo)`;
   }
  };
 
+ // Ek utterance/session khatam hone ke baad (chahe kaamyabi se final result
+ // mila ho, ya no-speech ki wajah se) — agar user ne khud mic dabake roka
+ // nahi hai, to turant ek naya chhota session shuru kar do. Isse mic
+ // "continuous" jaisa lagta hai (jab tak khud na roko sunta rehta hai),
+ // lekin har session bounded hone ki wajah se wo repeat-loop bug nahi
+ // aata jo continuous:true se aata tha.
+ function chainNextSessionIfNeeded(){
+  if (qaUserStopped) return false;
+  if (qaChainCount >= QA_MAX_CHAIN) {
+   statusEl.textContent = "Mic band ho gaya (lambi der tak chala) — dabao dobara bolne ke liye.";
+   return false;
+  }
+  qaChainCount++;
+  qaRestarting = true;
+  quickAddActiveRecognition = null;
+  setTimeout(() => runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR), 120);
+  return true;
+ }
+
  rec.onerror = (e) => {
-  // "no-speech" ka matlab sirf itna hai ki engine ne kisi gap me kuch nahi
-  // suna (jaise tap karne aur bolna shuru karne ke beech ka gap, ya bolte
-  // waqt do shabdon ke beech ki natural saans/pause) — real fail nahi hai.
-  // Isliye ise chup-chaap khud hi 4 baar tak dobara try karte hain, bina
-  // "band ho gaya" dikhaye. Pehle ye sirf 2 baar tha aur restart hone par
-  // pichhla bola hua text bhi kho jaata tha (upar accumulator se ab fix
-  // hai) — isliye ab thoda zyada retry safe hai.
-  if (e.error === 'no-speech' && qaAutoRestarts < 4) {
-   qaAutoRestarts++;
-   qaRestarting = true;
-   quickAddActiveRecognition = null;
-   setTimeout(() => runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR), 150);
-   return;
+  if (e.error === 'no-speech') {
+   // Kuch nahi suna is chhote se session me (gap ya thodi der ki khamoshi)
+   // — real fail nahi hai, chup-chaap agla chained session shuru kar do.
+   if (chainNextSessionIfNeeded()) return;
   }
   if (e.error === 'not-allowed') {
-   statusEl.textContent = "⚠️ Mic blocked — Allow mic in browser settings 🔒, then tap the mic.";
+   statusEl.textContent = "⚠️ Mic blocked hai — browser ke address bar me 🔒/site-settings me mic 'Allow' karo, phir mic dabao.";
   } else if (e.error === 'no-speech') {
-   statusEl.textContent = "Couldn't hear you — tap the mic and try again. Speak clearly and closer.";
-  } else {
+   statusEl.textContent = "Kuch suna nahi — mic dabake dobara bolo, thoda saaf aur paas se bolo.";
+  } else if (e.error !== 'aborted') {
    statusEl.textContent = "Error: " + e.error;
   }
   micBtn.style.boxShadow = "0 6px 16px rgba(230,50,50,.4)";
   micBtn.classList.remove('qa-listening');
   if (haloEl) haloEl.classList.remove('listening');
   if (stateDotEl) stateDotEl.classList.remove('on');
-  if (stateTextEl) { stateTextEl.textContent = "Mic is off now"; stateTextEl.style.color = "#888"; }
+  if (stateTextEl) { stateTextEl.textContent = "Mic band ho gaya"; stateTextEl.style.color = "#888"; }
  };
  rec.onend = () => {
   if (quickAddActiveRecognition === rec) quickAddActiveRecognition = null;
-  if (qaRestarting) { qaRestarting = false; return; }   // silent auto-retry chal raha hai, UI abhi "ON" hi rahega
+  if (qaRestarting) { qaRestarting = false; return; }   // chained restart already scheduled, UI abhi "ON" hi rahega
+  // Normal end — is utterance ka result mil chuka (ya khaali tha). Agar
+  // user ne khud stop nahi kiya, to agla chained session shuru kar do
+  // taaki lamba, multi-sentence bolna bhi capture ho jaaye.
+  if (chainNextSessionIfNeeded()) return;
   micBtn.style.boxShadow = "0 6px 16px rgba(230,50,50,.4)";
   micBtn.classList.remove('qa-listening');
   if (haloEl) haloEl.classList.remove('listening');
   if (stateDotEl) stateDotEl.classList.remove('on');
-  if (stateTextEl) { stateTextEl.textContent = "The mic is off — click to speak again."; stateTextEl.style.color = "#888"; }
+  if (stateTextEl) { stateTextEl.textContent = "Mic band hai — dabao dobara bolne ke liye"; stateTextEl.style.color = "#888"; }
  };
 
  try { rec.start(); } catch(err) { statusEl.textContent = "Error: " + err.message; }
@@ -5482,6 +5470,7 @@ function onQaLiveCaptionEdit(){
 
 function closeQuickAdd(){
  document.getElementById("quickAddModal").classList.remove("active");
+ qaUserStopped = true;
  if (quickAddActiveRecognition) { try { quickAddActiveRecognition.abort(); } catch(e){} quickAddActiveRecognition = null; }
 }
 
