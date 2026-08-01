@@ -46,6 +46,13 @@ html,body{
  touch-action:manipulation; /* double-tap se accidental zoom rokta hai */
  -webkit-text-size-adjust:100%;
  text-size-adjust:100%;
+ /* Chrome/WebView ka native edge-swipe back/forward navigation gesture band
+    karta hai. Iske bina, left/right swipe karne par browser apna history
+    navigation gesture start kar deta tha jisme purani screen (jaise PIN
+    lock screen) aadhi-adhoori peek/preview me dikhne lagti thi — isse app
+    ka data bhi lock screen ke peeche se dikh jata tha. */
+ overscroll-behavior-x:none;
+ overscroll-behavior-y:none;
 }
 /* Mobile browsers input font-size 16px se kam hone par khud-ba-khud zoom kar dete hain.
    Ye rule sabhi input/textarea/select ka effective font-size 16px+ force karta hai,
@@ -2126,7 +2133,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
     <div class="card row between">
       <div>
         <div class="label" style="margin-bottom:4px;">Total Target Progress</div>
-        <div style="color:#eba926;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
+        <div style="color:#cf8e0d;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
         <div class="label" style="margin:0;">of total Target</div>
       </div>
       <div class="ring-wrap">
@@ -2149,8 +2156,8 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
       </div>
     </div>
 
-    <div class="row between" style="margin-bottom:10px;">
-      <span style="color:#af3a08;font-weight:600;">My Target</span>
+    <div class="row between" style="margin-bottom:10px; font-family: 'Poppins', sans-serif !important;">
+      <span style="color:#af3a08;font-weight:600;">All Target</span>
       <span style="color:var(--gold);font-size:13px;cursor:pointer;" id="viewAllGoalsBtn" onclick="toggleViewAllGoals()">View All</span>
     </div>
 
@@ -4142,13 +4149,12 @@ function computeGoalCurrent(goal){
     // Abhi index se koi real entry connect nahi hui — standalone demo value dikhao
     return Number(goal.manualCurrent) || 0;
   }
-  const now = new Date();
-  const curMonth = now.getMonth(), curYear = now.getFullYear();
   const targetName = goalMatchKey(goal);
   let expense = 0, savings = 0;
+  // Ab month-restriction hata di — goal ka progress shuru se ab tak (continue/
+  // all-time) ki sabhi matching entries se calculate hota hai, sirf current
+  // month ki entries se nahi.
   allEntries.forEach(e => {
-    const d = new Date(e.date);
-    if (d.getFullYear() !== curYear || d.getMonth() !== curMonth) return;
     const partyName = String(e.party || "Unknown").trim().toLowerCase();
     if (partyName !== targetName) return;
     const amt = Number(e.amount) || 0;
@@ -4788,8 +4794,9 @@ function renderDashboardTotals(){
  if(e.type==='income') totalBalance+=amt;
  else if(e.type==='expense') totalBalance-=amt;
 
- // Monthly calculations
- if(d.getFullYear()===curYear && d.getMonth()===curMonth){
+ // Continue/lifetime totals for the Receive, Payment, Savings boxes —
+ // ab yeh sirf current month tak limited nahi, balki HAR entry (all-time,
+ // shuru se ab tak) count/sum hoti hai.
  if(e.type==='income') {
   income+=amt;
   if(toSavingsParty) savings -= amt; // withdrawing from an investment reduces savings
@@ -4797,7 +4804,10 @@ function renderDashboardTotals(){
   expense+=amt;
   if(toSavingsParty) savings += amt; // paying into an investment grows savings
  }
- } else if(d.getFullYear()===prevYear && d.getMonth()===prevMonth){
+
+ // Growth % label ke liye previous-month totals alag se track (isme koi
+ // change nahi — yeh sirf "% from last month" trend ke liye hai).
+ if(d.getFullYear()===prevYear && d.getMonth()===prevMonth){
  if(e.type==='income') prevIncome+=amt; else if(e.type==='expense') prevExpense+=amt;
  }
  });
