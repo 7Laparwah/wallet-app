@@ -46,6 +46,13 @@ html,body{
  touch-action:manipulation; /* double-tap se accidental zoom rokta hai */
  -webkit-text-size-adjust:100%;
  text-size-adjust:100%;
+ /* Chrome/WebView ka native edge-swipe back/forward navigation gesture band
+    karta hai. Iske bina, left/right swipe karne par browser apna history
+    navigation gesture start kar deta tha jisme purani screen (jaise PIN
+    lock screen) aadhi-adhoori peek/preview me dikhne lagti thi — isse app
+    ka data bhi lock screen ke peeche se dikh jata tha. */
+ overscroll-behavior-x:none;
+ overscroll-behavior-y:none;
 }
 /* Mobile browsers input font-size 16px se kam hone par khud-ba-khud zoom kar dete hain.
    Ye rule sabhi input/textarea/select ka effective font-size 16px+ force karta hai,
@@ -60,7 +67,7 @@ input,textarea,select{
  position:relative;
  padding-bottom:96px;
 }
-h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
+h1,h2,h3,.brand,.amount-big{font-family:'Playfair Display', serif !important;}
 ::-webkit-scrollbar{width:0;height:0;}
 
 /* ===== Notifications ON/OFF pill toggle (Profile screen) ===== */
@@ -111,9 +118,9 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
  top: 12px;
  right: 12px;
  z-index: 8888;
- padding: 8px 14px;
- border-radius: 20px;
- font-size: 12px;
+ /* padding: 8px 14px; */
+ border-radius: 1px;
+ font-size: 1px;
  font-weight: 600;
  display: flex;
  align-items: center;
@@ -230,7 +237,7 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
 #pinLockScreen #pinErrorText{
  position:absolute;top:45dvh;left:50%;transform:translateX(-50%);
  white-space:nowrap;
- background:rgba(255,255,255,.8);
+ background:rgba(255, 255, 255, 0);
  padding:3px 12px;border-radius:12px;
  margin-top:0;
 }
@@ -278,6 +285,7 @@ h1,h2,h3,.brand,.amount-big{font-family:ui-sans-serif;}
    header ki asli height ke hisaab se — taaki content header ke peeche
    chhup na jaaye. */
 .top-row{
+ position: fixed !important;
  display:flex;align-items:stretch;justify-content:space-between;
  position:fixed;top:0;left:50%;transform:translateX(-50%);
  width:100%;max-width:480px;box-sizing:border-box;
@@ -371,7 +379,7 @@ body.light-theme .top-row{ background:#F3E7D3 !important; }
 }
 
 /* ===== Cards ===== */
-.card{background:#161a23;border:1px solid #1f2430;border-radius:18px;padding:16px;margin-bottom:16px;}
+.card{background:#161a23;border:1px solid #1f2430;border-radius:18px;padding:9px;margin-bottom:11px;}
 .card .ctitle{font-size:13px;font-weight:700;color:#cfd3da;margin-bottom:4px;}
 .card .cval{font-size:24px;font-weight:800;color:#e8b64c;margin-bottom:14px;}
 
@@ -1281,14 +1289,37 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
 /* Floating "+ Create Goal" button pinned to the bottom of the Goals list
    screen — moved to the right side so it doesn't sit on top of goal cards
    or overlap the bottom nav's own + button (which is centered). */
-#screen-goals .fab-bottom{
-    position:fixed; right:18px; left:auto; transform:none;
+/* #screen-goals .fab-bottom{ */
+    /* position:fixed; right:18px; left:auto; transform:none;
     bottom:100px; z-index:90;
     width:56px; height:56px; border-radius:50%; background:var(--gold); border:none;
     display:flex; align-items:center; justify-content:center; cursor:pointer;
     font-size:26px; color:#111; font-weight:700;
     box-shadow:0 10px 24px rgba(0,0,0,.35);
-  }
+  } */
+#screen-goals .fab-bottom {
+    position: fixed !important; /* Forcefully screen par fix rakhne ke liye */
+    right: 18px;
+    left: auto; /* 'inherit' ki jagah 'auto' use karein taaki left side clear rahe */
+    transform: none !important; /* Kisi bhi transform animation ko rokne ke liye */
+    bottom: 100px;
+    z-index: 999; /* Isko sabse upar rakhne ke liye z-index badha diya hai */
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #256a7e7a;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 26px;
+    color: #020102;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .35);
+}
+
+
 
 #screen-goals .card{ background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; margin-bottom:16px; box-shadow:var(--shadow); transition:background .25s ease, border-color .25s ease; }
 #screen-goals .card-sm{ border-radius:12px; padding:14px; }
@@ -1300,7 +1331,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
   } */
 
 #screen-goals .row{ display:flex; gap:12px; }
-#screen-goals .row.between{ justify-content:space-between; align-items:center; }
+#screen-goals .row.between{font-family: 'Inter', sans-serif; justify-content:space-between; align-items:center; }
 #screen-goals .row.center{ align-items:center; }
 
 #screen-goals .label{ color:var(--muted); font-size:13px; margin-bottom:6px; display:block; }
@@ -1655,8 +1686,8 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
      <div class="pinError" id="fpinNewPinError"></div>
     </div>
 
-    <!-- Step 4: Confirm New PIN -->
-    <div id="fpinStep4" style="display:none;text-align:center;">
+    <!--Step 4: Confirm New PIN -->
+  <div id="fpinStep4" style="display:none;text-align:center;">
      <div style="width:52px;height:52px;border-radius:16px;background:rgba(58,92,204,.10);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:20px;margin-left:auto;margin-right:auto;">✅</div>
      <div class="auth-heading" style="text-align:center;">Confirm PIN</div>
      <div class="auth-sub" style="text-align:center;">Enter your new PIN again to confirm.</div>
@@ -1700,7 +1731,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
  </div>
 </div>
 
-<div id="pinLockScreen" style="display:none;">
+ <div id="pinLockScreen" style="display:none;">
  <div class="pinTitle" id="pinTitleText">Enter PIN</div>
  <div class="pinSub" id="pinSubText">Enter your 4-digit PIN</div>
  <!-- App khulte hi yeh hidden input auto-focus hota hai, jisse phone ka
@@ -1742,7 +1773,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
 
  <div class="top-row">
  <div class="icon-circle" id="profileMenuBtn" onclick="goTo('profile')" style="cursor:pointer;margin-right:10px;flex-shrink:0;">
-  <i class="ti ti-menu-2"></i>
+  <i class="ti ti-menu-2" style="font-size: 24px;"></i>
  </div>
  <div class="greet" style="flex:1;">
  <div class="greet">
@@ -1774,7 +1805,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
  <div class="balance-amount">₹ <span id="walBalance"></span></div>
  <canvas id="miniChart" class="mini-chart" width="110" height="48" style="cursor:pointer;"></canvas>
  </div>
- <div class="trend-up" id="growthLabel"><i class="ti ti-trending-up"></i> 0% from last month</div>
+ <div class="trend-up" id="growthLabel"><i class="ti ti-trending-up"></i> Receive 0% vs last month</div>
  <div id="miniChartPopup" style="display:none;position:absolute;left:16px;right:16px;bottom:12px;background:#232838;color:#e8eaf0;font-size:10.5px;line-height:1.5;padding:7px 10px;border-radius:8px;z-index:5;box-shadow:0 4px 10px rgba(0,0,0,.35);"></div>
  </div>
 
@@ -1835,6 +1866,11 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
  <div class="card">
  <div class="ctitle" id="trendTitle">Payment Trend</div>
  <canvas id="trendChart" height="140"></canvas>
+ </div>
+
+ <div class="card">
+ <div class="ctitle" id="methodTitle">Payment Method</div>
+ <canvas id="methodChart" height="140"></canvas>
  </div>
 
 <div class="card">
@@ -2053,6 +2089,8 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
  <div class="menu-item" onclick="toggleTheme()"><div class="mico"><i class="ti ti-moon"></i></div><div class="mtext">Dark / Light Mode</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
  <div class="menu-item" onclick="toggleSyncStatusPanel()"><div class="mico"><i class="ti ti-wallet"></i></div><div class="mtext">Manage Accounts</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
  <div class="menu-item" onclick="openPartyManager()"><div class="mico"><i class="ti ti-users"></i></div><div class="mtext">Manage / Add Party</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
+ <div class="menu-item" onclick="openAiSettingsModal()"><div class="mico"><i class="ti ti-sparkles"></i></div><div class="mtext">AI Voice Parsing (Free)</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
+ <div class="menu-item" onclick="openAiChatModal()"><div class="mico"><i class="ti ti-message-circle"></i></div><div class="mtext">Chat: Balance se poochho</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
  <div class="menu-item" onclick="openDeletedHistory()"><div class="mico"><i class="ti ti-history"></i></div><div class="mtext">Deleted Entry History</div><div class="chev"><i class="ti ti-chevron-right"></i></div></div>
 <!-- Main Backup Button -->
 <div class="menu-item" onclick="goTo('backup')">
@@ -2102,7 +2140,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
     <div class="card row between">
       <div>
         <div class="label" style="margin-bottom:4px;">Total Target Progress</div>
-        <div style="color:#eba926;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
+        <div style="color:#cf8e0d;font-size:22px;font-weight:700;" id="totalCurrentText">₹0</div>
         <div class="label" style="margin:0;">of total Target</div>
       </div>
       <div class="ring-wrap">
@@ -2125,8 +2163,8 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
       </div>
     </div>
 
-    <div class="row between" style="margin-bottom:10px;">
-      <span style="color:#af3a08;font-weight:600;">My Target</span>
+    <div class="row between" style="margin-bottom:10px; font-family: 'Poppins', sans-serif !important;">
+      <span style="color:#af3a08;font-weight:600;">All Target</span>
       <span style="color:var(--gold);font-size:13px;cursor:pointer;" id="viewAllGoalsBtn" onclick="toggleViewAllGoals()">View All</span>
     </div>
 
@@ -2403,38 +2441,64 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
   <div style="padding:18px 20px;">
    <input id="qaLine" type="text" style="display:none;">
 
-   <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 6px;">
-    <div style="position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;">
-     <div id="qaMicHalo" style="position:absolute;width:88px;height:88px;border-radius:50%;background:rgba(230,40,40,.15);pointer-events:none;"></div>
-     <button onclick="startQuickAddVoice()" id="qaMicBtn" title="Voice se bharo" style="position:relative;width:64px;height:64px;border-radius:50%;background:#e63232;color:#fff;border:none;cursor:pointer;box-shadow:0 6px 16px rgba(230,50,50,.4);transition:box-shadow .2s,transform .2s,background .2s;display:flex;align-items:center;justify-content:center;">
-      <i class="ti ti-microphone" id="qaMicIcon" style="font-size:28px;line-height:1;"></i>
+   <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0 6px;position:relative;">
+    <!-- ===== AI MIC (primary) ===== Audio seedha Gemini ko jaata hai —
+         browser ka SpeechRecognition transcription step poori tarah
+         skip ho jaata hai. Gemini khud sunta hai, samajhta hai, aur
+         amount/party/method ek hi call me nikal deta hai. Isiliye ye ab
+         MAIN mic hai.
+         UI: peeche ek 3D animated iridescent "orb" hai (Three.js —
+         morphing/breathing blob jo state ke hisaab se color+speed badalta
+         hai: idle=grey/calm, listening=pink/fast, thinking=violet/pulse,
+         speaking=gold/energetic). Agar kisi wajah se WebGL/Three.js load
+         na ho paaye (purana browser, blocked CDN, etc), poora mic button
+         normal kaam karta rehta hai — orb sirf ek visual extra hai, core
+         functionality kabhi iske upar depend nahi karti. -->
+    <div style="position:relative;width:112px;height:112px;display:flex;align-items:center;justify-content:center;">
+     <div id="qaAiOrbWrap" style="position:absolute;width:112px;height:112px;border-radius:50%;overflow:hidden;pointer-events:none;">
+      <canvas id="qaAiOrbGlow" width="112" height="112" style="position:absolute;inset:0;width:100%;height:100%;filter:blur(10px) saturate(1.4);opacity:.88;"></canvas>
+      <canvas id="qaAiOrbSharp" width="112" height="112" style="position:absolute;inset:0;width:100%;height:100%;"></canvas>
+     </div>
+     <div id="qaAiMicHalo" style="position:absolute;width:112px;height:112px;border-radius:50%;background:rgba(168,85,247,.18);pointer-events:none;"></div>
+     <button onclick="toggleAiMic()" id="qaAiMicBtn" title="AI Mic — bolo, seedha entry banegi" style="position:relative;width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,rgba(168,85,247,.9),rgba(109,40,217,.9));color:#fff;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(168,85,247,.45),inset 0 1px 1px rgba(255,255,255,.4);transition:box-shadow .2s,transform .2s;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);">
+      <i class="ti ti-microphone" style="font-size:30px;line-height:1;"></i>
      </button>
     </div>
-    <!-- Saaf saaf ON/OFF indicator — blinking dot + text, taaki confusion na
-         ho ki mic chalu hai ya band ho gaya. qaVoiceStatus (neeche) sirf
-         result/error jaise messages ke liye hai, ye ek hamesha-visible
-         state label hai. -->
     <div id="qaMicState" style="font-size:12px;font-weight:600;margin-top:8px;display:flex;align-items:center;gap:6px;justify-content:center;color:#888;">
      <span id="qaMicStateDot" style="width:8px;height:8px;border-radius:50%;background:#888;display:inline-block;"></span>
-     <span id="qaMicStateText">Mic band hai</span>
+     <span id="qaMicStateText">AI Mic band hai — dabao aur bolo</span>
     </div>
-    <div style="font-size:11.5px;color:#999;margin-top:4px;" id="qaMicHint">Bolo: "200 adarsh ko cash pay kiye"</div>
+    <div style="font-size:11.5px;color:#999;margin-top:4px;text-align:center;" id="qaMicHint">Say an entry (e.g. 'Paid 200 cash to abc') or ask a question (e.g. 'What's Adarsh's balance?') — same mic.</div>
+
+    <!-- ===== Purana mic (optional/backup) ===== Ab default nahi hai —
+         chhota icon, sirf tab ke liye jab kabhi AI available na ho ya
+         manually local (bina-AI) parsing use karni ho. -->
+    <button type="button" onclick="startQuickAddVoice()" id="qaMicBtn" title="Backup mic (bina AI ke, purana tareeka)" style="position:absolute;top:4px;right:4px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#8b9099;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+     <i class="ti ti-microphone-2" id="qaMicIcon" style="font-size:14px;line-height:1;"></i>
+    </button>
+    <div id="qaMicHalo" style="display:none;"></div>
    </div>
 
-   <!-- Live caption: Google Voice Search jaisa — bolte waqt yahan text
-        real-time me dikhta rehta hai, final hote hi confirm ho jaata hai.
-        Ab ye ek editable <input> hai — user ispe tap karke cursor rakh
-        sakta hai aur text ko haath se theek kar sakta hai (jaise party ka
-        naam sahi karna ho to). Edit karte hi onQaLiveCaptionEdit() dobara
-        amount/party/method nikal leta hai. -->
+   <!-- Live caption: dono mic (AI ya backup) ka result yahan dikhta hai.
+        Editable <input> hai — user ispe tap karke cursor rakh sakta hai
+        aur text ko haath se theek kar sakta hai (jaise party ka naam sahi
+        karna ho to). Edit karte hi onQaLiveCaptionEdit() dobara amount/
+        party/method nikal leta hai. -->
    <div style="position:relative;">
     <input id="qaLiveCaption" type="text" autocomplete="off" oninput="onQaLiveCaptionEdit()"
-     placeholder="Yahan voice text aayega, tap karke edit bhi kar sakte ho"
+     placeholder="Voice text here. Tap to edit."
      style="width:100%;box-sizing:border-box;min-height:44px;font-size:16px;color:#fffc40;text-align:center;padding:8px 26px 8px 4px;font-weight:500;line-height:1.4;background:transparent;border:none;border-bottom:1px solid rgba(255,252,64,.25);outline:none;">
     <i class="ti ti-pencil" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);font-size:14px;color:#888;pointer-events:none;"></i>
    </div>
 
-   <div id="qaVoiceStatus" style="font-size:11.5px;color:#888;margin:2px 0 12px;min-height:14px;text-align:center;"></div>
+   <div id="qaVoiceStatus" style="font-size:11.5px;color:#888;margin:2px 0 8px;min-height:14px;text-align:center;"></div>
+
+   <!-- Backup mic se ya manual type se text aaya ho to isse AI se check
+        karwane ka manual button. AI Mic khud hi seedha AI use karta hai,
+        isliye ye button zyada tar backup-mic/edit ke case ke liye hai. -->
+   <button type="button" id="qaAiBtn" onclick="aiImproveQuickAddText(false)" style="width:100%;padding:9px 0;margin-bottom:10px;border:1px solid rgba(160,120,255,.35);border-radius:8px;background:rgba(160,120,255,.08);color:#b79dff;font-weight:600;font-size:12.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+    <i class="ti ti-sparkles"></i> AI se dobara check karo
+   </button>
 
    <button onclick="submitQuickAdd()" style="width:100%;padding:12px 0;border:none;border-radius:8px;background:rgba(30, 60, 120, .06);color:#fff;font-weight:700;font-size:15px;cursor:pointer;">Confirm</button>
   </div>
@@ -2445,6 +2509,8 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
 @keyframes qaMicPulse{ 0%{transform:scale(1);opacity:.6;} 70%{transform:scale(1.6);opacity:0;} 100%{transform:scale(1.6);opacity:0;} }
 #qaMicHalo.listening{ animation:qaMicPulse 1.4s ease-out infinite; }
 #qaMicBtn.qa-listening{ background:#ff3b3b; transform:scale(1.08); }
+#qaAiMicHalo.listening{ animation:qaMicPulse 1.4s ease-out infinite; background:rgba(168,85,247,.28) !important; }
+#qaAiMicBtn.qa-listening{ background:linear-gradient(135deg,#c084fc,#7c3aed) !important; }
 @keyframes qaDotBlink{ 0%,100%{opacity:1;} 50%{opacity:.2;} }
 #qaMicStateDot.on{ background:#e63232; animation:qaDotBlink 1s ease-in-out infinite; }
 </style>
@@ -3042,44 +3108,6 @@ function getGoalCategoryStats(categoryTitle) {
  return { expense, savings };
 }
 
-function renderGoalsProgress() {
- const box = document.getElementById('goalsProgressBox');
- if (!box) return;
- const { expense, savings } = getCurrentMonthGoalStats();
- const { savingsTarget, expenseLimit } = financialGoals;
-
- if (!savingsTarget && !expenseLimit) {
-  box.innerHTML = '<div style="color:#8b9099;font-size:12px;text-align:center;">Set a goal above to see your progress here.</div>';
-  return;
- }
-
- let html = '';
- if (savingsTarget > 0) {
-  const pct = Math.min(100, Math.round((savings / savingsTarget) * 100));
-  html += `<div style="margin-bottom:14px;">
-   <div style="display:flex;justify-content:space-between;color:#ffffff;font-size:11.5px;margin-bottom:6px;">
-    <span>Savings this month</span><span>₹${savings.toLocaleString('en-IN')} / ₹${savingsTarget.toLocaleString('en-IN')}</span>
-   </div>
-   <div style="height:8px;border-radius:5px;background:#ffffff;overflow:hidden;">
-    <div style="height:100%;width:${pct}%;background:#3ddc84;"></div>
-   </div>
-  </div>`;
- }
- if (expenseLimit > 0) {
-  const pct = Math.min(100, Math.round((expense / expenseLimit) * 100));
-  const barColor = expense > expenseLimit ? '#f06464' : (pct > 80 ? '#f6b042' : '#e8b64c');
-  html += `<div>
-   <div style="display:flex;justify-content:space-between;color:#ffffff;font-size:11.5px;margin-bottom:6px;">
-    <span>Spent this month</span><span>₹${expense.toLocaleString('en-IN')} / ₹${expenseLimit.toLocaleString('en-IN')}</span>
-   </div>
-   <div style="height:8px;border-radius:5px;background:#232838;overflow:hidden;">
-    <div style="height:100%;width:${pct}%;background:${barColor};"></div>
-   </div>
-  </div>`;
- }
- box.innerHTML = html;
-}
-
 // Shows a one-time-per-month notification if goals are met/exceeded.
 // Called after entries change and once on app open.
 function checkGoalAlerts() {
@@ -3592,7 +3620,7 @@ let currentFilter = "all";
 let entryType = "expense";
 let editEntryType = "expense";
 let analyticsType = "expense";
-let donutChartObj, trendChartObj;
+let donutChartObj, trendChartObj, methodChartObj;
 let editingEntryId = null;
 
 // ===== CATEGORIES AND DATA =====
@@ -3641,7 +3669,14 @@ function calculateAnalytics(type){
  const trendLabels = weekLabels.length ? weekLabels : ["No data"];
  const trendData = weekLabels.length ? weekLabels.map(w=>weekTotals[w]) : [0];
 
- return { total, catArr, trendLabels, trendData };
+ // group by METHOD (Cash/UPI/Bank) — used by the Payment/Receive Method bar chart
+ const methodTotals = { Cash: 0, UPI: 0, Bank: 0 };
+ monthEntries.forEach(e=>{
+  const m = ["Cash","UPI","Bank"].includes(e.method) ? e.method : "Cash";
+  methodTotals[m] += Number(e.amount||0);
+ });
+
+ return { total, catArr, trendLabels, trendData, methodTotals };
 }
 
 // ===== FUNCTIONS =====
@@ -4118,13 +4153,12 @@ function computeGoalCurrent(goal){
     // Abhi index se koi real entry connect nahi hui — standalone demo value dikhao
     return Number(goal.manualCurrent) || 0;
   }
-  const now = new Date();
-  const curMonth = now.getMonth(), curYear = now.getFullYear();
   const targetName = goalMatchKey(goal);
   let expense = 0, savings = 0;
+  // Ab month-restriction hata di — goal ka progress shuru se ab tak (continue/
+  // all-time) ki sabhi matching entries se calculate hota hai, sirf current
+  // month ki entries se nahi.
   allEntries.forEach(e => {
-    const d = new Date(e.date);
-    if (d.getFullYear() !== curYear || d.getMonth() !== curMonth) return;
     const partyName = String(e.party || "Unknown").trim().toLowerCase();
     if (partyName !== targetName) return;
     const amt = Number(e.amount) || 0;
@@ -4274,8 +4308,6 @@ function cssVar(name){
 // canvas-drawn visuals (rings/charts) ko naye colors ke saath redraw karna
 // padta hai, jo index.html ka toggleTheme() is function ko call karke karta hai.
 function refreshGoalsScreenTheme(){
-  const btn = document.getElementById("goalsThemeToggleBtn");
-  if (btn) btn.textContent = document.body.classList.contains("light-theme") ? "☀️" : "🌙";
   renderList();
   const activeScreenEl = document.querySelector("#screen-goals .gfscreen.active");
   const activeScreen = activeScreenEl ? activeScreenEl.id : "";
@@ -4745,15 +4777,136 @@ function isSavingsParty(party) {
  return p.includes("groww") || p.includes("apj emi") || p.includes("mutual fund") || p.includes("investment");
 }
 
+// ===== AI Chat: "kis party ka kitna balance hai" jaise sawaal =====
+// Privacy/speed ke liye poori entries history AI ko nahi bhejte — sirf
+// party-wise totals (kitna diya, kitna liya, net balance) local calculate
+// karke ek chhota summary AI ko bhejte hain, saath me user ka sawaal. AI
+// sirf isi summary ke base par jawaab deta hai.
+function buildAllPartyBalances(){
+ const map = {};
+ entries.forEach(e => {
+  const party = (e.party || 'Unknown').trim();
+  if (!party) return;
+  if (!map[party]) map[party] = { party, paid: 0, received: 0 };
+  const amt = Number(e.amount) || 0;
+  if (e.type === 'expense') map[party].paid += amt;       // maine inko diya
+  else if (e.type === 'income') map[party].received += amt; // maine inse liya
+ });
+ return Object.values(map).map(p => ({
+  party: p.party,
+  paid: p.paid,
+  received: p.received,
+  net: p.paid - p.received   // +ve: inse lena hai, -ve: inko dena hai
+ })).sort((a,b) => Math.abs(b.net) - Math.abs(a.net));
+}
+function buildBalanceSummaryText(){
+ const rows = buildAllPartyBalances();
+ if (rows.length === 0) return "Abhi koi entry hi nahi hai.";
+ const lines = rows.map(r => {
+  const status = r.net === 0 ? "settled/barabar" : (r.net > 0 ? `inse ₹${Math.abs(r.net).toLocaleString('en-IN')} lena hai` : `inko ₹${Math.abs(r.net).toLocaleString('en-IN')} dena hai`);
+  return `- ${r.party}: total paid ₹${r.paid.toLocaleString('en-IN')}, total received ₹${r.received.toLocaleString('en-IN')} → ${status}`;
+ });
+ const totalPaid = rows.reduce((s,r)=>s+r.paid,0);
+ const totalReceived = rows.reduce((s,r)=>s+r.received,0);
+ return `Overall: total paid ₹${totalPaid.toLocaleString('en-IN')}, total received ₹${totalReceived.toLocaleString('en-IN')}.\n\nParty-wise:\n` + lines.join("\n");
+}
+
+let aiChatMessages = []; // session-only: [{role:'user'|'ai', text}]
+
+function openAiChatModal(){
+ const existing = document.getElementById('aiChatModal');
+ if (existing) existing.remove();
+ const html = `
+ <div class="modal-bg active" id="aiChatModal">
+  <div class="modal" style="max-width:400px;padding:0;overflow:hidden;display:flex;flex-direction:column;max-height:80vh;">
+   <div class="modal-header" style="padding:14px 16px;">
+    <h3 style="font-size:15.5px;display:flex;align-items:center;gap:6px;"><i class="ti ti-message-circle"></i>Ask Balance"</h3>
+    <button class="modal-close" onclick="document.getElementById('aiChatModal').remove()">&times;</button>
+   </div>
+   <div id="aiChatList" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-height:200px;max-height:52vh;"></div>
+   <div style="padding:10px 14px 14px;border-top:1px solid #1f2430;">
+    <div id="aiChatMsg" style="font-size:11.5px;color:#8b9099;margin-bottom:6px;min-height:14px;"></div>
+    <div style="display:flex;gap:8px;">
+     <input id="aiChatInput" type="text" placeholder="Ask me anythink?" onkeydown="if(event.key==='Enter')sendAiChatMessage();"
+      style="flex:1;box-sizing:border-box;padding:11px 12px;border-radius:10px;border:1px solid #232838;background:#0d1117;color:#e8eaf0;font-size:13.5px;">
+     <button onclick="sendAiChatMessage()" id="aiChatSendBtn" style="padding:0 16px;border:none;border-radius:10px;background:linear-gradient(135deg,#f0c060,#e8b64c);color:#1a1305;font-weight:700;cursor:pointer;"><i class="ti ti-send"></i></button>
+    </div>
+   </div>
+  </div>
+ </div>`;
+ document.body.insertAdjacentHTML('beforeend', html);
+ renderAiChatMessages();
+ if (!getGeminiKey()) {
+  document.getElementById('aiChatMsg').innerHTML = `⚠️ First, enter your free AI key. — <a href="#" onclick="document.getElementById('aiChatModal').remove();openAiSettingsModal();return false;" style="color:#e8b64c;">yahan se</a>.`;
+ }
+}
+function renderAiChatMessages(){
+ const listEl = document.getElementById('aiChatList');
+ if (!listEl) return;
+ if (aiChatMessages.length === 0){
+  listEl.innerHTML = `<div style="font-size:12.5px;color:#8b9099;text-align:center;margin-top:20px;line-height:1.6;">"Ask anything about your balance - such as<br>"What is XYZ balance?"<br>"Who owes the most?"</div>`;
+  return;
+ }
+ listEl.innerHTML = aiChatMessages.map(m => `
+  <div style="align-self:${m.role==='user'?'flex-end':'flex-start'};max-width:85%;">
+   <div style="background:${m.role==='user'?'linear-gradient(135deg,#f0c060,#e8b64c)':'#1f2430'};color:${m.role==='user'?'#1a1305':'#e8eaf0'};padding:10px 13px;border-radius:14px;${m.role==='user'?'border-bottom-right-radius:4px;':'border-bottom-left-radius:4px;'}font-size:13.5px;line-height:1.5;white-space:pre-wrap;">${m.text}</div>
+  </div>`).join('');
+ listEl.scrollTop = listEl.scrollHeight;
+}
+async function sendAiChatMessage(){
+ const apiKey = getGeminiKey();
+ const inputEl = document.getElementById('aiChatInput');
+ const msgEl = document.getElementById('aiChatMsg');
+ const sendBtn = document.getElementById('aiChatSendBtn');
+ const question = inputEl.value.trim();
+ if (!question) return;
+ if (!apiKey) { openAiSettingsModal(); return; }
+
+ aiChatMessages.push({ role: 'user', text: question });
+ inputEl.value = "";
+ renderAiChatMessages();
+ msgEl.textContent = "";
+ sendBtn.disabled = true;
+ const thinkingIdx = aiChatMessages.length;
+ aiChatMessages.push({ role: 'ai', text: '💭 Soch raha hoon...' });
+ renderAiChatMessages();
+
+ try {
+  const summary = buildBalanceSummaryText();
+  const prompt = `Tum ek personal finance app ke andar ek helpful assistant ho. User apne paise ke balance/party ke baare me sawaal poochta hai. NEECHE diye gaye REAL DATA ke alawa kuch bhi mat maano ya banao — agar data me answer na ho to saaf bolo "ye jaankari mere paas nahi hai".
+
+DATA (party-wise balances, Hindi rupee me):
+${summary}
+
+User ka sawaal: "${question}"
+
+Chhota, seedha, Hinglish me jawaab do (2-4 lines se zyada nahi, jab tak zaroorat na ho). Rupee amounts ko ₹ ke saath likho.`;
+  const reply = await callGeminiText(prompt);
+  aiChatMessages[thinkingIdx] = { role: 'ai', text: reply || "Maaf karo, jawaab nahi mil paya." };
+  speakText(reply || "Maaf karo, jawaab nahi mil paya.");
+ } catch (err) {
+  aiChatMessages[thinkingIdx] = { role: 'ai', text: "⚠️ AI se jawaab nahi mila: " + err.message };
+ } finally {
+  sendBtn.disabled = false;
+  renderAiChatMessages();
+ }
+}
+
 function renderDashboardTotals(){
  const now = new Date();
  const curMonth = now.getMonth(), curYear = now.getFullYear();
  const prevDate = new Date(curYear, curMonth-1, 1);
  const prevMonth = prevDate.getMonth(), prevYear = prevDate.getFullYear();
 
- let income=0, expense=0, prevIncome=0, prevExpense=0;
+ let income=0, expense=0;
  let savings=0; // Investment-aware: only Groww/APJ EMI Bank/Mutual Fund/Other Investment affect this
  let totalBalance = 0; // Cumulative balance across all time
+ // Growth badge ke liye alag se sirf "Receive" ka is-mahine-vs-pichle-
+ // mahine comparison chahiye — BUGFIX: pehle ye poore all-time `income`
+ // (jo abhi cumulative hai) ko sirf pichle mahine ke income se compare
+ // kar raha tha, jisse number hamesha bahut bada/galat dikhta tha. Ab
+ // "is mahine" ka income alag track hota hai, sirf isi comparison ke liye.
+ let curMonthIncome = 0, prevIncome = 0;
 
  entries.forEach(e=>{
  const d = new Date(e.date);
@@ -4764,8 +4917,9 @@ function renderDashboardTotals(){
  if(e.type==='income') totalBalance+=amt;
  else if(e.type==='expense') totalBalance-=amt;
 
- // Monthly calculations
- if(d.getFullYear()===curYear && d.getMonth()===curMonth){
+ // Continue/lifetime totals for the Receive, Payment, Savings boxes —
+ // ab yeh sirf current month tak limited nahi, balki HAR entry (all-time,
+ // shuru se ab tak) count/sum hoti hai.
  if(e.type==='income') {
   income+=amt;
   if(toSavingsParty) savings -= amt; // withdrawing from an investment reduces savings
@@ -4773,8 +4927,12 @@ function renderDashboardTotals(){
   expense+=amt;
   if(toSavingsParty) savings += amt; // paying into an investment grows savings
  }
+
+ // Sirf growth badge ke liye month-wise Receive tracking
+ if(d.getFullYear()===curYear && d.getMonth()===curMonth){
+  if(e.type==='income') curMonthIncome+=amt;
  } else if(d.getFullYear()===prevYear && d.getMonth()===prevMonth){
- if(e.type==='income') prevIncome+=amt; else if(e.type==='expense') prevExpense+=amt;
+  if(e.type==='income') prevIncome+=amt;
  }
  });
 
@@ -4787,16 +4945,20 @@ function renderDashboardTotals(){
 
  
 
- // Growth % = current month total activity vs previous month (income based growth)
+ // Growth % = sirf "Receive" (income) ka is mahine vs pichle mahine
+ // comparison hai — na expense, na savings, na total balance is number me
+ // count hote. Label me ab saaf "Receive" likha hai taaki confusion na ho
+ // ki ye kis cheez ka % hai.
  let growthPct = 0;
  if(prevIncome > 0){
- growthPct = ((income - prevIncome) / prevIncome) * 100;
- } else if(income > 0){
+ growthPct = ((curMonthIncome - prevIncome) / prevIncome) * 100;
+ } else if(curMonthIncome > 0){
  growthPct = 100;
  }
  const growthEl = document.getElementById("growthLabel");
  const sign = growthPct >= 0 ? "+" : "";
- growthEl.innerHTML = `<i class="ti ti-trending-${growthPct>=0?'up':'down'}"></i> ${sign}${growthPct.toFixed(1)}% from last month`;
+ growthEl.innerHTML = `<i class="ti ti-trending-${growthPct>=0?'up':'down'}"></i> Receive ${sign}${growthPct.toFixed(1)}% vs last month`;
+ growthEl.title = "Sirf 'Receive' (income) ka is mahine vs pichle mahine comparison — expense/savings/balance isme count nahi hote.";
  growthEl.style.color = growthPct >= 0 ? "#3ddc84" : "#f06464";
 
  // Balance card amount color (+ / -)
@@ -5189,8 +5351,10 @@ function openQuickAdd(){
  document.getElementById("qaLiveCaption").value = "";
  quickAddVoiceType = null;
  document.getElementById("quickAddModal").classList.add("active");
- // Voice-only mode: mic khud-ba-khud chaalu ho jata hai, extra tap nahi karna padta.
- setTimeout(() => startQuickAddVoice(), 150);
+ // AI Mic ab primary hai aur audio actually RECORD karta hai (privacy-
+ // sensitive) — isliye khud-ba-khud shuru nahi hota, user ko khud dabana
+ // hota hai. (Pehle purana browser-mic auto-start hota tha; wo ab sirf
+ // backup hai, wo bhi manual hi rehta hai.)
 }
 
 // ===== Devanagari -> Roman (Hinglish) transliteration =====
@@ -5251,6 +5415,179 @@ function transliterateDevanagariToRoman(text){
  return out;
 }
 
+// ===== Gemini AI (free tier) — API key management + core caller =====
+// SECURITY MODEL — please read before touching this section:
+//  1) Ye key KABHI BHI is file/source-code me hardcode NAHI hoti — na
+//     kisi variable me, na kisi comment me, kahin nahi. User isse Profile
+//     > AI Voice Parsing se khud runtime par type/paste karta hai. Isliye
+//     agar ye .html file kisi repository (GitHub waghera) me commit/push
+//     ho, us repo me KABHI koi API key nahi hogi — chahe kitni baar bhi
+//     commit karo. Ye sabse zaroori guarantee hai.
+//  2) Key sirf isi device ke browser localStorage me rehti hai — kisi
+//     server pe nahi jaati (sirf Google ko jaati hai, jab AI feature
+//     actually use ho).
+//  3) Neeche localStorage me plaintext ki bajaye halka obfuscate (encode)
+//     karke store kiya jaata hai, taaki koi casually devtools/localStorage
+//     khol ke seedha key na padh le. IMPORTANT: ye asli encryption NAHI
+//     hai — jis bhi insaan ke paas is device/browser tak physical/devtools
+//     access hai, wo isse reverse bhi kar sakta hai (client-side JS me
+//     sacchi secrecy possible hi nahi hoti bina server ke). Real-world
+//     threat jo ye rokta hai: repository/source-code leakage (#1) aur
+//     casual/accidental exposure — koi bhi jaan-boojh kar dedicated tareeke
+//     se try kare to client-side kabhi 100% secure nahi ho sakta.
+function _aiKeyObfuscate(str){
+ // Simple reversible XOR + base64 — obscurity, encryption nahi (upar note dekho)
+ const salt = "expenseAppAiKey";
+ let out = "";
+ for (let i = 0; i < str.length; i++) out += String.fromCharCode(str.charCodeAt(i) ^ salt.charCodeAt(i % salt.length));
+ try { return btoa(unescape(encodeURIComponent(out))); } catch(e) { return ""; }
+}
+function _aiKeyDeobfuscate(encoded){
+ const salt = "expenseAppAiKey";
+ try {
+  const raw = decodeURIComponent(escape(atob(encoded)));
+  let out = "";
+  for (let i = 0; i < raw.length; i++) out += String.fromCharCode(raw.charCodeAt(i) ^ salt.charCodeAt(i % salt.length));
+  return out;
+ } catch(e) { return ""; }
+}
+function getGeminiKey(){
+ const stored = localStorage.getItem('geminiApiKeyEnc');
+ if (!stored) return '';
+ return _aiKeyDeobfuscate(stored).trim();
+}
+function setGeminiKey(k){
+ if (k && k.trim()) localStorage.setItem('geminiApiKeyEnc', _aiKeyObfuscate(k.trim()));
+ else localStorage.removeItem('geminiApiKeyEnc');
+ // Purana plaintext format (agar pehle se bacha ho) hamesha ke liye hata do
+ localStorage.removeItem('geminiApiKey');
+}
+
+// prompt bhejta hai, JSON mode me structured response maangta hai (schema
+// diya ho to usi shape me), aur parsed JS object/array/value wapas karta
+// hai. Agar key hi na ho to turant null (koi network call nahi).
+//
+// MODEL NOTE: "gemini-flash-lite-latest" ek Google ka official ALIAS hai
+// (hardcoded version number jaisa "gemini-2.0-flash" nahi) — ye hamesha
+// khud-ba-khud current/latest Flash-Lite model ki taraf point karta rehta
+// hai. Pehle yahan "gemini-2.0-flash" tha jo Google ne deprecate kar diya
+// (isiliye "quota limit: 0" error aa raha tha) — alias use karne se ab
+// aisa dobara nahi hoga, Google jab bhi model retire/upgrade karega, alias
+// khud naye model par shift ho jaayega. Fir bhi, agar kabhi Google is
+// alias ko bhi hata de, neeche ek fallback model try hota hai — taaki
+// dono AI features ek hi jagah break na ho.
+const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-flash-latest"];
+
+async function _geminiRawFetch(body){
+ const apiKey = getGeminiKey();
+ if (!apiKey) return null;
+ let lastErr = null;
+ for (const model of GEMINI_MODELS) {
+  try {
+   const resp = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
+    { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }
+   );
+   if (!resp.ok) {
+    let msg = "AI request failed (" + resp.status + ")";
+    try { const errBody = await resp.json(); if (errBody?.error?.message) msg = errBody.error.message; } catch(e){}
+    lastErr = new Error(msg);
+    continue; // try next model in the fallback list
+   }
+   const data = await resp.json();
+   const textOut = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+   if (!textOut) { lastErr = new Error("AI se koi jawab nahi mila"); continue; }
+   return textOut;
+  } catch (err) {
+   lastErr = err;
+  }
+ }
+ throw lastErr || new Error("AI request failed");
+}
+
+async function callGeminiJSON(prompt, schema){
+ const apiKey = getGeminiKey();
+ if (!apiKey) return null;
+ const body = {
+  contents: [{ role: "user", parts: [{ text: prompt }] }],
+  generationConfig: {
+   responseMimeType: "application/json",
+   ...(schema ? { responseSchema: schema } : {})
+  }
+ };
+ const textOut = await _geminiRawFetch(body);
+ return JSON.parse(textOut);
+}
+
+// Free-form text reply chahiye ho (JSON nahi, jaise chat ke liye) — same
+// endpoint, bas JSON mode off.
+async function callGeminiText(prompt){
+ const apiKey = getGeminiKey();
+ if (!apiKey) return null;
+ const body = { contents: [{ role: "user", parts: [{ text: prompt }] }] };
+ const textOut = await _geminiRawFetch(body);
+ return textOut ? textOut.trim() : textOut;
+}
+
+// ===== AI Settings modal (Gemini API key) =====
+function openAiSettingsModal(){
+ const existing = document.getElementById('aiSettingsModal');
+ if (existing) existing.remove();
+ const currentKey = getGeminiKey();
+ const masked = currentKey ? (currentKey.slice(0,4) + '••••••••' + currentKey.slice(-4)) : '';
+ const html = `
+ <div class="modal-bg active" id="aiSettingsModal">
+  <div class="modal" style="max-width:380px;">
+   <div class="modal-header">
+    <h3 style="font-size:16px;"><i class="ti ti-sparkles"></i> AI Voice Parsing (Free)</h3>
+    <button class="modal-close" onclick="document.getElementById('aiSettingsModal').remove()">&times;</button>
+   </div>
+   <div class="modal-body">
+    <div style="font-size:12.5px;color:#8b9099;line-height:1.6;margin-bottom:12px;">
+     This uses Google's Gemini AI — to understand voice entries and for 'chat with balance'. Your own <b>free</b> API key chahiye (credit card nahi lagta). Free key 1 minute me yahan se milti hai:
+     <br><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#e8b64c;">aistudio.google.com/apikey →</a>
+    </div>
+    ${currentKey ? `<div style="font-size:12px;color:#3ddc84;margin-bottom:10px;">✅ Key connected: ${masked}</div>` : `<div style="font-size:12px;color:#f0a860;margin-bottom:10px;">⚠️ Abhi koi key nahi daali hai — AI features off rahenge, app normal (local) parsing use karta rahega.</div>`}
+    <div style="position:relative;margin-bottom:10px;">
+     <input id="aiKeyInput" type="password" placeholder="Paste Gemini API key here" value="" autocomplete="off"
+      style="width:100%;box-sizing:border-box;padding:11px 40px 11px 12px;border-radius:10px;border:1px solid #232838;background:#0d1117;color:#e8eaf0;font-size:13.5px;font-family:monospace;">
+     <i class="ti ti-eye" id="aiKeyToggleIcon" onclick="toggleAiKeyVisibility()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#8b9099;cursor:pointer;font-size:16px;"></i>
+    </div>
+    <div style="font-size:11px;color:#6b7280;margin-bottom:10px;line-height:1.5;">🔒 This key is never saved in this repository — it is only stored in your local browser (mildly obfuscated).</div>
+    <div style="display:flex;gap:8px;">
+     <button onclick="saveAiSettingsKey()" style="flex:1;padding:11px 0;border:none;border-radius:10px;background:linear-gradient(135deg,#f0c060,#e8b64c);color:#1a1305;font-weight:700;font-size:13.5px;cursor:pointer;">Save Key</button>
+     ${currentKey ? `<button onclick="clearAiSettingsKey()" style="padding:11px 14px;border-radius:10px;border:1px solid #f06464;background:transparent;color:#f06464;font-weight:600;font-size:13px;cursor:pointer;">Remove</button>` : ''}
+    </div>
+    <div id="aiSettingsMsg" style="font-size:12px;color:#8b9099;margin-top:10px;"></div>
+   </div>
+  </div>
+ </div>`;
+ document.body.insertAdjacentHTML('beforeend', html);
+}
+function toggleAiKeyVisibility(){
+ const input = document.getElementById('aiKeyInput');
+ const icon = document.getElementById('aiKeyToggleIcon');
+ if (!input) return;
+ const showing = input.type === 'text';
+ input.type = showing ? 'password' : 'text';
+ if (icon) { icon.classList.toggle('ti-eye', showing); icon.classList.toggle('ti-eye-off', !showing); }
+}
+function saveAiSettingsKey(){
+ const val = document.getElementById('aiKeyInput').value.trim();
+ const msgEl = document.getElementById('aiSettingsMsg');
+ if (!val) { msgEl.textContent = "Pehle key paste karo."; msgEl.style.color = "#f06464"; return; }
+ setGeminiKey(val);
+ msgEl.textContent = "✅ Saved! AI features ab on hain.";
+ msgEl.style.color = "#3ddc84";
+ setTimeout(() => { const m = document.getElementById('aiSettingsModal'); if (m) m.remove(); }, 900);
+}
+function clearAiSettingsKey(){
+ setGeminiKey(null);
+ const m = document.getElementById('aiSettingsModal');
+ if (m) m.remove();
+ openAiSettingsModal();
+}
+
 // ===== Voice entry: Google Voice Search jaisa — bolte waqt text live
 // screen pe dikhta rehta hai (interim results), rukte hi final ho jaata hai. =====
 let quickAddActiveRecognition = null; // ek waqt me sirf ek hi session chalega
@@ -5259,13 +5596,12 @@ let qaRestarting = false;
 let qaUserStopped = false;   // true jab user khud mic dabake roke
 let qaChainCount = 0;
 const QA_MAX_CHAIN = 30;     // safety cap — kabhi bhi hamesha ke liye loop na ho
-// Jab session restart hota hai (chahe no-speech ki wajah se ho ya normal
-// pause ki wajah se), ek naya `rec` object banta hai jiska apna khaali
-// e.results shuru se start hota hai. Pehle is wajah se pichhle session me
-// jo bhi final text ban chuka tha, wo naye session ke pehle onresult par
-// poori tarah overwrite ho ke kho jaata tha — isiliye lambe sentence beech
-// me hi katta hua lagta tha. Ab qaAccumulatedFinal isko restarts ke paar
-// bhi save rakhta hai.
+// Jab session restart hota hai, ek naya `rec` object banta hai jiska apna
+// khaali e.results shuru se start hota hai. Pehle is wajah se pichhle
+// session me jo bhi final text ban chuka tha, wo naye session ke pehle
+// onresult par poori tarah overwrite ho ke kho jaata tha — isiliye lambe
+// sentence beech me hi katta hua lagta tha. Ab qaAccumulatedFinal isko
+// restarts ke paar bhi save rakhta hai.
 let qaAccumulatedFinal = "";
 
 function startQuickAddVoice(){
@@ -5273,7 +5609,7 @@ function startQuickAddVoice(){
  const captionEl = document.getElementById('qaLiveCaption');
  const micBtn = document.getElementById('qaMicBtn');
  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
- if (!SR) { statusEl.textContent = "⚠️ Ye browser voice input support nahi karta"; return; }
+ if (!SR) { statusEl.textContent = "⚠️This browser does not support voice input."; return; }
 
  // Chrome/Web Speech API sirf secure context (https:// ya localhost) me
  // mic allow karta hai — file:// ya plain http:// pe hamesha "not-allowed"
@@ -5308,30 +5644,32 @@ function runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR){
  const stateDotEl = document.getElementById('qaMicStateDot');
  const stateTextEl = document.getElementById('qaMicStateText');
  if (stateDotEl) stateDotEl.classList.add('on');
- if (stateTextEl) { stateTextEl.textContent = "Mic ON — sun raha hoon"; stateTextEl.style.color = "#e63232"; }
+ if (stateTextEl) { stateTextEl.textContent = "Mic ON — I'm listening..."; stateTextEl.style.color = "#e63232"; }
 
  const rec = new SR();
  quickAddActiveRecognition = rec;
  // hi-IN use kiya hai kyunki ye hi actually bola gaya Hindi audio sunta/
- // samajhta hai. hi-IN ka result Devanagari script me aata hai, jisko hum
- // neeche khud Roman/Hinglish me convert kar dete hain
- // (transliterateDevanagariToRoman) taaki screen par Hinglish text dikhe
- // aur party names (jo Roman letters me stored hain) se bhi match ho sake.
+ // samajhta hai (en-IN Hindi bolne par kuch sunta hi nahi tha — isiliye
+ // mic "on" dikhta tha par text aata hi nahi tha). hi-IN ka result
+ // Devanagari script me aata hai, jisko hum neeche khud Roman/Hinglish me
+ // convert kar dete hain (transliterateDevanagariToRoman) taaki screen par
+ // Hinglish text dikhe aur party names (jo Roman letters me stored hain)
+ // se bhi match ho sake.
  rec.lang = "hi-IN";
  rec.interimResults = true;   // live, typing-as-you-speak effect
  // continuous=false — YE JAAN-BOOJH KAR false rakha hai. continuous:true
  // Android Chrome me ek jaana-mana bug trigger karta hai: engine wahi
  // pichla suna hua shabd/phrase baar-baar khud hi repeat karke bolta rehta
- // hai (jaise "aaraesa 20 aaraesa 20 aaraesa 20..." — exactly wahi problem
- // jo screenshot me dikhi). Fix: har utterance ek chhota, bounded session
- // hai (continuous=false), aur neeche onend me hum khud usse turant naya
- // session chain kar dete hain — isse "continuous sunte rehna" wala UX
- // milta hai lekin bina us repeat-loop bug ke.
+ // hai (jaise "aaraesa 20 aaraesa 20 aaraesa 20..."). Fix: har utterance
+ // ek chhota, bounded session hai (continuous=false), aur neeche onend me
+ // hum khud usse turant naya session chain kar dete hain — isse
+ // "continuous sunte rehna" wala UX milta hai lekin bina us repeat-loop
+ // bug ke.
  rec.continuous = false;
 
  const haloEl = document.getElementById('qaMicHalo');
  if (haloEl) haloEl.classList.add('listening');
- rec.onstart = () => statusEl.textContent = "🔴 Sun raha hoon...";
+ rec.onstart = () => statusEl.textContent = "🔴 listening...";
 
  rec.onresult = (e) => {
   let interim = "", sessionFinal = "";
@@ -5358,16 +5696,15 @@ function runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR){
   if (sessionFinal) {
    qaAccumulatedFinal = combinedFinal;
    document.getElementById('qaLine').value = parseVoiceToQuickAddLine(qaAccumulatedFinal);
-   statusEl.textContent = `✅ "${qaAccumulatedFinal}" — theek hai to Confirm & Save dabao (ya upar text edit karo)`;
+   statusEl.textContent = `✅ "${qaAccumulatedFinal}" — Okay, tap Confirm(or edit text above).`;
   }
  };
 
- // Ek utterance/session khatam hone ke baad (chahe kaamyabi se final result
- // mila ho, ya no-speech ki wajah se) — agar user ne khud mic dabake roka
- // nahi hai, to turant ek naya chhota session shuru kar do. Isse mic
- // "continuous" jaisa lagta hai (jab tak khud na roko sunta rehta hai),
- // lekin har session bounded hone ki wajah se wo repeat-loop bug nahi
- // aata jo continuous:true se aata tha.
+ // Ek utterance/session khatam hone ke baad — agar user ne khud mic
+ // dabake roka nahi hai, to turant ek naya chhota session shuru kar do.
+ // Isse mic "continuous" jaisa lagta hai (jab tak khud na roko sunta
+ // rehta hai), lekin har session bounded hone ki wajah se wo repeat-loop
+ // bug nahi aata jo continuous:true se aata tha.
  function chainNextSessionIfNeeded(){
   if (qaUserStopped) return false;
   if (qaChainCount >= QA_MAX_CHAIN) {
@@ -5381,6 +5718,19 @@ function runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR){
   return true;
  }
 
+ // Mic poori tarah band ho gaya. UI ko "OFF" dikhao, aur agar kuch bola
+ // gaya tha to turant AI ko bhej do taaki wo seedha entry samajh ke
+ // taiyar kar de (AI available na ho to jo local parsing already ho chuki
+ // hai wahi rehti hai — kuch tootta nahi).
+ function finalizeQaMicOff(offMessage){
+  micBtn.style.boxShadow = "0 6px 16px rgba(230,50,50,.4)";
+  micBtn.classList.remove('qa-listening');
+  if (haloEl) haloEl.classList.remove('listening');
+  if (stateDotEl) stateDotEl.classList.remove('on');
+  if (stateTextEl) { stateTextEl.textContent = offMessage; stateTextEl.style.color = "#888"; }
+  if (qaAccumulatedFinal.trim() && typeof aiImproveQuickAddText === 'function') aiImproveQuickAddText(true);
+ }
+
  rec.onerror = (e) => {
   if (e.error === 'no-speech') {
    // Kuch nahi suna is chhote se session me (gap ya thodi der ki khamoshi)
@@ -5388,30 +5738,19 @@ function runQuickAddVoiceSession(statusEl, captionEl, micBtn, SR){
    if (chainNextSessionIfNeeded()) return;
   }
   if (e.error === 'not-allowed') {
-   statusEl.textContent = "⚠️ Mic blocked hai — browser ke address bar me 🔒/site-settings me mic 'Allow' karo, phir mic dabao.";
+   statusEl.textContent = "⚠️ Mic blocked — Allow mic in browser settings 🔒, then tap the mic.";
   } else if (e.error === 'no-speech') {
-   statusEl.textContent = "Kuch suna nahi — mic dabake dobara bolo, thoda saaf aur paas se bolo.";
+   statusEl.textContent = "Couldn't hear you — tap the mic and try again. Speak clearly and closer.";
   } else if (e.error !== 'aborted') {
    statusEl.textContent = "Error: " + e.error;
   }
-  micBtn.style.boxShadow = "0 6px 16px rgba(230,50,50,.4)";
-  micBtn.classList.remove('qa-listening');
-  if (haloEl) haloEl.classList.remove('listening');
-  if (stateDotEl) stateDotEl.classList.remove('on');
-  if (stateTextEl) { stateTextEl.textContent = "Mic band ho gaya"; stateTextEl.style.color = "#888"; }
+  finalizeQaMicOff("Mic is off now");
  };
  rec.onend = () => {
   if (quickAddActiveRecognition === rec) quickAddActiveRecognition = null;
   if (qaRestarting) { qaRestarting = false; return; }   // chained restart already scheduled, UI abhi "ON" hi rahega
-  // Normal end — is utterance ka result mil chuka (ya khaali tha). Agar
-  // user ne khud stop nahi kiya, to agla chained session shuru kar do
-  // taaki lamba, multi-sentence bolna bhi capture ho jaaye.
   if (chainNextSessionIfNeeded()) return;
-  micBtn.style.boxShadow = "0 6px 16px rgba(230,50,50,.4)";
-  micBtn.classList.remove('qa-listening');
-  if (haloEl) haloEl.classList.remove('listening');
-  if (stateDotEl) stateDotEl.classList.remove('on');
-  if (stateTextEl) { stateTextEl.textContent = "Mic band hai — dabao dobara bolne ke liye"; stateTextEl.style.color = "#888"; }
+  finalizeQaMicOff("The mic is off — click to speak again.");
  };
 
  try { rec.start(); } catch(err) { statusEl.textContent = "Error: " + err.message; }
@@ -5468,10 +5807,614 @@ function onQaLiveCaptionEdit(){
  statusEl.textContent = `✅ "${text}" — theek hai to Confirm & Save dabao`;
 }
 
+// AI (Gemini, free tier) se text ko parse karta hai — amount/party/method/
+// type nikalta hai, local regex-based parseVoiceToQuickAddLine() se zyada
+// samajhdaari se. `auto=true` matlab ye mic band hone par khud-ba-khud
+// chala hai (is case me chup-chaap fail ho sakta hai, koi bhi UI-blocking
+// error nahi dikhega — jo already local-parse se ban chuka hai wahi
+// dikhta rahega). `auto=false` matlab user ne khud button dabaya hai
+// (jaise text edit karne ke baad dobara try karne ke liye).
+async function aiImproveQuickAddText(auto){
+ const apiKey = getGeminiKey();
+ const captionEl = document.getElementById('qaLiveCaption');
+ const statusEl = document.getElementById('qaVoiceStatus');
+ const btn = document.getElementById('qaAiBtn');
+ const stateTextEl = document.getElementById('qaMicStateText');
+ const text = captionEl.value.trim();
+
+ if (!apiKey) {
+  if (!auto) openAiSettingsModal();
+  return; // auto mode: chup-chaap skip, local parse pehle se dikh rahi hai
+ }
+ if (!text) {
+  if (!auto) statusEl.textContent = "Pehle kuch bolo ya likho, phir AI se try karo.";
+  return;
+ }
+
+ const sel = document.getElementById('partySel');
+ const partyNames = sel ? Array.from(sel.options).map(o => o.value).filter(Boolean) : [];
+ const prevBtnHtml = btn ? btn.innerHTML : '';
+ if (btn) { btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader-2"></i> AI samajh raha hai...'; }
+ if (auto) statusEl.textContent = "✨ AI se entry samjhi ja rahi hai...";
+
+ try {
+  // BUGFIX: pehle ye hamesha maan leta tha ki text ek TRANSACTION hai —
+  // agar koi sawaal type/edit kare (jaise "adarsh ka balance kya he?"),
+  // to amount/party khaali/galat nikalta tha, aur Confirm dabane par
+  // "Sahi amount likho" jaisa confusing error deta tha. Ab AI Mic (audio)
+  // ki tarah yahan bhi pehle "intent" (transaction/question) decide hota
+  // hai — sawaal ho to seedha jawaab milta hai, entry form ko haath nahi
+  // lagaya jaata.
+  const balanceSummary = buildBalanceSummaryText();
+  const schema = {
+   type: "OBJECT",
+   properties: {
+    intent: { type: "STRING", enum: ["transaction", "question"] },
+    amount: { type: "NUMBER" },
+    party: { type: "STRING" },
+    method: { type: "STRING", enum: ["Cash", "UPI", "Bank"] },
+    type: { type: "STRING", enum: ["income", "expense"] },
+    notes: { type: "STRING" },
+    answer: { type: "STRING" }
+   },
+   required: ["intent"]
+  };
+  const prompt = `Tum ek Hindi/Hinglish personal-finance app ke andar ek assistant ho. User ne ye likha: "${text}"
+
+Pehle decide karo "intent" kya hai:
+1) TRANSACTION — ek expense/income bata raha hai (jaise "200 adarsh ko cash diye"). Is case me "intent":"transaction" do, aur:
+   - amount (number, sirf digits), party (naam), method ("Cash"/"UPI"/"Bank" — na bola ho to "Cash"), type ("expense" agar diya/pay kiya, "income" agar mila/receive hua), notes (sirf extra context, warna "").
+   Existing party names (close match kare to WAHI naam exact spelling ke saath use karo): ${JSON.stringify(partyNames)}
+
+2) QUESTION — balance/party ke baare me sawaal poochh raha hai (jaise "adarsh ka balance kya hai"). Is case me "intent":"question" do, aur:
+   - answer: NEECHE diye REAL DATA ke base par chhota Hinglish jawaab (2-3 lines se zyada nahi). Data me na ho to saaf "ye jaankari mere paas nahi hai" bolo — kabhi kuch mat banao.
+
+DATA (sawaal ke jawaab ke liye — party-wise balances):
+${balanceSummary}
+
+EXAMPLE 1 — "400 ritesh ko cash pay kiye advance me" -> {"intent":"transaction","amount":400,"party":"Ritesh","method":"Cash","type":"expense","notes":"advance me"}
+EXAMPLE 2 — "adarsh ka balance kya he?" -> {"intent":"question","answer":"Adarsh se aapko ₹200 lene hain."}`;
+
+  const result = await callGeminiJSON(prompt, schema);
+  if (!result) throw new Error("AI key set nahi hai");
+
+  if (result.intent === "question") {
+   // Ye ek sawaal tha, entry nahi — qaLine ko chhedte nahi taaki galti se
+   // koi khaali/galat entry Confirm par save na ho jaaye.
+   const answer = (result.answer || "Maaf karo, jawaab nahi mil paya.").trim();
+   document.getElementById('qaLine').value = "";
+   statusEl.textContent = `💬 ${answer}`;
+   if (stateTextEl) { stateTextEl.textContent = "🔊 AI bol raha hai..."; stateTextEl.style.color = "#a855f7"; }
+   speakText(answer, () => {
+    if (stateTextEl) { stateTextEl.textContent = "AI Mic band hai — entry bolo ya sawaal poochho"; stateTextEl.style.color = "#888"; }
+   });
+   return;
+  }
+
+  const matchedParty = matchPartyName(result.party) || result.party || "";
+  const amount = Number(result.amount) || "";
+  const method = ["Cash", "UPI", "Bank"].includes(result.method) ? result.method : "Cash";
+  if (result.type === "income" || result.type === "expense") quickAddVoiceType = result.type;
+  const cleanNotes = (result.notes || "").trim();
+
+  document.getElementById('qaLine').value = `${amount},${matchedParty},,${method},${cleanNotes || text}`;
+  statusEl.textContent = `✨ AI ne samjha: ₹${amount || '?'} · ${matchedParty || '(party set nahi)'} · ${method}${cleanNotes ? ' · ' + cleanNotes : ''} — theek hai to Confirm dabao (ya text edit karo)`;
+ } catch (err) {
+  // AI fail ho gaya — jo local (regex) parsing pehle se ho chuki thi wahi
+  // qaLine me hai, entry banna nahi rukega. Bas ek chhota sa notice.
+  onQaLiveCaptionEdit();
+  statusEl.textContent = auto
+   ? `⚠️ AI abhi available nahi hai (${err.message}) — normal parsing se text bhara hai, check karke Confirm dabao.`
+   : "⚠️ AI se nahi ho paya: " + err.message;
+ } finally {
+  if (btn) { btn.disabled = false; btn.innerHTML = prevBtnHtml; }
+ }
+}
+
+// ===== Voice OUTPUT (TTS) — Gemini Live/Google Assistant jaisa spoken
+// reply. Browser ka built-in SpeechSynthesis use karta hai (koi extra
+// API key ya cost nahi). Hindi voice mile to wahi use hoti hai, warna
+// device ki default voice se hi bol deta hai — dono cases me kaam karta
+// hai. onEnd callback milta hai taaki speech khatam hone ke BAAD koi
+// agla step (jaise entry auto-save) chalaya ja sake.
+let _ttsVoicesCache = null;
+function _pickHindiVoice(){
+ try {
+  if (!_ttsVoicesCache || _ttsVoicesCache.length === 0) {
+   _ttsVoicesCache = window.speechSynthesis.getVoices() || [];
+  }
+  return _ttsVoicesCache.find(v => v.lang && v.lang.toLowerCase().startsWith('hi')) || null;
+ } catch(e) { return null; }
+}
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+ window.speechSynthesis.onvoiceschanged = () => { _ttsVoicesCache = window.speechSynthesis.getVoices(); };
+}
+function speakText(text, onEnd){
+ try {
+  if (!text || !('speechSynthesis' in window)) { if (onEnd) onEnd(); return; }
+  window.speechSynthesis.cancel(); // pichli koi speech chal rahi ho to rok do
+  const utter = new SpeechSynthesisUtterance(text);
+  const hv = _pickHindiVoice();
+  utter.lang = hv ? hv.lang : 'hi-IN';
+  if (hv) utter.voice = hv;
+  utter.rate = 1;
+  utter.pitch = 1;
+  let done = false;
+  const finish = () => { if (!done) { done = true; if (onEnd) onEnd(); } };
+  utter.onend = finish;
+  utter.onerror = finish;
+  window.speechSynthesis.speak(utter);
+  // Safety fallback: agar kisi wajah se onend/onerror kabhi na chale
+  // (kuch browsers me rare bug hota hai), to bhi agla step atka na rahe.
+  setTimeout(finish, Math.max(4000, text.length * 90));
+ } catch(e) {
+  if (onEnd) onEnd();
+ }
+}
+
+// ===== AI Mic (PRIMARY) — audio seedha Gemini ko jaata hai =====
+// Purane mic se fark: purana mic pehle browser ke apne (kabhi kabhi kamzor)
+// SpeechRecognition se Devanagari text banata tha, phir usse Roman me
+// convert karke, phir alag se AI ko bhejta tha (2 step, thoda lossy). Ye
+// naya AI Mic seedha recorded audio Gemini ko bhejta hai — Gemini khud
+// sunta hai (jo browser ke built-in engine se kaafi behtar samajhta hai)
+// aur ek hi call me transcript + amount/party/method/type sab nikal deta
+// hai. Isiliye ye ab MAIN/default mic hai; purana mic sirf backup hai.
+// ===== AI Mic 3D Orb (Three.js) — purely visual, state-reactive layer
+// behind the mic button. 4 states: idle (grey/calm) -> listening (pink/
+// fast, jab user bol raha ho) -> thinking (violet/pulse, jab Gemini
+// process kar raha ho) -> speaking (gold/energetic, jab TTS bol raha ho)
+// -> wapas idle. Agar WebGL/Three.js kisi wajah se load na ho paaye
+// (purana browser, blocked CDN, low-end device), ye function chup-chaap
+// skip ho jaata hai — AI Mic ka recording/parsing/save logic isse
+// bilkul depend nahi karta, sirf ek visual extra hai.
+window.__aiOrbState = 'idle';
+function setAiOrbState(state){
+ window.__aiOrbState = state;
+ if (window.__aiOrbApi) window.__aiOrbApi.setState(state);
+}
+function initAiOrb(){
+ if (window.__aiOrbInited || window.__aiOrbFailed) return;
+ const sharpCanvas = document.getElementById('qaAiOrbSharp');
+ const glowCanvas = document.getElementById('qaAiOrbGlow');
+ if (!sharpCanvas || !glowCanvas) return;
+
+ function build(){
+  if (window.__aiOrbInited) return;
+  if (typeof THREE === 'undefined') { window.__aiOrbFailed = true; return; }
+  try {
+   window.__aiOrbInited = true;
+   const SIZE = 112;
+   const STATE_PARAMS = {
+    idle:      { amp:0.16, speed:0.35, intensity:0.85, hueSpeed:0.0,  hueBase:0.62 },
+    listening: { amp:0.34, speed:0.95, intensity:1.10, hueSpeed:0.6,  hueBase:0.86 },
+    thinking:  { amp:0.22, speed:0.60, intensity:0.95, hueSpeed:0.25, hueBase:0.70 },
+    speaking:  { amp:0.42, speed:1.30, intensity:1.20, hueSpeed:0.9,  hueBase:0.12 }
+   };
+
+   const scene = new THREE.Scene();
+   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+   camera.position.set(0, 0, 3.6);
+
+   function makeRenderer(canvas){
+    const r = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+    r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    r.setSize(SIZE, SIZE, false);
+    return r;
+   }
+   const rendererSharp = makeRenderer(sharpCanvas);
+   const rendererGlow  = makeRenderer(glowCanvas);
+
+   const uniforms = {
+    uTime:{value:0}, uAmp:{value:0.16}, uSpeed:{value:0.35},
+    uHueShift:{value:0}, uIntensity:{value:0.85}, uHueBase:{value:0.62}
+   };
+   const vertexShader = `
+    uniform float uTime; uniform float uAmp; uniform float uSpeed;
+    varying vec3 vNormal; varying float vNoise;
+    float turb(vec3 p){
+     float n = 0.0;
+     n += sin(p.x*1.8 + p.y*1.3 + p.z*1.1) * 0.5;
+     n += sin(p.x*3.1 - p.y*2.0 + p.z*2.6) * 0.28;
+     n += sin(p.x*4.7 + p.y*4.1 - p.z*3.3) * 0.14;
+     return n;
+    }
+    void main(){
+     vNormal = normal;
+     float t = uTime * uSpeed;
+     float n = turb(position * 1.6 + vec3(t, t*0.7, -t*0.9));
+     vNoise = n;
+     vec3 displaced = position + normal * (n * uAmp);
+     vec4 mv = modelViewMatrix * vec4(displaced, 1.0);
+     gl_Position = projectionMatrix * mv;
+    }
+   `;
+   const fragmentShader = `
+    uniform float uTime; uniform float uHueShift; uniform float uIntensity; uniform float uHueBase;
+    varying vec3 vNormal; varying float vNoise;
+    vec3 hsl2rgb(vec3 c){
+     vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0);
+     return c.z + c.y * (rgb - 0.5) * (1.0 - abs(2.0*c.z-1.0));
+    }
+    void main(){
+     float hue = fract(uHueBase + vNormal.y*0.18 + vNormal.x*0.10 + uTime*0.03*uHueShift + vNoise*0.05);
+     float sat = 0.75;
+     float light = 0.52 + vNoise*0.12;
+     vec3 col = hsl2rgb(vec3(hue, sat, light));
+     float fres = pow(1.0 - abs(vNormal.z), 2.2);
+     col += fres * vec3(0.35, 0.25, 0.55);
+     gl_FragColor = vec4(col * uIntensity, 1.0);
+    }
+   `;
+   const material = new THREE.ShaderMaterial({ uniforms, vertexShader, fragmentShader });
+   const geometry = new THREE.IcosahedronGeometry(1.0, 20);
+   const orb = new THREE.Mesh(geometry, material);
+   scene.add(orb);
+
+   const clock = new THREE.Clock();
+   let currentState = 'idle';
+   window.__aiOrbApi = { setState:(s)=>{ if (STATE_PARAMS[s]) currentState = s; } };
+
+   function animate(){
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+    uniforms.uTime.value = t;
+    const p = STATE_PARAMS[currentState] || STATE_PARAMS.idle;
+    uniforms.uAmp.value       += (p.amp       - uniforms.uAmp.value)       * 0.06;
+    uniforms.uSpeed.value     += (p.speed     - uniforms.uSpeed.value)     * 0.06;
+    uniforms.uIntensity.value+= (p.intensity - uniforms.uIntensity.value) * 0.06;
+    uniforms.uHueShift.value  += (p.hueSpeed  - uniforms.uHueShift.value)  * 0.08;
+    uniforms.uHueBase.value   += (p.hueBase   - uniforms.uHueBase.value)   * 0.04;
+
+    const scaleTarget = currentState === 'idle' ? 1.0 : (currentState === 'speaking' ? 1.14 : 1.08);
+    orb.scale.x += (scaleTarget - orb.scale.x) * 0.06;
+    orb.scale.y += (scaleTarget - orb.scale.y) * 0.06;
+    orb.scale.z += (scaleTarget - orb.scale.z) * 0.06;
+    orb.rotation.y += currentState === 'idle' ? 0.0015 : 0.004;
+    orb.rotation.x += 0.0009;
+
+    rendererSharp.render(scene, camera);
+    rendererGlow.render(scene, camera);
+   }
+   animate();
+  } catch(e) {
+   // Kisi bhi WebGL/driver issue par chup-chaap fallback — mic button
+   // aur uska poora flow bilkul normal kaam karta rehta hai.
+   window.__aiOrbFailed = true;
+  }
+ }
+
+ if (typeof THREE !== 'undefined') { build(); return; }
+ if (window.__threeJsLoading) {
+  const iv = setInterval(()=>{ if (typeof THREE !== 'undefined'){ clearInterval(iv); build(); } }, 150);
+  return;
+ }
+ window.__threeJsLoading = true;
+ const s = document.createElement('script');
+ s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+ s.onload = () => { window.__threeJsLoading = false; build(); };
+ s.onerror = () => { window.__threeJsLoading = false; window.__aiOrbFailed = true; };
+ document.head.appendChild(s);
+}
+
+let aiMicRecorder = null;
+let aiMicChunks = [];
+let aiMicActive = false;
+
+function blobToBase64(blob){
+ return new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+   const result = reader.result || "";
+   const base64 = String(result).split(',')[1] || "";
+   resolve(base64);
+  };
+  reader.onerror = reject;
+  reader.readAsDataURL(blob);
+ });
+}
+
+// ===== BUGFIX: audio format =====
+// Asli waja jiske chalte "bolne par text show nahi hota tha" aur "entry
+// kabhi sahi kabhi galat" — MediaRecorder browser me audio ko "webm/opus"
+// (Chrome/Android) ya "mp4/aac" (Safari/iOS) me record karta hai. Gemini
+// ke generateContent audio-understanding endpoint ke liye Google ke apne
+// docs sirf WAV/MP3/AIFF/AAC/OGG/FLAC ko guaranteed-supported batate hain
+// — webm reliably kaam nahi karta, isliye request kabhi silently fail ho
+// jaata tha (caption khaali reh jaata) aur kabhi jo thoda-bahut samjha
+// jaata wo galat/adhoora hota. Fix: recording ke baad audio ko humesha
+// WAV (universally supported format) me khud convert karke bhejte hain —
+// isse har device/browser par reliably kaam karega.
+async function blobToWavBase64(blob){
+ const arrayBuffer = await blob.arrayBuffer();
+ const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+ const audioCtx = new AudioCtxClass();
+ let audioBuffer;
+ try {
+  audioBuffer = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
+ } finally {
+  try { audioCtx.close(); } catch(e){}
+ }
+ const wavBlob = _encodeWavFromAudioBuffer(audioBuffer);
+ return await blobToBase64(wavBlob);
+}
+function _encodeWavFromAudioBuffer(audioBuffer){
+ // Mono me downmix karte hain (Gemini ko stereo ki zaroorat nahi, aur
+ // file size bhi chhota rehta hai — upload jaldi hota hai).
+ const numFrames = audioBuffer.length;
+ let samples;
+ if (audioBuffer.numberOfChannels === 1) {
+  samples = audioBuffer.getChannelData(0);
+ } else {
+  const ch0 = audioBuffer.getChannelData(0);
+  const ch1 = audioBuffer.getChannelData(1);
+  samples = new Float32Array(numFrames);
+  for (let i = 0; i < numFrames; i++) samples[i] = (ch0[i] + ch1[i]) / 2;
+ }
+ const sampleRate = audioBuffer.sampleRate;
+ const bytesPerSample = 2; // 16-bit PCM
+ const blockAlign = bytesPerSample; // mono
+ const byteRate = sampleRate * blockAlign;
+ const dataSize = samples.length * bytesPerSample;
+ const buffer = new ArrayBuffer(44 + dataSize);
+ const view = new DataView(buffer);
+ const writeString = (offset, str) => { for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i)); };
+ writeString(0, 'RIFF');
+ view.setUint32(4, 36 + dataSize, true);
+ writeString(8, 'WAVE');
+ writeString(12, 'fmt ');
+ view.setUint32(16, 16, true);       // PCM chunk size
+ view.setUint16(20, 1, true);        // audio format = PCM
+ view.setUint16(22, 1, true);        // channels = mono
+ view.setUint32(24, sampleRate, true);
+ view.setUint32(28, byteRate, true);
+ view.setUint16(32, blockAlign, true);
+ view.setUint16(34, 16, true);       // bits per sample
+ writeString(36, 'data');
+ view.setUint32(40, dataSize, true);
+ let offset = 44;
+ for (let i = 0; i < samples.length; i++, offset += 2) {
+  const s = Math.max(-1, Math.min(1, samples[i]));
+  view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+ }
+ return new Blob([view], { type: 'audio/wav' });
+}
+
+// Audio + prompt Gemini ko bhejta hai. Ab do kaam ek hi mic se hote hain:
+// 1) Transaction bolo ("200 adarsh ko cash pay kiye") — entry ke fields milte hain
+// 2) Sawaal poochho ("adarsh ka balance kitna hai") — seedha "answer" milta hai
+// AI khud decide karta hai ki intent kya hai ("intent": "transaction"/"question").
+async function aiMicToEntry(base64Audio, mimeType){
+ const sel = document.getElementById('partySel');
+ const partyNames = sel ? Array.from(sel.options).map(o => o.value).filter(Boolean) : [];
+ const balanceSummary = buildBalanceSummaryText(); // sawaal ka jawaab isi data se milta hai
+ const schema = {
+  type: "OBJECT",
+  properties: {
+   intent: { type: "STRING", enum: ["transaction", "question"] },
+   transcript: { type: "STRING" },
+   amount: { type: "NUMBER" },
+   party: { type: "STRING" },
+   method: { type: "STRING", enum: ["Cash", "UPI", "Bank"] },
+   type: { type: "STRING", enum: ["income", "expense"] },
+   notes: { type: "STRING" },
+   answer: { type: "STRING" }
+  },
+  required: ["intent", "transcript"]
+ };
+ const promptText = `Tum ek Hindi/Hinglish personal-finance app ke andar ek voice assistant ho. Attached audio clip suno — user Hindi/Hinglish me bol raha hai.
+
+User do tarah ki cheezein bol sakta hai — pehle decide karo "intent" kya hai:
+
+1) TRANSACTION — user ek expense/income bata raha hai (jaise "200 adarsh ko cash pay kiye advance me"). Is case me "intent":"transaction" do, aur:
+   - transcript: jo bola gaya uska Roman/Hinglish likha hua poora text
+   - amount: number, sirf digits
+   - party: jisko/jisse paisa gaya/aaya uska naam
+   - method: "Cash"/"UPI"/"Bank" — kuch na bola ho to "Cash"
+   - type: "expense" agar paisa diya/pay kiya/kharch kiya, "income" agar paisa mila/receive hua/aaya
+   - notes: sirf EXTRA context jo amount/party/method me cover nahi hota (jaise "advance ke liye"). Kuch extra na ho to "" do.
+
+2) QUESTION — user apne balance/party ke baare me sawaal poochh raha hai (jaise "adarsh ka balance kitna hai", "kisko sabse zyada dena hai"). Is case me "intent":"question" do, aur:
+   - transcript: jo sawaal poocha gaya
+   - answer: NEECHE diye REAL DATA ke base par chhota, seedha Hinglish jawaab (2-3 lines se zyada nahi). Data me na ho to saaf bolo "ye jaankari mere paas nahi hai" — kabhi bhi data ke bahar kuch mat banao/maano.
+
+Existing party names (transaction match karne ke liye — agar close match kare to WAHI naam exact spelling ke saath use karo): ${JSON.stringify(partyNames)}
+
+DATA (sawaal ke jawaab ke liye — party-wise balances):
+${balanceSummary}
+
+EXAMPLE 1 (transaction) — "400 ritesh ko cash pay kiye advance me" ->
+{"intent":"transaction","transcript":"400 ritesh ko cash pay kiye advance me","amount":400,"party":"Ritesh","method":"Cash","type":"expense","notes":"advance me"}
+
+EXAMPLE 2 (question) — "adarsh ka balance kitna hai" ->
+{"intent":"question","transcript":"adarsh ka balance kitna hai","answer":"Adarsh se aapko ₹200 lene hain."}`;
+
+ const apiKey = getGeminiKey();
+ if (!apiKey) throw new Error("AI key set nahi hai");
+ const body = {
+  contents: [{
+   role: "user",
+   parts: [
+    { text: promptText },
+    { inline_data: { mime_type: mimeType, data: base64Audio } }
+   ]
+  }],
+  generationConfig: {
+   responseMimeType: "application/json",
+   responseSchema: schema
+  }
+ };
+ const textOut = await _geminiRawFetch(body);
+ return JSON.parse(textOut);
+}
+
+async function toggleAiMic(){
+ const statusEl = document.getElementById('qaVoiceStatus');
+ const captionEl = document.getElementById('qaLiveCaption');
+ const btn = document.getElementById('qaAiMicBtn');
+ const haloEl = document.getElementById('qaAiMicHalo');
+ const stateDotEl = document.getElementById('qaMicStateDot');
+ const stateTextEl = document.getElementById('qaMicStateText');
+
+ initAiOrb(); // pehli baar tap hote hi lazily set ho jaata hai (harmless agar dobara call ho)
+
+ if (!getGeminiKey()) { openAiSettingsModal(); return; }
+
+ // Agar pehle se record ho raha hai, to dubara tap karne par turant rok
+ // do — recording ruktte hi Gemini ko bhej diya jaata hai.
+ if (aiMicActive && aiMicRecorder && aiMicRecorder.state === 'recording') {
+  aiMicRecorder.stop();
+  return;
+ }
+
+ if (!window.isSecureContext) {
+  statusEl.textContent = "⚠️ Voice sirf HTTPS pe chalta hai (file:// ya http:// pe nahi).";
+  return;
+ }
+ if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
+  statusEl.textContent = "⚠️ Ye browser audio recording support nahi karta.";
+  return;
+ }
+
+ try {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const mimeCandidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+  const mimeType = mimeCandidates.find(m => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || '';
+  aiMicRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+  aiMicChunks = [];
+  aiMicActive = true;
+
+  captionEl.value = "";
+  document.getElementById('qaLine').value = "";
+  btn.classList.add('qa-listening');
+  btn.style.transform = "scale(1.08)";
+  if (haloEl) haloEl.classList.add('listening');
+  setAiOrbState('listening');
+  if (stateDotEl) stateDotEl.classList.add('on');
+  if (stateTextEl) { stateTextEl.textContent = "🔴 AI Mic ON — bolo..."; stateTextEl.style.color = "#a855f7"; }
+  statusEl.textContent = "🔴 Recording... bolna khatam hone par mic dubara dabao.";
+
+  aiMicRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) aiMicChunks.push(e.data); };
+
+  aiMicRecorder.onstop = async () => {
+   aiMicActive = false;
+   try { stream.getTracks().forEach(t => t.stop()); } catch(e){}
+   btn.classList.remove('qa-listening');
+   btn.style.transform = "scale(1)";
+   if (haloEl) haloEl.classList.remove('listening');
+   if (stateDotEl) stateDotEl.classList.remove('on');
+
+   if (aiMicChunks.length === 0) {
+    setAiOrbState('idle');
+    if (stateTextEl) { stateTextEl.textContent = "AI Mic band hai — dabao aur bolo"; stateTextEl.style.color = "#888"; }
+    statusEl.textContent = "Nothing recorded — tap mic and try again.";
+    return;
+   }
+
+   const blob = new Blob(aiMicChunks, { type: (aiMicRecorder && aiMicRecorder.mimeType) || mimeType || 'audio/webm' });
+   setAiOrbState('thinking');
+   if (stateTextEl) { stateTextEl.textContent = "✨ AI sun ke samajh raha hai..."; stateTextEl.style.color = "#a855f7"; }
+   statusEl.textContent = "✨ AI sun ke samajh raha hai...";
+   btn.disabled = true;
+
+   try {
+    let base64Audio, mimeForApi;
+    try {
+     // Primary path: convert to WAV — reliably supported by Gemini on
+     // every browser/device, fixes the "text nahi dikhta" / inconsistent
+     // result bug that webm/mp4 caused.
+     base64Audio = await blobToWavBase64(blob);
+     mimeForApi = 'audio/wav';
+    } catch (convErr) {
+     // Bahut hi rare fallback — agar kisi wajah se WAV conversion hi fail
+     // ho jaaye (jaise device decodeAudioData support na kare), to purana
+     // raw-blob tareeka try karo taaki bilkul kaam karna band na ho.
+     base64Audio = await blobToBase64(blob);
+     mimeForApi = blob.type ? blob.type.split(';')[0] : 'audio/webm';
+    }
+    const result = await aiMicToEntry(base64Audio, mimeForApi);
+
+    if (result.intent === "question") {
+     // Ye ek balance/party SAWAAL tha, entry nahi — isi mic se jawaab bhi
+     // mil jaata hai, alag Chat kholne ki zaroorat nahi. Entry form ko
+     // chhedte nahi (qaLine khaali hi rehta hai) taaki galti se koi entry
+     // save na ho jaaye.
+     const askedText = result.transcript || "";
+     const answer = (result.answer || "Maaf karo, jawaab nahi mil paya.").trim();
+     captionEl.value = askedText;
+     statusEl.textContent = `💬 ${answer}`;
+     setAiOrbState('speaking');
+     if (stateTextEl) { stateTextEl.textContent = "🔊 AI bol raha hai..."; stateTextEl.style.color = "#a855f7"; }
+     speakText(answer, () => {
+      setAiOrbState('idle');
+      if (stateTextEl) { stateTextEl.textContent = "AI Mic band hai — entry bolo ya sawaal poochho"; stateTextEl.style.color = "#888"; }
+     });
+     btn.disabled = false;
+     return; // transaction wala flow neeche skip
+    }
+
+    const rawPartyMatch = matchPartyName(result.party); // null agar list me confident match na mila ho
+    const matchedParty = rawPartyMatch || result.party || "";
+    const amount = Number(result.amount) || "";
+    const method = ["Cash", "UPI", "Bank"].includes(result.method) ? result.method : "Cash";
+    if (result.type === "income" || result.type === "expense") quickAddVoiceType = result.type;
+    const transcript = result.transcript || "";
+    const cleanNotes = (result.notes || "").trim(); // sirf extra context, jaise "advance me" — party/method dobara nahi
+
+    captionEl.value = transcript;
+    // Notes field me clean note use hota hai (agar Gemini ne diya ho),
+    // warna fallback poora transcript hi save hota hai.
+    document.getElementById('qaLine').value = `${amount},${matchedParty},,${method},${cleanNotes || transcript}`;
+
+    const typeWord = (quickAddVoiceType === "income") ? "receive hua" : "payment kiya";
+    const noteSpeak = cleanNotes ? ` Note: ${cleanNotes}.` : "";
+
+    if (amount && rawPartyMatch) {
+     // Sab kuch clear/confident hai — Gemini Live jaisa: samjho, bolo,
+     // aur khud save kar do (extra Confirm tap ki zaroorat nahi).
+     statusEl.textContent = `✨ AI ne samjha: ₹${amount} · ${matchedParty} · ${method}${cleanNotes ? ' · ' + cleanNotes : ''} — save ho raha hai...`;
+     setAiOrbState('speaking');
+     if (stateTextEl) { stateTextEl.textContent = "🔊 AI bol raha hai..."; stateTextEl.style.color = "#a855f7"; }
+     const speakLine = `Maine samjha: ${amount} rupaye, ${matchedParty} ke saath, ${method} se ${typeWord}.${noteSpeak} Entry save kar raha hoon.`;
+     speakText(speakLine, () => {
+      submitQuickAdd();
+      setAiOrbState('idle');
+      if (stateTextEl) { stateTextEl.textContent = "AI Mic band hai — dabao aur bolo"; stateTextEl.style.color = "#888"; }
+     });
+    } else {
+     // Kuch confirm nahi ho paya (amount ya party clear nahi) — safety ke
+     // liye khud se save nahi karta, sirf bol/bata ke user se manual
+     // Confirm maangta hai.
+     statusEl.textContent = `✨ AI ne samjha: ₹${amount || '?'} · ${matchedParty || '(party set nahi)'} · ${method}${cleanNotes ? ' · ' + cleanNotes : ''} — theek hai to Confirm dabao (ya text edit karo)`;
+     setAiOrbState('speaking');
+     if (stateTextEl) { stateTextEl.textContent = "🔊 AI bol raha hai..."; stateTextEl.style.color = "#a855f7"; }
+     const speakLine = `Maine puri tarah nahi samjha. ${amount ? ('₹' + amount) : 'amount'} aur party check karke Confirm dabao.`;
+     speakText(speakLine, () => {
+      setAiOrbState('idle');
+      if (stateTextEl) { stateTextEl.textContent = "AI Mic band hai — dabao aur bolo"; stateTextEl.style.color = "#888"; }
+     });
+    }
+   } catch (err) {
+    setAiOrbState('idle');
+    statusEl.textContent = "⚠️ AI se nahi ho paya: " + err.message + " — chaho to upar backup mic (🎙️ chhota icon) try karo.";
+    speakText("Maaf karo, samajh nahi paya. Dobara try karo.");
+   } finally {
+    btn.disabled = false;
+   }
+  };
+
+  aiMicRecorder.start();
+ } catch (err) {
+  setAiOrbState('idle');
+  statusEl.textContent = "⚠️ Mic access nahi mila: " + (err.message || err);
+ }
+}
+
 function closeQuickAdd(){
  document.getElementById("quickAddModal").classList.remove("active");
  qaUserStopped = true;
  if (quickAddActiveRecognition) { try { quickAddActiveRecognition.abort(); } catch(e){} quickAddActiveRecognition = null; }
+ if (aiMicRecorder && aiMicRecorder.state === 'recording') { try { aiMicRecorder.stop(); } catch(e){} }
 }
 
 // "DD-MM-YY" ya "DD-MM-YYYY" -> "YYYY-MM-DD". Agar date na di ho ya galat
@@ -5756,6 +6699,8 @@ function setAnalyticsType(t){
  document.getElementById("overviewTitle").textContent = t==="expense" ? "Payment Overview" : "Receive Overview";
  const trendTitleEl = document.getElementById("trendTitle");
  if (trendTitleEl) trendTitleEl.textContent = t==="expense" ? "Payment Trend" : "Receive Trend";
+ const methodTitleEl = document.getElementById("methodTitle");
+ if (methodTitleEl) methodTitleEl.textContent = t==="expense" ? "Payment Method" : "Receive Method";
  renderCharts();
  renderTopCats();
 }
@@ -5772,7 +6717,7 @@ function renderCharts(){
   }
   return;
  }
- const { total, catArr, trendLabels, trendData } = calculateAnalytics(analyticsType);
+ const { total, catArr, trendLabels, trendData, methodTotals } = calculateAnalytics(analyticsType);
  document.getElementById("overviewAmt").textContent = "₹ " + total.toLocaleString("en-IN");
 
  const ctx = document.getElementById("donutChart");
@@ -5807,24 +6752,62 @@ function renderCharts(){
  if(trendChartObj) trendChartObj.destroy();
  const chartMuted = isLightMode() ? "#6b7280" : "#8b9099";
  const chartGrid = isLightMode() ? "#e2e8f2" : "#1f2430";
+ // Column chart — har bar ka apna alag color (reference image jaisa:
+ // blue/green/orange/pink cycle), taaki Payment/Receive Trend visually
+ // ek colorful column graph lage, line-graph nahi.
+ const TREND_BAR_COLORS = ["#4c9be8", "#8ce84c", "#e8964c", "#e84c8c", "#a855f7", "#4ce8c9"];
+ const trendBarColors = trendLabels.map((_, i) => TREND_BAR_COLORS[i % TREND_BAR_COLORS.length]);
  trendChartObj = new Chart(tctx, {
- type:"line",
+ type:"bar",
  data:{
  labels: trendLabels,
  datasets:[{
  data: trendData,
- borderColor:"#e8b64c", backgroundColor:"rgba(232,182,76,0.15)", fill:true, tension:.4, pointRadius:3,
- pointBackgroundColor:"#e8b64c"
+ backgroundColor: trendBarColors,
+ borderRadius:6,
+ borderSkipped:false,
+ maxBarThickness:36
  }]
  },
  options:{
  plugins:{legend:{display:false}},
  scales:{
  x:{ ticks:{color:chartMuted, font:{size:10}}, grid:{display:false} },
- y:{ ticks:{color:chartMuted, font:{size:10}}, grid:{color:chartGrid} }
+ y:{ ticks:{color:chartMuted, font:{size:10}}, grid:{color:chartGrid}, beginAtZero:true }
  }
  }
  });
+
+ // Payment/Receive Method breakdown — horizontal bar chart (Cash/UPI/Bank),
+ // reference image jaisa: har method ka apna alag color, bars side-se-side.
+ const mctx = document.getElementById("methodChart");
+ if(methodChartObj) methodChartObj.destroy();
+ if(mctx){
+ const methodLabels = ["Cash", "UPI", "Bank"];
+ const METHOD_COLORS = { Cash:"#4c9be8", UPI:"#8ce84c", Bank:"#e8964c" };
+ const methodData = methodLabels.map(m => (methodTotals && methodTotals[m]) || 0);
+ methodChartObj = new Chart(mctx, {
+ type:"bar",
+ data:{
+ labels: methodLabels,
+ datasets:[{
+ data: methodData,
+ backgroundColor: methodLabels.map(m => METHOD_COLORS[m]),
+ borderRadius:6,
+ borderSkipped:false,
+ maxBarThickness:28
+ }]
+ },
+ options:{
+ indexAxis:"y",
+ plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(ctx)=>"₹"+Number(ctx.raw||0).toLocaleString("en-IN") } } },
+ scales:{
+ x:{ ticks:{color:chartMuted, font:{size:10}}, grid:{color:chartGrid}, beginAtZero:true },
+ y:{ ticks:{color:chartMuted, font:{size:11}}, grid:{display:false} }
+ }
+ }
+ });
+ }
 }
 
 function renderTopCats(){
@@ -6330,8 +7313,6 @@ document.addEventListener('DOMContentLoaded', () => {
  try {
    if (localStorage.getItem("appTheme") === "light") {
      document.body.classList.add("light-theme");
-     const iconEl = document.getElementById('themeToggleIcon');
-     if (iconEl) iconEl.className = "ti ti-sun";
      const profileBtn = document.getElementById('profileThemeToggleBtn');
      if (profileBtn) profileBtn.textContent = "☀️";
    }
@@ -6679,8 +7660,6 @@ function toggleTheme(){
  const isLight = document.body.classList.contains("light-theme");
  try { localStorage.setItem("appTheme", isLight ? "light" : "dark"); } catch(e){}
  showNotification(isLight ? "Light mode on" : "Dark mode on", "success");
- const iconEl = document.getElementById('themeToggleIcon');
- if (iconEl) iconEl.className = isLight ? "ti ti-sun" : "ti ti-moon";
  const profileBtn = document.getElementById('profileThemeToggleBtn');
  if (profileBtn) profileBtn.textContent = isLight ? "☀️" : "🌙";
  // Refresh canvas-based charts so their colors match the new theme (CSS can't reach into canvas)
