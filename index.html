@@ -4740,16 +4740,24 @@ function buildAllPartyBalances(){
   net: p.paid - p.received   // +ve: inse lena hai, -ve: inko dena hai
  })).sort((a,b) => Math.abs(b.net) - Math.abs(a.net));
 }
-function buildBalanceSummaryText(){
+function buildBalanceSummaryText(maxParties){
  const rows = buildAllPartyBalances();
  if (rows.length === 0) return "Abhi koi entry hi nahi hai.";
- const lines = rows.map(r => {
+ const totalPaid = rows.reduce((s,r)=>s+r.paid,0);
+ const totalReceived = rows.reduce((s,r)=>s+r.received,0);
+ // SPEED FIX: voice quick-add (compact mode) sirf top parties bhejta hai,
+ // na ki har party — bade party-list wale users ke liye prompt chhota
+ // rehta hai, isliye Gemini ka response fast aata hai. Chat/"Ask Balance"
+ // (maxParties na diya ho) me poori list milti hai, quality kam nahi hoti.
+ const rowsToShow = maxParties
+  ? [...rows].sort((a,b)=>Math.abs(b.net)-Math.abs(a.net)).slice(0, maxParties)
+  : rows;
+ const lines = rowsToShow.map(r => {
   const status = r.net === 0 ? "settled/barabar" : (r.net > 0 ? `inse ₹${Math.abs(r.net).toLocaleString('en-IN')} lena hai` : `inko ₹${Math.abs(r.net).toLocaleString('en-IN')} dena hai`);
   return `- ${r.party}: total paid ₹${r.paid.toLocaleString('en-IN')}, total received ₹${r.received.toLocaleString('en-IN')} → ${status}`;
  });
- const totalPaid = rows.reduce((s,r)=>s+r.paid,0);
- const totalReceived = rows.reduce((s,r)=>s+r.received,0);
- return `Overall: total paid ₹${totalPaid.toLocaleString('en-IN')}, total received ₹${totalReceived.toLocaleString('en-IN')}.\n\nParty-wise:\n` + lines.join("\n");
+ const omittedNote = (maxParties && rows.length > rowsToShow.length) ? `\n(+${rows.length - rowsToShow.length} aur parties, chhote balance wale)` : "";
+ return `Overall: total paid ₹${totalPaid.toLocaleString('en-IN')}, total received ₹${totalReceived.toLocaleString('en-IN')}.\n\nParty-wise (top ${rowsToShow.length}):\n` + lines.join("\n") + omittedNote;
 }
 
 // ===== Full app context for "Ask Balance" voice/text questions =====
@@ -4759,12 +4767,16 @@ function buildBalanceSummaryText(){
 // real data (localStorage se, same source jo Wallet/Analytics/Goals
 // screens use karte hain) ko ek compact Hinglish text me jod deta hai jo
 // Gemini ko bheja jaata hai — jawaab sirf isi data ke base par milta hai.
-function buildAiContextText(){
+function buildAiContextText(compact){
  const now = new Date();
  const curMonth = now.getMonth(), curYear = now.getFullYear();
 
  // ---- 1) Party-wise balance (all-time) ----
- const balanceSection = buildBalanceSummaryText();
+ // SPEED FIX: compact=true (voice quick-add) sirf top 10 parties bhejta
+ // hai — poori list nahi. Bada context = Gemini ko zyada padhna padta
+ // hai = jawaab aane me zyada time lagta hai. "Ask Balance" chat me
+ // compact nahi hota, poora data milta hai.
+ const balanceSection = buildBalanceSummaryText(compact ? 10 : undefined);
 
  // ---- 2) This month ka analysis: total + top parties/categories ----
  const monthEntries = entries.filter(e => {
@@ -4789,8 +4801,8 @@ function buildAiContextText(){
  const allIncome = entries.filter(e=>e.type==='income').reduce((s,e)=>s+(Number(e.amount)||0),0);
  const totalsSection = `All-time: total payment ₹${allExpense.toLocaleString('en-IN')}, total receive ₹${allIncome.toLocaleString('en-IN')}, total entries: ${entries.length}.`;
 
- // ---- 4) Recent entries (last 8) ----
- const recentSection = entries.slice(0, 8).map(e => {
+ // ---- 4) Recent entries (last 8, ya compact mode me last 5) ----
+ const recentSection = entries.slice(0, compact ? 5 : 8).map(e => {
   const typeWord = e.type === 'income' ? 'received' : 'paid';
   return `- ${e.date}: ₹${(Number(e.amount)||0).toLocaleString('en-IN')} ${typeWord} ${e.type==='income'?'from':'to'} ${e.party||'Unknown'} (${e.method||'Cash'})${e.notes ? ' — ' + e.notes : ''}`;
  }).join("\n") || "Abhi koi entry hi nahi hai.";
@@ -5482,7 +5494,7 @@ function setGeminiKey(k){
 // dono AI features ek hi jagah break na ho.
 const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-flash-latest"];
 
-async function _geminiRawFetch(body){
+async function _geminiRawFetch(body, signal){
  const apiKey = getGeminiKey();
  if (!apiKey) return null;
  let lastErr = null;
@@ -5490,7 +5502,7 @@ async function _geminiRawFetch(body){
   try {
    const resp = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`,
-    { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) }
+    { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body), signal }
    );
    if (!resp.ok) {
     let msg = "AI request failed (" + resp.status + ")";
@@ -5504,6 +5516,7 @@ async function _geminiRawFetch(body){
    return textOut;
   } catch (err) {
    lastErr = err;
+   if (err && err.name === 'AbortError') break; // user ne cancel kiya — dusra model try mat karo
   }
  }
  throw lastErr || new Error("AI request failed");
@@ -6221,6 +6234,10 @@ function setAivCaption(text){
 let aiMicRecorder = null;
 let aiMicChunks = [];
 let aiMicActive = false;
+// Cross (X) button ka istemaal karte hue in-flight Gemini request ko
+// cancel karne ke liye — taaki band karne ke baad bhi background me
+// response na aaye ya AI bolna shuru na kar de.
+let aiMicAbortController = null;
 
 function blobToBase64(blob){
  return new Promise((resolve, reject) => {
@@ -6331,7 +6348,7 @@ function _encodeWavFromAudioBuffer(audioBuffer){
 async function aiMicToEntry(base64Audio, mimeType){
  const sel = document.getElementById('partySel');
  const partyNames = sel ? Array.from(sel.options).map(o => o.value).filter(Boolean) : [];
- const balanceSummary = buildAiContextText(); // sawaal ka jawaab isi data se milta hai
+ const balanceSummary = buildAiContextText(true); // compact=true → tez response (dekho buildAiContextText comment)
  const schema = {
   type: "OBJECT",
   properties: {
@@ -6356,7 +6373,7 @@ User do tarah ki cheezein bol sakta hai — pehle decide karo "intent" kya hai:
    - party: jisko/jisse paisa gaya/aaya uska naam
    - method: "Cash"/"UPI"/"Bank" — kuch na bola ho to "Cash"
    - type: "expense" agar paisa diya/pay kiya/kharch kiya, "income" agar paisa mila/receive hua/aaya
-   - notes: sirf EXTRA context jo amount/party/method me cover nahi hota (jaise "advance ke liye"). Kuch extra na ho to "" do.
+   - notes: SIRF reason/purpose (jaise "Chai ke liye", "Advance"). KABHI bhi amount, party ka naam, ya method (cash/upi/bank) notes me repeat MAT karo — wo already alag fields me save hote hain. Poora bola hua sentence copy-paste karke notes me mat daalo — sirf uska "kis liye" wala chhota hissa likho, 4-5 shabdon me. Reason bilkul na bola gaya ho to "" do.
 
 2) QUESTION — user apne balance, is mahine ka analysis/kharch, recent entries, ya goals/targets ke baare me sawaal poochh raha hai (jaise "adarsh ka balance kitna hai", "is mahine kitna kharch hua", "mera savings goal kitna complete hua", "kisko sabse zyada dena hai"). Is case me "intent":"question" do, aur:
    - transcript: jo sawaal poocha gaya
@@ -6368,7 +6385,11 @@ REAL DATA (balance, is-mahine ka analysis, recent entries, goals/targets):
 ${balanceSummary}
 
 EXAMPLE 1 (transaction) — "400 ritesh ko cash pay kiye advance me" ->
-{"intent":"transaction","transcript":"400 ritesh ko cash pay kiye advance me","amount":400,"party":"Ritesh","method":"Cash","type":"expense","notes":"advance me"}
+{"intent":"transaction","transcript":"400 ritesh ko cash pay kiye advance me","amount":400,"party":"Ritesh","method":"Cash","type":"expense","notes":"Advance"}
+
+EXAMPLE 1B (transaction, notes clean rakhna zaroori) — "20 rupaye office expence me chai ke liye pay kiye cash" ->
+{"intent":"transaction","transcript":"20 rupaye office expence me chai ke liye pay kiye cash","amount":20,"party":"Office Expense","method":"Cash","type":"expense","notes":"Chai ke liye"}
+(GALAT hota agar notes me poora sentence "20 rupaye office expence me chai ke liye pay kiye cash" repeat kar diya jaata — aisa KABHI mat karo.)
 
 EXAMPLE 2 (question) — "adarsh ka balance kitna hai" ->
 {"intent":"question","transcript":"adarsh ka balance kitna hai","answer":"abc se aapko ₹200 lene hain."}
@@ -6394,7 +6415,8 @@ EXAMPLE 4 (question) — "savings goal kitna complete hua" ->
    responseSchema: schema
   }
  };
- const textOut = await _geminiRawFetch(body);
+ aiMicAbortController = new AbortController();
+ const textOut = await _geminiRawFetch(body, aiMicAbortController.signal);
  return JSON.parse(textOut);
 }
 
@@ -6590,6 +6612,13 @@ function closeQuickAdd(){
  qaUserStopped = true;
  if (quickAddActiveRecognition) { try { quickAddActiveRecognition.abort(); } catch(e){} quickAddActiveRecognition = null; }
  if (aiMicRecorder && aiMicRecorder.state === 'recording') { try { aiMicRecorder.stop(); } catch(e){} }
+ // Cross (X) button: mic band, AI ka chal raha request cancel, aur agar
+ // AI kuch bol raha tha to wo bhi turant chup — taaki band karne ke baad
+ // screen ke peeche kuch bhi (jawaab ya awaaz) chalta na rahe.
+ if (aiMicAbortController) { try { aiMicAbortController.abort(); } catch(e){} aiMicAbortController = null; }
+ if (typeof window !== 'undefined' && 'speechSynthesis' in window) { try { window.speechSynthesis.cancel(); } catch(e){} }
+ setAiOrbState && setAiOrbState('idle');
+ setAivState && setAivState('idle');
  const aivOverlay = document.getElementById('aiVoiceFullscreen');
  if (aivOverlay) aivOverlay.classList.remove('active');
  if (aivResultSyncTimer) { clearInterval(aivResultSyncTimer); aivResultSyncTimer = null; }
@@ -9404,7 +9433,7 @@ function syncAivResultVisibility(){
  <div class="aiv-ui">
   <div class="aiv-top">
    <div class="aiv-eyebrow">DAYTODAY · AI VOICE</div>
-   <div class="aiv-title">Speak, I am listening.</div>
+   <div class="aiv-title">Tap the mic to speak</div>
    <div class="aiv-tabs">
     <button class="aiv-tab active" id="aivTabEntry" onclick="document.getElementById('aivTabEntry').classList.add('active');document.getElementById('aivTabAsk').classList.remove('active');setAivCaption('Tap the mic and speak your entry')">Quick Entry</button>
     <button class="aiv-tab" id="aivTabAsk" onclick="document.getElementById('aivTabAsk').classList.add('active');document.getElementById('aivTabEntry').classList.remove('active');setAivCaption('Tap the mic and ask about your balance')">Ask Balance</button>
