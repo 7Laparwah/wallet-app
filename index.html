@@ -1526,11 +1526,6 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
      Login with Google
     </button>
 
-    <!-- <button class="apple-signin-btn" onclick="">
-     <svg width="18" height="20" viewBox="0 0 814 1000" style="flex-shrink:0;"><path fill="#1a2340" d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-42.2-150.3-109.7C89 525 45 413.5 45 324.9 45 202.3 119.1 137 192.8 137c65.2 0 108.5 42.8 148.4 42.8 38.1 0 87.8-45.1 156.1-45.1 25.2 0 108.2 2.6 168.1 81.3zm-154.2-130.4c28.9-34.1 49.7-81.3 49.7-128.6 0-6.4-.6-12.9-1.9-18.1-47.4 1.9-103.7 31.7-137.8 70.9-26.7 30.4-51.6 77.7-51.6 125.6 0 7.1 1.3 14.2 1.9 16.5 3.2.6 8.4 1.3 13.5 1.3 42.8 0 96.1-28.4 125.2-67.6z"/></svg>
-     Login with Apple
-    </button> -->
-
     <!-- Logged in user card (hidden initially) -->
     <div id="userInfoContainer" style="display:none;margin-top:16px;">
      <div class="auth-user-card">
@@ -1731,7 +1726,7 @@ body.light-theme #screen-goals .header{ background:#F3E7D3 !important; }
  </div>
 </div>
 
-<div id="pinLockScreen" style="display:none;">
+ <div id="pinLockScreen" style="display:none;">
  <div class="pinTitle" id="pinTitleText">Enter PIN</div>
  <div class="pinSub" id="pinSubText">Enter your 4-digit PIN</div>
  <!-- App khulte hi yeh hidden input auto-focus hota hai, jisse phone ka
@@ -2587,6 +2582,7 @@ const firebaseConfig = {
   appId: "1:125507121584:web:87dec9292e70d7a919e675",
   measurementId: "G-SK7GX8RVEH"
 };
+
 
 // 🔴 REPLACE THE VALUES ABOVE WITH YOUR REAL FIREBASE CONFIG
 // (Firebase Console → Project Settings → General → Your apps → Web app)
@@ -6009,7 +6005,19 @@ function initAiOrb(){
 
    const scene = new THREE.Scene();
    const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
-   camera.position.set(0, 0, 5.4);
+   // Mobile/portrait fix: camera.position.z was fixed at 5.4, tuned for
+   // wide/laptop (landscape, aspect>=1) screens. On a phone (portrait,
+   // aspect<1) width is the limiting dimension, so with a fixed distance
+   // the orb filled way more of the (narrow) screen — that's the "bubble
+   // too big" bug. fitCameraZ() pushes the camera back proportionally to
+   // how narrow the screen is, so the orb reads the same relative size on
+   // phone and laptop alike.
+   function fitCameraZ(w, h){
+    const BASE_Z = 5.4;
+    const aspect = w / h;
+    return aspect < 1 ? BASE_Z / aspect : BASE_Z;
+   }
+   camera.position.set(0, 0, fitCameraZ(window.innerWidth, window.innerHeight));
 
    function makeRenderer(canvas){
     const r = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
@@ -6089,7 +6097,9 @@ function initAiOrb(){
    function onResize(){
     if (!document.getElementById('aiVoiceFullscreen')?.classList.contains('active')) return;
     const w = window.innerWidth, h = window.innerHeight;
-    camera.aspect = w/h; camera.updateProjectionMatrix();
+    camera.aspect = w/h;
+    camera.position.z = fitCameraZ(w, h);
+    camera.updateProjectionMatrix();
     rendererSharp.setSize(w,h); rendererGlow.setSize(w,h);
    }
    window.addEventListener('resize', onResize);
@@ -6433,10 +6443,10 @@ async function toggleAiMic(){
   if (haloEl) haloEl.classList.add('listening');
   setAiOrbState('listening');
   setAivState('listening');
-  setAivCaption("Bolo — jaise: 400 ritesh ko cash advance me, ya poochho 'balance kitna hai'");
+  setAivCaption("Make entry or check balance?");
   if (stateDotEl) stateDotEl.classList.add('on');
   if (stateTextEl) { stateTextEl.textContent = "🔴 AI Mic ON — bolo..."; stateTextEl.style.color = "#a855f7"; }
-  statusEl.textContent = "🔴 Recording... bolna khatam hone par mic dubara dabao.";
+  statusEl.textContent = "🔴 Recording... Tap mic again after speaking.";
 
   aiMicRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) aiMicChunks.push(e.data); };
 
@@ -6451,8 +6461,8 @@ async function toggleAiMic(){
    if (aiMicChunks.length === 0) {
     setAiOrbState('idle');
     setAivState('idle');
-    setAivCaption("Kuch record nahi hua — mic dabao aur dobara bolo");
-    if (stateTextEl) { stateTextEl.textContent = "AI Mic band hai — dabao aur bolo"; stateTextEl.style.color = "#888"; }
+    setAivCaption("Nothing recorded — tap mic and try again.");
+    if (stateTextEl) { stateTextEl.textContent = "AI Mic is off — tap to speak."; stateTextEl.style.color = "#888"; }
     statusEl.textContent = "Nothing recorded — tap mic and try again.";
     return;
    }
@@ -6460,9 +6470,9 @@ async function toggleAiMic(){
    const blob = new Blob(aiMicChunks, { type: (aiMicRecorder && aiMicRecorder.mimeType) || mimeType || 'audio/webm' });
    setAiOrbState('thinking');
    setAivState('thinking');
-   setAivCaption("Samajh raha hoon...");
-   if (stateTextEl) { stateTextEl.textContent = "✨ AI sun ke samajh raha hai..."; stateTextEl.style.color = "#a855f7"; }
-   statusEl.textContent = "✨ AI sun ke samajh raha hai...";
+   setAivCaption("Thinking...");
+   if (stateTextEl) { stateTextEl.textContent = "✨ AI is thinking..."; stateTextEl.style.color = "#a855f7"; }
+   statusEl.textContent = "✨AI is thinking...";
    btn.disabled = true;
 
    try {
@@ -6488,18 +6498,18 @@ async function toggleAiMic(){
      // chhedte nahi (qaLine khaali hi rehta hai) taaki galti se koi entry
      // save na ho jaaye.
      const askedText = result.transcript || "";
-     const answer = (result.answer || "Maaf karo, jawaab nahi mil paya.").trim();
+     const answer = (result.answer || "Sorry, couldn't find an answer.").trim();
      captionEl.value = askedText;
      statusEl.textContent = `💬 ${answer}`;
      setAiOrbState('speaking');
      setAivState('speaking');
      setAivCaption(answer);
-     if (stateTextEl) { stateTextEl.textContent = "🔊 AI bol raha hai..."; stateTextEl.style.color = "#a855f7"; }
+     if (stateTextEl) { stateTextEl.textContent = "🔊 speaking..."; stateTextEl.style.color = "#a855f7"; }
      speakText(answer, () => {
       setAiOrbState('idle');
       setAivState('idle');
       setAivCaption("Say an entry, or ask another question");
-      if (stateTextEl) { stateTextEl.textContent = "AI Mic band hai — entry bolo ya sawaal poochho"; stateTextEl.style.color = "#888"; }
+      if (stateTextEl) { stateTextEl.textContent = "Mic off — speak now"; stateTextEl.style.color = "#888"; }
      });
      btn.disabled = false;
      return; // transaction wala flow neeche skip
@@ -6525,7 +6535,7 @@ async function toggleAiMic(){
      // Sab kuch clear/confident hai — Gemini Live jaisa: samjho, bolo,
      // aur khud save kar do (extra Confirm tap ki zaroorat nahi).
      const summaryLine = `₹${amount} · ${matchedParty} · ${method}${cleanNotes ? ' · ' + cleanNotes : ''}`;
-     statusEl.textContent = `✨ AI ne samjha: ${summaryLine} — save ho raha hai...`;
+     statusEl.textContent = `✨ AI ne samjha: ${summaryLine} — Saving...`;
      setAiOrbState('speaking');
      setAivState('speaking');
      setAivCaption(summaryLine + " — saving...");
@@ -6536,7 +6546,7 @@ async function toggleAiMic(){
       setAiOrbState('idle');
       setAivState('idle');
       setAivCaption("Say an entry, or ask a question");
-      if (stateTextEl) { stateTextEl.textContent = "AI Mic band hai — dabao aur bolo"; stateTextEl.style.color = "#888"; }
+      if (stateTextEl) { stateTextEl.textContent = "Mic is off — tap and speak."; stateTextEl.style.color = "#888"; }
      });
     } else {
      // Kuch confirm nahi ho paya (amount ya party clear nahi) — safety ke
@@ -9248,6 +9258,21 @@ window.addEventListener('offline', () => {
  align-items:center; justify-content:space-between;
  padding:44px 24px 44px; padding-top:calc(44px + env(safe-area-inset-top));
  padding-bottom:calc(44px + env(safe-area-inset-bottom));
+ overflow-y:auto; /* safety net: on short phone screens, scroll instead of clipping/hiding content */
+}
+/* Small/short phone screens: shrink paddings, gaps and the orb-canvas footprint
+   so the eyebrow/title/tabs/caption/hint/result-bar all stay visible without
+   needing to scroll — this was tuned only for laptop viewport heights before. */
+@media (max-width:420px), (max-height:700px){
+ .aiv-ui{ padding:24px 18px 24px; padding-top:calc(20px + env(safe-area-inset-top)); padding-bottom:calc(20px + env(safe-area-inset-bottom)); gap:10px; }
+ .aiv-top{ gap:8px; }
+ .aiv-title{ font-size:18px; }
+ .aiv-caption-wrap{ min-height:40px; padding:0 12px; }
+ #aivCaption{ font-size:13.5px; max-width:300px; }
+ .aiv-mic-zone{ gap:12px; }
+ #aivMicBtn{ width:66px; height:66px; }
+ #aivMicBtn i{ font-size:22px; }
+ .aiv-hint{ font-size:10.5px; max-width:250px; }
 }
 .aiv-close{
  position:absolute; top:calc(16px + env(safe-area-inset-top)); right:16px;
@@ -9379,7 +9404,7 @@ function syncAivResultVisibility(){
  <div class="aiv-ui">
   <div class="aiv-top">
    <div class="aiv-eyebrow">DAYTODAY · AI VOICE</div>
-   <div class="aiv-title">Bolo, main sun raha hoon</div>
+   <div class="aiv-title">Speak, I am listening.</div>
    <div class="aiv-tabs">
     <button class="aiv-tab active" id="aivTabEntry" onclick="document.getElementById('aivTabEntry').classList.add('active');document.getElementById('aivTabAsk').classList.remove('active');setAivCaption('Tap the mic and speak your entry')">Quick Entry</button>
     <button class="aiv-tab" id="aivTabAsk" onclick="document.getElementById('aivTabAsk').classList.add('active');document.getElementById('aivTabEntry').classList.remove('active');setAivCaption('Tap the mic and ask about your balance')">Ask Balance</button>
@@ -9391,14 +9416,14 @@ function syncAivResultVisibility(){
   </div>
 
   <div class="aiv-mic-zone">
-   <div id="aivStateLabel"><span id="aivStateDot" data-state="idle"></span><span id="aivStateText">Idle — tap to speak</span></div>
+   <div id="aivStateLabel"><span id="aivStateDot" data-state="idle"></span><span id="aivStateText">Tap to speak</span></div>
    <button id="aivMicBtn" onclick="toggleAiMic()" aria-label="Toggle AI mic">
     <span class="aiv-ring r1"></span>
     <span class="aiv-ring r2"></span>
     <span class="aiv-ring r3"></span>
     <i class="ti ti-microphone"></i>
    </button>
-   <div class="aiv-hint">Say an entry (e.g. "400 xyz ko cash advance me") or ask a question (e.g. "abc ka balance kitna hai?")</div>
+   <div class="aiv-hint"></div>
 
    <!-- ===== Result / edit / confirm ===== Voice se ya backup-mic se jo
         bhi text aaye wo yahan dikhta/edit hota hai, phir Confirm dabao —
