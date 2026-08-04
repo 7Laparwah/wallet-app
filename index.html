@@ -4761,30 +4761,78 @@ function buildBalanceSummaryText(maxParties){
 }
 
 // ===== Full app context for "Ask Balance" voice/text questions =====
-// Sirf party-wise balance kaafi nahi tha — user is-mahine ke analytics
-// (kitna kharch hua, sabse zyada kis party/category pe), recent entries,
-// aur goals/targets ka progress bhi poochh sakta hai. Ye function sab
-// real data (localStorage se, same source jo Wallet/Analytics/Goals
-// screens use karte hain) ko ek compact Hinglish text me jod deta hai jo
-// Gemini ko bheja jaata hai — jawaab sirf isi data ke base par milta hai.
+// Sirf party-wise balance kaafi nahi tha — user date-range (aaj/kal/is
+// week/last month/...), payment-method-wise, search, analytics (top
+// expenses, daily average), aur budget (Expense Limit goals) ke baare
+// me bhi poochh sakta hai. Ye function sab real data (localStorage se,
+// same source jo Wallet/Analytics/Goals screens use karte hain) ko ek
+// Hinglish text me jod deta hai jo Gemini ko bheja jaata hai — jawaab
+// sirf isi data ke base par milta hai.
+// NOTE: entries me abhi "category" (Food/Travel/Petrol...) field nahi
+// hai — sirf party/method/notes hai, isliye category-wise breakdown
+// yahan include nahi kiya gaya hai.
 function buildAiContextText(compact){
  const now = new Date();
  const curMonth = now.getMonth(), curYear = now.getFullYear();
+ const toINR = n => `₹${(Number(n)||0).toLocaleString('en-IN')}`;
 
  // ---- 1) Party-wise balance (all-time) ----
- // SPEED FIX: compact=true (voice quick-add) sirf top 10 parties bhejta
- // hai — poori list nahi. Bada context = Gemini ko zyada padhna padta
- // hai = jawaab aane me zyada time lagta hai. "Ask Balance" chat me
- // compact nahi hota, poora data milta hai.
- const balanceSection = buildBalanceSummaryText(compact ? 10 : undefined);
+ const balanceSection = buildBalanceSummaryText(compact ? 15 : undefined);
 
- // ---- 2) This month ka analysis: total + top parties/categories ----
+ // ---- 2) Date-wise totals: aaj / kal / is week / last week / is mahina / last mahina / is saal ----
+ function sumRange(fromDate, toDate){
+  let exp = 0, inc = 0, count = 0;
+  entries.forEach(e => {
+   const d = new Date(e.date);
+   if (isNaN(d)) return;
+   if (d >= fromDate && d <= toDate) {
+    count++;
+    if (e.type === 'expense') exp += Number(e.amount) || 0; else inc += Number(e.amount) || 0;
+   }
+  });
+  return { exp, inc, count };
+ }
+ const startOfDay = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+ const endOfDay = d => { const x = new Date(d); x.setHours(23,59,59,999); return x; };
+ const today0 = startOfDay(now), today1 = endOfDay(now);
+ const yesterday = new Date(now); yesterday.setDate(yesterday.getDate()-1);
+ const yest0 = startOfDay(yesterday), yest1 = endOfDay(yesterday);
+ const dow = now.getDay(); // 0=Sun
+ const weekStart = new Date(now); weekStart.setDate(now.getDate() - dow); weekStart.setHours(0,0,0,0);
+ const weekEnd = endOfDay(now);
+ const lastWeekEnd = new Date(weekStart); lastWeekEnd.setMilliseconds(-1);
+ const lastWeekStart = new Date(weekStart); lastWeekStart.setDate(lastWeekStart.getDate()-7);
+ const monthStart = new Date(curYear, curMonth, 1);
+ const monthEnd = endOfDay(now);
+ const lastMonthStart = new Date(curYear, curMonth-1, 1);
+ const lastMonthEnd = new Date(curYear, curMonth, 0, 23,59,59,999);
+ const yearStart = new Date(curYear, 0, 1);
+ const yearEnd = endOfDay(now);
+
+ const todayR = sumRange(today0, today1);
+ const yestR = sumRange(yest0, yest1);
+ const weekR = sumRange(weekStart, weekEnd);
+ const lastWeekR = sumRange(lastWeekStart, lastWeekEnd);
+ const monthR = sumRange(monthStart, monthEnd);
+ const lastMonthR = sumRange(lastMonthStart, lastMonthEnd);
+ const yearR = sumRange(yearStart, yearEnd);
+ const monthName = now.toLocaleDateString('en-IN', { month:'long', year:'numeric' });
+ const lastMonthName = lastMonthStart.toLocaleDateString('en-IN', { month:'long', year:'numeric' });
+
+ const dateWiseSection =
+`Aaj: expense ${toINR(todayR.exp)}, income ${toINR(todayR.inc)} (${todayR.count} entries)
+Kal: expense ${toINR(yestR.exp)}, income ${toINR(yestR.inc)} (${yestR.count} entries)
+Is week: expense ${toINR(weekR.exp)}, income ${toINR(weekR.inc)}
+Last week: expense ${toINR(lastWeekR.exp)}, income ${toINR(lastWeekR.inc)}
+Is mahina (${monthName}): expense ${toINR(monthR.exp)}, income ${toINR(monthR.inc)}
+Last mahina (${lastMonthName}): expense ${toINR(lastMonthR.exp)}, income ${toINR(lastMonthR.inc)}
+Is saal (${curYear}): expense ${toINR(yearR.exp)}, income ${toINR(yearR.inc)}`;
+
+ // ---- 3) This month ka top parties ----
  const monthEntries = entries.filter(e => {
   const d = new Date(e.date);
   return d.getFullYear() === curYear && d.getMonth() === curMonth;
  });
- const monthExpense = monthEntries.filter(e=>e.type==='expense').reduce((s,e)=>s+(Number(e.amount)||0),0);
- const monthIncome = monthEntries.filter(e=>e.type==='income').reduce((s,e)=>s+(Number(e.amount)||0),0);
  const monthByParty = {};
  monthEntries.forEach(e => {
   if (e.type !== 'expense') return;
@@ -4792,23 +4840,43 @@ function buildAiContextText(compact){
   monthByParty[p] = (monthByParty[p]||0) + (Number(e.amount)||0);
  });
  const topMonthParties = Object.entries(monthByParty).sort((a,b)=>b[1]-a[1]).slice(0,5)
-  .map(([p,amt]) => `${p}: ₹${amt.toLocaleString('en-IN')}`).join(", ") || "koi expense nahi";
- const monthName = now.toLocaleDateString('en-IN', { month:'long', year:'numeric' });
- const analysisSection = `Is mahine (${monthName}): total payment/expense ₹${monthExpense.toLocaleString('en-IN')}, total receive/income ₹${monthIncome.toLocaleString('en-IN')}.\nTop payment categories/parties is mahine: ${topMonthParties}.`;
+  .map(([p,amt]) => `${p}: ${toINR(amt)}`).join(", ") || "koi expense nahi";
+ const analysisSection = `Top payees/parties is mahine: ${topMonthParties}.`;
 
- // ---- 3) All-time totals ----
+ // ---- 4) All-time totals ----
  const allExpense = entries.filter(e=>e.type==='expense').reduce((s,e)=>s+(Number(e.amount)||0),0);
  const allIncome = entries.filter(e=>e.type==='income').reduce((s,e)=>s+(Number(e.amount)||0),0);
- const totalsSection = `All-time: total payment ₹${allExpense.toLocaleString('en-IN')}, total receive ₹${allIncome.toLocaleString('en-IN')}, total entries: ${entries.length}.`;
+ const totalsSection = `All-time: total payment ${toINR(allExpense)}, total receive ${toINR(allIncome)}, total entries: ${entries.length}.`;
 
- // ---- 4) Recent entries (last 8, ya compact mode me last 5) ----
- const recentSection = entries.slice(0, compact ? 5 : 8).map(e => {
+ // ---- 5) Payment method wise (all-time + is mahina) ----
+ function methodBreakup(list){
+  const m = {};
+  list.filter(e=>e.type==='expense').forEach(e => {
+   const k = e.method || 'Cash';
+   m[k] = (m[k]||0) + (Number(e.amount)||0);
+  });
+  return Object.entries(m).map(([k,v]) => `${k}: ${toINR(v)}`).join(", ") || "koi expense nahi";
+ }
+ const paymentMethodSection = `All-time (payment/expense side): ${methodBreakup(entries)}\nIs mahine: ${methodBreakup(monthEntries)}`;
+
+ // ---- 6) Analytics: top 5 single biggest expenses + daily average ----
+ const top5Expenses = entries.filter(e=>e.type==='expense')
+  .slice().sort((a,b)=>(Number(b.amount)||0)-(Number(a.amount)||0)).slice(0,5)
+  .map(e => `${e.date}: ${toINR(e.amount)} — ${e.party||'Unknown'}${e.notes ? ' ('+e.notes+')' : ''}`)
+  .join("\n") || "koi expense nahi";
+ const daysElapsed = now.getDate();
+ const dailyAvg = daysElapsed > 0 ? monthR.exp / daysElapsed : 0;
+ const analyticsSection = `Top 5 sabse bade single expenses (all-time):\n${top5Expenses}\nIs mahine daily average expense: ${toINR(dailyAvg)}/din (${daysElapsed} din ka data).\nWeekly trend: is week ${toINR(weekR.exp)} vs last week ${toINR(lastWeekR.exp)}.`;
+
+ // ---- 7) Search-friendly entries list (party/amount/date/method/notes keyword search ke liye) ----
+ const searchCap = compact ? 25 : 60;
+ const recentSection = entries.slice(0, searchCap).map(e => {
   const typeWord = e.type === 'income' ? 'received' : 'paid';
-  return `- ${e.date}: ₹${(Number(e.amount)||0).toLocaleString('en-IN')} ${typeWord} ${e.type==='income'?'from':'to'} ${e.party||'Unknown'} (${e.method||'Cash'})${e.notes ? ' — ' + e.notes : ''}`;
+  return `- ${e.date}: ${toINR(e.amount)} ${typeWord} ${e.type==='income'?'from':'to'} ${e.party||'Unknown'} (${e.method||'Cash'})${e.notes ? ' — ' + e.notes : ''}`;
  }).join("\n") || "Abhi koi entry hi nahi hai.";
 
- // ---- 5) Goals / targets ----
- let goalsSection = "Koi goal/target set nahi hai.";
+ // ---- 8) Goals / targets (Expense Limit type goals = BUDGET) ----
+ let goalsSection = "Koi goal/target/budget set nahi hai.";
  try {
   loadGoalsFromStorage();
   refreshGoalLiveData();
@@ -4816,12 +4884,13 @@ function buildAiContextText(compact){
   if (activeGoals.length > 0) {
    goalsSection = activeGoals.map(g => {
     const pct = g.target > 0 ? Math.min(100, Math.round((g.current / g.target) * 100)) : 0;
-    return `- "${g.name}" (${g.type}, category: ${g.category}): ₹${g.current.toLocaleString('en-IN')} / ₹${g.target.toLocaleString('en-IN')} (${pct}%), ${g.daysLeft} din baaki`;
+    const kind = g.type === 'Expense Limit' ? 'BUDGET/limit' : 'Savings goal';
+    return `- "${g.name}" (${kind}): ${toINR(g.current)} / ${toINR(g.target)} (${pct}%), ${g.daysLeft} din baaki`;
    }).join("\n");
   }
  } catch(err) { /* goals load fail ho to bhi baaki context mil jaaye */ }
 
- return `BALANCE (party-wise, all-time):\n${balanceSection}\n\nANALYSIS:\n${analysisSection}\n${totalsSection}\n\nRECENT ENTRIES (latest 8):\n${recentSection}\n\nGOALS/TARGETS:\n${goalsSection}`;
+ return `BALANCE (party-wise, all-time):\n${balanceSection}\n\nDATE-WISE TOTALS:\n${dateWiseSection}\n\n${analysisSection}\n${totalsSection}\n\nPAYMENT METHOD WISE:\n${paymentMethodSection}\n\nANALYTICS:\n${analyticsSection}\n\nENTRIES LIST (latest ${searchCap}, party/amount/date/method/notes se search karne ke liye):\n${recentSection}\n\nGOALS/BUDGET/TARGETS:\n${goalsSection}`;
 }
 
 let aiChatMessages = []; // session-only: [{role:'user'|'ai', text}]
@@ -5912,11 +5981,11 @@ EXAMPLE 4 — "savings goal kitna complete hua?" -> {"intent":"question","answer
 
   const matchedParty = matchPartyName(result.party) || result.party || "";
   const amount = Number(result.amount) || "";
-  const method = ["Cash", "UPI", "Bank"].includes(result.method) ? result.method : "Cash";
+  const method = normalizeVoiceMethod(result.method);
   if (result.type === "income" || result.type === "expense") quickAddVoiceType = result.type;
-  const cleanNotes = (result.notes || "").trim();
+  const cleanNotes = sanitizeVoiceNotes(result.notes, text);
 
-  document.getElementById('qaLine').value = `${amount},${matchedParty},,${method},${cleanNotes || text}`;
+  document.getElementById('qaLine').value = `${amount},${matchedParty},,${method},${cleanNotes}`;
   statusEl.textContent = `✨ AI ne samjha: ₹${amount || '?'} · ${matchedParty || '(party set nahi)'} · ${method}${cleanNotes ? ' · ' + cleanNotes : ''} — theek hai to Confirm dabao (ya text edit karo)`;
  } catch (err) {
   // AI fail ho gaya — jo local (regex) parsing pehle se ho chuki thi wahi
@@ -6201,6 +6270,13 @@ function openAiVoiceFullscreen(){
  // sync rahe, chahe value kahin se bhi set hua ho.
  if (aivResultSyncTimer) clearInterval(aivResultSyncTimer);
  aivResultSyncTimer = setInterval(syncAivResultVisibility, 250);
+
+ // SINGLE-TAP SYSTEM: screen kholne wala tap hi mic ko turant start kar
+ // deta hai — user ko dobara mic button dabana nahi padta. Agar Gemini
+ // key set nahi hai to settings khulega (jaisa toggleAiMic me hota hai).
+ if (!getGeminiKey()) { openAiSettingsModal(); return; }
+ aiMicKeepListening = false;
+ startAiMicRecording();
 }
 function closeAiVoiceFullscreen(){
  const overlay = document.getElementById('aiVoiceFullscreen');
@@ -6238,6 +6314,46 @@ let aiMicActive = false;
 // cancel karne ke liye — taaki band karne ke baad bhi background me
 // response na aaye ya AI bolna shuru na kar de.
 let aiMicAbortController = null;
+
+// SAFETY NET: Gemini ek chhota/fast model hai — prompt me clearly bola
+// hone ke bawajood kabhi-kabhi "notes" field me poora bola hua sentence
+// hi daal deta hai (amount/party/method repeat karke). Ye function check
+// karta hai ki AI ka diya "notes" transcript se bahut zyada milta-julta
+// hai kya (matlab poora sentence copy hua) — agar haan, to us bharose
+// wale notes ko fenk kar transcript se khud hi "... ke liye" / "advance"
+// jaisa chhota reason nikalne ki koshish karta hai, warna khaali chhod
+// deta hai (poora sentence dikhane se behtar hai kuch na dikhana).
+function sanitizeVoiceNotes(rawNotes, transcript){
+ const notes = (rawNotes || "").trim();
+ const t = (transcript || "").trim();
+ if (!notes) return "";
+ const wordCount = notes.split(/\s+/).filter(Boolean).length;
+ const looksFull = wordCount > 6 || (t && notes.length >= t.length * 0.6);
+ if (!looksFull) return notes; // chhota/clean hai, jaisa hai waisa rakho
+
+ let m = t.match(/([\u0900-\u097F\w]+(?:\s+[\u0900-\u097F\w]+){0,3}\s+ke\s+liye)/i);
+ if (m) return m[1].trim();
+ m = t.match(/([\u0900-\u097F\w]+(?:\s+[\u0900-\u097F\w]+){0,3}\s+ki\s+wajah\s+se)/i);
+ if (m) return m[1].trim();
+ if (/\badvance\b/i.test(t)) return "Advance";
+ // BULLETPROOF FALLBACK: koi bhi chhota reason-pattern na mile to poora
+ // sentence kabhi bhi notes me nahi jaana chahiye — khaali hi rakho.
+ // (Pehle bhi yahi tha, ye extra comment sirf clarity ke liye hai.)
+ return "";
+}
+
+// AI kabhi-kabhi method "upi"/"bank" chhote letters me ya extra space ke
+// saath bhejta hai — plain .includes() check case-sensitive hone ki wajah
+// se aisa response chup-chaap "Cash" pe fallback ho jaata tha (bug: user
+// UPI bole aur Cash save ho jaaye). Ab case/whitespace normalize karke
+// match karte hain taaki asli method hi save ho.
+function normalizeVoiceMethod(rawMethod){
+ const m = String(rawMethod || "").trim().toLowerCase();
+ if (m === "upi") return "UPI";
+ if (m === "bank") return "Bank";
+ if (m === "cash") return "Cash";
+ return "Cash"; // sach me kuch bola hi nahi gaya ho tabhi ye default lagta hai
+}
 
 function blobToBase64(blob){
  return new Promise((resolve, reject) => {
@@ -6345,6 +6461,53 @@ function _encodeWavFromAudioBuffer(audioBuffer){
 // 1) Transaction bolo ("200 adarsh ko cash pay kiye") — entry ke fields milte hain
 // 2) Sawaal poochho ("adarsh ka balance kitna hai") — seedha "answer" milta hai
 // AI khud decide karta hai ki intent kya hai ("intent": "transaction"/"question").
+// Voice se "last transaction delete/edit karo" jaisa action perform karta
+// hai. entries[0] hamesha sabse recent entry hai (naye entries unshift()
+// hote hain). Delete se pehle deleted-history me save hota hai (existing
+// saveToDeletedHistory function), isliye galti se delete hone par bhi
+// data poori tarah gum nahi hota — Wallet/Entries/Analytics screens turant
+// refresh ho jaate hain taaki voice se kiya gaya change UI me dikh jaaye.
+function performAiVoiceAction(result){
+ if (!entries || entries.length === 0) {
+  return "Koi entry hai hi nahi jise delete/edit kiya jaaye.";
+ }
+ const target = entries[0]; // sabse recent entry
+
+ if (result.actionType === "delete_last_entry") {
+  try { if (typeof saveToDeletedHistory === 'function') saveToDeletedHistory(target); } catch(e){}
+  entries = entries.filter(e => e !== target);
+  localStorage.setItem('entries', JSON.stringify(entries));
+  try { renderWallet(); } catch(e){}
+  try { renderEntries(); } catch(e){}
+  try { renderAnalytics(); } catch(e){}
+  try { if (typeof renderList === 'function') renderList(); } catch(e){}
+  if (typeof firebaseReady !== 'undefined' && firebaseReady && typeof db !== 'undefined' && db) {
+   setTimeout(() => { db.collection("entries").doc(String(target.id)).delete().catch(()=>{}); }, 50);
+  }
+  return (result.answer && result.answer.trim()) || `Aakhri entry (₹${Number(target.amount)||0}, ${target.party||'Unknown'}) delete kar di gayi.`;
+ }
+
+ if (result.actionType === "update_last_entry") {
+  if (result.amount !== undefined && result.amount !== null && !isNaN(result.amount) && result.amount !== 0) target.amount = Number(result.amount);
+  if (result.party) target.party = matchPartyName(result.party) || result.party;
+  if (result.method) target.method = normalizeVoiceMethod(result.method);
+  if (result.type === "income" || result.type === "expense") target.type = result.type;
+  if (result.notes !== undefined && result.notes !== null && result.notes !== "") target.notes = result.notes;
+  const idx = entries.findIndex(e => String(e.id) === String(target.id));
+  if (idx > -1) entries[idx] = target;
+  localStorage.setItem('entries', JSON.stringify(entries));
+  try { renderWallet(); } catch(e){}
+  try { renderEntries(); } catch(e){}
+  try { renderAnalytics(); } catch(e){}
+  if (typeof firebaseReady !== 'undefined' && firebaseReady && typeof db !== 'undefined' && db) {
+   setTimeout(() => { db.collection("entries").doc(String(target.id)).set(target).catch(()=>{}); }, 50);
+  }
+  return (result.answer && result.answer.trim()) || `Aakhri entry update kar di gayi: ₹${Number(target.amount)||0} · ${target.party||'Unknown'}.`;
+ }
+
+ return "Samajh nahi paaya kaunsa action karna hai.";
+}
+
 async function aiMicToEntry(base64Audio, mimeType){
  const sel = document.getElementById('partySel');
  const partyNames = sel ? Array.from(sel.options).map(o => o.value).filter(Boolean) : [];
@@ -6352,22 +6515,23 @@ async function aiMicToEntry(base64Audio, mimeType){
  const schema = {
   type: "OBJECT",
   properties: {
-   intent: { type: "STRING", enum: ["transaction", "question"] },
+   intent: { type: "STRING", enum: ["transaction", "question", "action"] },
    transcript: { type: "STRING" },
    amount: { type: "NUMBER" },
    party: { type: "STRING" },
    method: { type: "STRING", enum: ["Cash", "UPI", "Bank"] },
    type: { type: "STRING", enum: ["income", "expense"] },
    notes: { type: "STRING" },
-   answer: { type: "STRING" }
+   answer: { type: "STRING" },
+   actionType: { type: "STRING", enum: ["delete_last_entry", "update_last_entry"] }
   },
   required: ["intent", "transcript"]
  };
  const promptText = `Tum ek Hindi/Hinglish personal-finance app ke andar ek voice assistant ho. Attached audio clip suno — user Hindi/Hinglish me bol raha hai.
 
-User do tarah ki cheezein bol sakta hai — pehle decide karo "intent" kya hai:
+User teen tarah ki cheezein bol sakta hai — pehle decide karo "intent" kya hai:
 
-1) TRANSACTION — user ek expense/income bata raha hai (jaise "200 adarsh ko cash pay kiye advance me"). Is case me "intent":"transaction" do, aur:
+1) TRANSACTION — user ek NAYI expense/income bata raha hai (jaise "200 adarsh ko cash pay kiye advance me"). Is case me "intent":"transaction" do, aur:
    - transcript: jo bola gaya uska Roman/Hinglish likha hua poora text
    - amount: number, sirf digits
    - party: jisko/jisse paisa gaya/aaya uska naam
@@ -6375,13 +6539,20 @@ User do tarah ki cheezein bol sakta hai — pehle decide karo "intent" kya hai:
    - type: "expense" agar paisa diya/pay kiya/kharch kiya, "income" agar paisa mila/receive hua/aaya
    - notes: SIRF reason/purpose (jaise "Chai ke liye", "Advance"). KABHI bhi amount, party ka naam, ya method (cash/upi/bank) notes me repeat MAT karo — wo already alag fields me save hote hain. Poora bola hua sentence copy-paste karke notes me mat daalo — sirf uska "kis liye" wala chhota hissa likho, 4-5 shabdon me. Reason bilkul na bola gaya ho to "" do.
 
-2) QUESTION — user apne balance, is mahine ka analysis/kharch, recent entries, ya goals/targets ke baare me sawaal poochh raha hai (jaise "adarsh ka balance kitna hai", "is mahine kitna kharch hua", "mera savings goal kitna complete hua", "kisko sabse zyada dena hai"). Is case me "intent":"question" do, aur:
+2) QUESTION — user balance, date-wise kharch (aaj/kal/is week/last week/is mahina/last mahina/is saal), payment-method-wise (UPI/Cash/Bank), search (kisi party/keyword/amount se), analytics (top expenses, daily average, weekly trend), budget/goal status, ya money-saving tips/insights maang raha hai. Is case me "intent":"question" do, aur:
    - transcript: jo sawaal poocha gaya
-   - answer: NEECHE diye REAL DATA ke base par chhota, seedha Hinglish jawaab (2-3 lines se zyada nahi). Data me na ho to saaf bolo "ye jaankari mere paas nahi hai" — kabhi bhi data ke bahar kuch mat banao/maano.
+   - answer: NEECHE diye REAL DATA ke base par chhota, seedha Hinglish jawaab (2-4 lines se zyada nahi). Tips/insights wale sawaal me REAL DATA dekh kar khud reasoning se practical Hinglish tips do (jaise sabse zyada kis party/method pe kharch ho raha hai, wahan kam karne ka suggestion). Data me kuch specific na mile to saaf bolo "ye jaankari mere paas nahi hai" — kabhi bhi number/fact khud se mat banao.
+   - IMPORTANT: entries me "category" (Food/Travel/Petrol jaisa) field STORE nahi hoti — sirf party/method/notes hoti hai. Agar user kisi category ke baare me poochhe (jaise "Food par kitna kharch hua"), to REAL DATA ke party naam/notes me us keyword se milta-julta match dhoondo aur bolo ki ye party/notes ke naam ke base par estimate hai, exact category tracking abhi available nahi hai.
+
+3) ACTION — user apni AAKHRI (sabse recent) entry ko EDIT ya DELETE karne ko bol raha hai (jaise "last transaction delete karo", "pichli entry hata do", "last expense ka amount 500 kar do", "income update karo 2000 kar do"). Is case me "intent":"action" do, aur:
+   - actionType: "delete_last_entry" (delete/hatao/remove bola) YA "update_last_entry" (amount/party/notes/type badalne ko bola)
+   - update_last_entry ke liye jo bhi field badalni bataayi gayi ho wahi bhejo (amount/party/method/type/notes) — baaki khaali chhodo, wo purani value se hi rahegi
+   - answer: user ko confirm karne ke liye chhota Hinglish message (jaise "Aakhri entry delete kar di gayi." ya "Amount ₹500 update kar diya.")
+   NOTE: sirf tabhi "action" do jab user EXPLICITLY edit/update/delete/remove/hatao/badlo bole kisi PURANI entry ke baare me — agar shaq ho ki naya transaction hai ya sawaal hai, to wahi maano (action sabse aakhri option hai).
 
 Existing party names (transaction match karne ke liye — agar close match kare to WAHI naam exact spelling ke saath use karo): ${JSON.stringify(partyNames)}
 
-REAL DATA (balance, is-mahine ka analysis, recent entries, goals/targets):
+REAL DATA (balance, date-wise totals, payment-method wise, analytics, entries list, goals/budget):
 ${balanceSummary}
 
 EXAMPLE 1 (transaction) — "400 ritesh ko cash pay kiye advance me" ->
@@ -6391,14 +6562,32 @@ EXAMPLE 1B (transaction, notes clean rakhna zaroori) — "20 rupaye office expen
 {"intent":"transaction","transcript":"20 rupaye office expence me chai ke liye pay kiye cash","amount":20,"party":"Office Expense","method":"Cash","type":"expense","notes":"Chai ke liye"}
 (GALAT hota agar notes me poora sentence "20 rupaye office expence me chai ke liye pay kiye cash" repeat kar diya jaata — aisa KABHI mat karo.)
 
-EXAMPLE 2 (question) — "adarsh ka balance kitna hai" ->
+EXAMPLE 2 (question - balance) — "adarsh ka balance kitna hai" ->
 {"intent":"question","transcript":"adarsh ka balance kitna hai","answer":"abc se aapko ₹200 lene hain."}
 
-EXAMPLE 3 (question) — "is mahine kitna kharch hua" ->
-{"intent":"question","transcript":"is mahine kitna kharch hua","answer":"Is mahine ab tak ₹4,500 kharch hua hai, sabse zyada Food me."}
+EXAMPLE 3 (question - date-wise) — "aaj kitna kharch hua" ->
+{"intent":"question","transcript":"aaj kitna kharch hua","answer":"Aaj ab tak ₹450 kharch hua hai, 2 entries me."}
 
-EXAMPLE 4 (question) — "savings goal kitna complete hua" ->
-{"intent":"question","transcript":"savings goal kitna complete hua","answer":"Aapka \\"Monthly Savings Goal\\" ₹6,000 / ₹15,000 (40%) complete hai."}`;
+EXAMPLE 4 (question - payment method) — "UPI se kitna payment hua" ->
+{"intent":"question","transcript":"UPI se kitna payment hua","answer":"UPI se ab tak total ₹8,200 payment hua hai."}
+
+EXAMPLE 5 (question - search) — "amazon ke transactions dikhao" ->
+{"intent":"question","transcript":"amazon ke transactions dikhao","answer":"Amazon ki 2 entries mili: 12-Jul ko ₹1,200 aur 20-Jul ko ₹650."}
+
+EXAMPLE 6 (question - analytics) — "sabse zyada paisa kis party pe gaya" ->
+{"intent":"question","transcript":"sabse zyada paisa kis party pe gaya","answer":"Is mahine sabse zyada Rahul pe ₹3,500 gaya hai."}
+
+EXAMPLE 7 (question - budget) — "budget kitna bacha hai" ->
+{"intent":"question","transcript":"budget kitna bacha hai","answer":"Monthly Expense Limit ₹15,000 / ₹20,000 (75%) use ho chuka hai, ₹5,000 bacha hai."}
+
+EXAMPLE 8 (question - tips) — "paise bachane ki tips do" ->
+{"intent":"question","transcript":"paise bachane ki tips do","answer":"Is mahine sabse zyada kharch Rahul aur UPI payments me ho raha hai — wahan thoda control karo to savings badh sakti hai."}
+
+EXAMPLE 9 (action - delete) — "last transaction delete karo" ->
+{"intent":"action","transcript":"last transaction delete karo","actionType":"delete_last_entry","answer":"Aakhri entry delete kar di gayi."}
+
+EXAMPLE 10 (action - update) — "last entry ka amount 500 kar do" ->
+{"intent":"action","transcript":"last entry ka amount 500 kar do","actionType":"update_last_entry","amount":500,"answer":"Aakhri entry ka amount ₹500 update kar diya."}`;
 
  const apiKey = getGeminiKey();
  if (!apiKey) throw new Error("AI key set nahi hai");
@@ -6420,24 +6609,47 @@ EXAMPLE 4 (question) — "savings goal kitna complete hua" ->
  return JSON.parse(textOut);
 }
 
+let aiMicKeepListening = false; // true = question ka jawaab milne ke baad mic khud-ba-khud dobara sunna shuru kar dega (dobara tap nahi karna padega)
+
 async function toggleAiMic(){
+ initAiOrb(); // pehli baar tap hote hi lazily set ho jaata hai (harmless agar dobara call ho)
+
+ if (!getGeminiKey()) { openAiSettingsModal(); return; }
+
+ // AI abhi jawaab bol raha hai — tap karke turant cancel karo (jaise
+ // conversation ko rok dena), taaki user chahe to turant naya tap karke
+ // fresh se bol sake.
+ if (window.speechSynthesis && window.speechSynthesis.speaking) {
+  try { window.speechSynthesis.cancel(); } catch(e){}
+  aiMicKeepListening = false;
+  setAiOrbState('idle');
+  setAivState('idle');
+  return;
+ }
+
+ // SINGLE-TAP SYSTEM: agar already record ho raha hai to ye sirf ek manual
+ // "jaldi rok do" backup hai — normally VAD (neeche) khud hi bolna khatam
+ // hote hi rok deta hai, dobara tap karne ki zaroorat nahi hoti.
+ if (aiMicActive && aiMicRecorder && aiMicRecorder.state === 'recording') {
+  aiMicRecorder.stop();
+  return;
+ }
+
+ aiMicKeepListening = false; // fresh tap — naya conversation shuru
+ await startAiMicRecording();
+}
+
+// Ek hi tap se mic on karta hai, recording start karta hai, aur voice
+// activity detection (VAD) laga deta hai jo khud bolna khatam hone par
+// (thodi si chup rehne ke baad) recording rok kar process shuru kar deta
+// hai — isliye dobara tap karne ki zaroorat nahi padti.
+async function startAiMicRecording(){
  const statusEl = document.getElementById('qaVoiceStatus');
  const captionEl = document.getElementById('qaLiveCaption');
  const btn = document.getElementById('qaAiMicBtn');
  const haloEl = document.getElementById('qaAiMicHalo');
  const stateDotEl = document.getElementById('qaMicStateDot');
  const stateTextEl = document.getElementById('qaMicStateText');
-
- initAiOrb(); // pehli baar tap hote hi lazily set ho jaata hai (harmless agar dobara call ho)
-
- if (!getGeminiKey()) { openAiSettingsModal(); return; }
-
- // Agar pehle se record ho raha hai, to dubara tap karne par turant rok
- // do — recording ruktte hi Gemini ko bhej diya jaata hai.
- if (aiMicActive && aiMicRecorder && aiMicRecorder.state === 'recording') {
-  aiMicRecorder.stop();
-  return;
- }
 
  if (!window.isSecureContext) {
   statusEl.textContent = "⚠️ Voice sirf HTTPS pe chalta hai (file:// ya http:// pe nahi).";
@@ -6465,12 +6677,18 @@ async function toggleAiMic(){
   if (haloEl) haloEl.classList.add('listening');
   setAiOrbState('listening');
   setAivState('listening');
-  setAivCaption("Make entry or check balance?");
+  setAivCaption("Bolo — jaise ruko, khud process ho jaayega");
   if (stateDotEl) stateDotEl.classList.add('on');
   if (stateTextEl) { stateTextEl.textContent = "🔴 AI Mic ON — bolo..."; stateTextEl.style.color = "#a855f7"; }
-  statusEl.textContent = "🔴 Recording... Tap mic again after speaking.";
+  statusEl.textContent = "🔴 Sun raha hoon... bolna khatam karte hi khud process ho jaayega.";
 
   aiMicRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) aiMicChunks.push(e.data); };
+
+  // Voice Activity Detection: bolna shuru hote hi note karo, phir jab
+  // ~1.2 second chup ho jaaye to recording khud stop kar do. Agar kisi
+  // wajah se VAD set up na ho paaye (purana browser), to bhi manual tap
+  // (upar toggleAiMic me) backup ke taur pe kaam karta rehta hai.
+  setupAiMicAutoStop(stream, aiMicRecorder);
 
   aiMicRecorder.onstop = async () => {
    aiMicActive = false;
@@ -6483,9 +6701,9 @@ async function toggleAiMic(){
    if (aiMicChunks.length === 0) {
     setAiOrbState('idle');
     setAivState('idle');
-    setAivCaption("Nothing recorded — tap mic and try again.");
+    setAivCaption("Kuch record nahi hua — mic dabao aur bolo.");
     if (stateTextEl) { stateTextEl.textContent = "AI Mic is off — tap to speak."; stateTextEl.style.color = "#888"; }
-    statusEl.textContent = "Nothing recorded — tap mic and try again.";
+    statusEl.textContent = "Kuch record nahi hua — mic dabao aur bolo.";
     return;
    }
 
@@ -6519,6 +6737,7 @@ async function toggleAiMic(){
      // mil jaata hai, alag Chat kholne ki zaroorat nahi. Entry form ko
      // chhedte nahi (qaLine khaali hi rehta hai) taaki galti se koi entry
      // save na ho jaaye.
+     aiMicKeepListening = true; // jawaab ke baad mic khud dobara sunna shuru karega — agla sawaal poochne ke liye tap nahi karna padega
      const askedText = result.transcript || "";
      const answer = (result.answer || "Sorry, couldn't find an answer.").trim();
      captionEl.value = askedText;
@@ -6530,8 +6749,39 @@ async function toggleAiMic(){
      speakText(answer, () => {
       setAiOrbState('idle');
       setAivState('idle');
-      setAivCaption("Say an entry, or ask another question");
-      if (stateTextEl) { stateTextEl.textContent = "Mic off — speak now"; stateTextEl.style.color = "#888"; }
+      setAivCaption("Agla sawaal poocho, ya entry bolo...");
+      if (stateTextEl) { stateTextEl.textContent = "🔴 Sun raha hoon..."; stateTextEl.style.color = "#a855f7"; }
+      // Tap ki zaroorat nahi — mic khud dobara on ho jaata hai taaki
+      // conversation chalti rahe. Agar cancel karna ho to mic dabao.
+      if (aiMicKeepListening) startAiMicRecording();
+     });
+     btn.disabled = false;
+     return; // transaction wala flow neeche skip
+    }
+
+    if (result.intent === "action") {
+     // "Last transaction delete/edit karo" jaisa voice command — koi naya
+     // entry save nahi hota, existing sabse recent entry par action hota hai.
+     aiMicKeepListening = true;
+     const askedText = result.transcript || "";
+     let answer;
+     try {
+      answer = performAiVoiceAction(result);
+     } catch(actionErr) {
+      answer = "Sorry, ye action complete nahi ho paaya — " + (actionErr && actionErr.message ? actionErr.message : "kuch gadbad ho gayi.");
+     }
+     captionEl.value = askedText;
+     statusEl.textContent = `💬 ${answer}`;
+     setAiOrbState('speaking');
+     setAivState('speaking');
+     setAivCaption(answer);
+     if (stateTextEl) { stateTextEl.textContent = "🔊 speaking..."; stateTextEl.style.color = "#a855f7"; }
+     speakText(answer, () => {
+      setAiOrbState('idle');
+      setAivState('idle');
+      setAivCaption("Agla sawaal poocho, ya entry bolo...");
+      if (stateTextEl) { stateTextEl.textContent = "🔴 Sun raha hoon..."; stateTextEl.style.color = "#a855f7"; }
+      if (aiMicKeepListening) startAiMicRecording();
      });
      btn.disabled = false;
      return; // transaction wala flow neeche skip
@@ -6540,22 +6790,23 @@ async function toggleAiMic(){
     const rawPartyMatch = matchPartyName(result.party); // null agar list me confident match na mila ho
     const matchedParty = rawPartyMatch || result.party || "";
     const amount = Number(result.amount) || "";
-    const method = ["Cash", "UPI", "Bank"].includes(result.method) ? result.method : "Cash";
+    const method = normalizeVoiceMethod(result.method);
     if (result.type === "income" || result.type === "expense") quickAddVoiceType = result.type;
     const transcript = result.transcript || "";
-    const cleanNotes = (result.notes || "").trim(); // sirf extra context, jaise "advance me" — party/method dobara nahi
+    const cleanNotes = sanitizeVoiceNotes(result.notes, result.transcript || transcript); // sirf extra context, jaise "advance me" — party/method dobara nahi, aur agar AI ne poora sentence de diya to safety-net khud reason nikal leta hai
 
     captionEl.value = transcript;
     // Notes field me clean note use hota hai (agar Gemini ne diya ho),
     // warna fallback poora transcript hi save hota hai.
-    document.getElementById('qaLine').value = `${amount},${matchedParty},,${method},${cleanNotes || transcript}`;
+    document.getElementById('qaLine').value = `${amount},${matchedParty},,${method},${cleanNotes}`;
 
     const typeWord = (quickAddVoiceType === "income") ? "receive hua" : "payment kiya";
     const noteSpeak = cleanNotes ? ` Note: ${cleanNotes}.` : "";
 
     if (amount && rawPartyMatch) {
      // Sab kuch clear/confident hai — Gemini Live jaisa: samjho, bolo,
-     // aur khud save kar do (extra Confirm tap ki zaroorat nahi).
+     // aur khud save kar do (extra Confirm tap ki zaroorat nahi). Ek hi
+     // tap me poora kaam ho jaata hai: suno → samjho → dikhao → save karo.
      const summaryLine = `₹${amount} · ${matchedParty} · ${method}${cleanNotes ? ' · ' + cleanNotes : ''}`;
      statusEl.textContent = `✨ AI ne samjha: ${summaryLine} — Saving...`;
      setAiOrbState('speaking');
@@ -6607,21 +6858,82 @@ async function toggleAiMic(){
  }
 }
 
+// VAD: audio volume ko monitor karta hai. Jaise hi speech shuru hoke
+// ~1.2 second ke liye chup ho jaati hai, recording khud stop kar deta hai
+// — isi wajah se dobara tap karne ki zaroorat khatam ho jaati hai. Ek
+// safety max-duration bhi hai taaki background noise ki wajah se mic
+// hamesha ke liye on na reh jaaye.
+function setupAiMicAutoStop(stream, recorder){
+ try {
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  if (!AudioCtx) return; // support na ho to manual tap-to-stop fallback rahega
+  const audioCtx = new AudioCtx();
+  const source = audioCtx.createMediaStreamSource(stream);
+  const analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 512;
+  source.connect(analyser);
+  const data = new Uint8Array(analyser.frequencyBinCount);
+
+  const SPEECH_THRESHOLD = 10;      // is se upar volume = user bol raha hai
+  const SILENCE_MS_TO_STOP = 1200;  // bolna khatam hone ke baad itni der chup rehne par auto-stop
+  const MAX_RECORD_MS = 30000;      // safety cap — hamesha ke liye on na rahe
+  let hasSpoken = false;
+  let silenceStart = null;
+  const startedAt = Date.now();
+  let closed = false;
+  const cleanup = () => { if (closed) return; closed = true; try { audioCtx.close(); } catch(e){} };
+
+  const tick = () => {
+   if (recorder.state !== 'recording') { cleanup(); return; }
+   analyser.getByteTimeDomainData(data);
+   let sum = 0;
+   for (let i = 0; i < data.length; i++) { const v = data[i] - 128; sum += v * v; }
+   const rms = Math.sqrt(sum / data.length);
+
+   if (rms > SPEECH_THRESHOLD) {
+    hasSpoken = true;
+    silenceStart = null;
+   } else if (hasSpoken) {
+    if (silenceStart === null) silenceStart = Date.now();
+    else if (Date.now() - silenceStart > SILENCE_MS_TO_STOP) {
+     cleanup();
+     try { recorder.stop(); } catch(e){}
+     return;
+    }
+   }
+
+   if (Date.now() - startedAt > MAX_RECORD_MS) {
+    cleanup();
+    try { recorder.stop(); } catch(e){}
+    return;
+   }
+
+   requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+ } catch(e) {
+  // VAD fail ho jaaye to bhi manual tap-to-stop backup existing hi hai
+ }
+}
+
 function closeQuickAdd(){
- document.getElementById("quickAddModal").classList.remove("active");
- qaUserStopped = true;
- if (quickAddActiveRecognition) { try { quickAddActiveRecognition.abort(); } catch(e){} quickAddActiveRecognition = null; }
- if (aiMicRecorder && aiMicRecorder.state === 'recording') { try { aiMicRecorder.stop(); } catch(e){} }
+ // Sabse pehle overlay hi hata do — agar niche kisi cleanup line me error
+ // aa bhi jaye, to bhi "X" click karte hi screen turant band ho jaayegi.
+ // (Pehle ye sabse last me tha, isliye ek chhoti si error aane par overlay
+ // kabhi band hi nahi hota tha — "X" dummy jaisa lagta tha.)
+ try { document.getElementById('aiVoiceFullscreen')?.classList.remove('active'); } catch(e){}
+ try { document.getElementById("quickAddModal")?.classList.remove("active"); } catch(e){}
+ try { qaUserStopped = true; } catch(e){}
+ try { if (quickAddActiveRecognition) { quickAddActiveRecognition.abort(); quickAddActiveRecognition = null; } } catch(e){}
+ try { if (aiMicRecorder && aiMicRecorder.state === 'recording') { aiMicRecorder.stop(); } } catch(e){}
  // Cross (X) button: mic band, AI ka chal raha request cancel, aur agar
  // AI kuch bol raha tha to wo bhi turant chup — taaki band karne ke baad
  // screen ke peeche kuch bhi (jawaab ya awaaz) chalta na rahe.
- if (aiMicAbortController) { try { aiMicAbortController.abort(); } catch(e){} aiMicAbortController = null; }
- if (typeof window !== 'undefined' && 'speechSynthesis' in window) { try { window.speechSynthesis.cancel(); } catch(e){} }
- setAiOrbState && setAiOrbState('idle');
- setAivState && setAivState('idle');
- const aivOverlay = document.getElementById('aiVoiceFullscreen');
- if (aivOverlay) aivOverlay.classList.remove('active');
- if (aivResultSyncTimer) { clearInterval(aivResultSyncTimer); aivResultSyncTimer = null; }
+ try { if (aiMicAbortController) { aiMicAbortController.abort(); aiMicAbortController = null; } } catch(e){}
+ try { if (typeof window !== 'undefined' && 'speechSynthesis' in window) { window.speechSynthesis.cancel(); } } catch(e){}
+ try { setAiOrbState && setAiOrbState('idle'); } catch(e){}
+ try { setAivState && setAivState('idle'); } catch(e){}
+ try { if (aivResultSyncTimer) { clearInterval(aivResultSyncTimer); aivResultSyncTimer = null; } } catch(e){}
 }
 
 // "DD-MM-YY" ya "DD-MM-YYYY" -> "YYYY-MM-DD". Agar date na di ho ya galat
@@ -9309,6 +9621,10 @@ window.addEventListener('offline', () => {
  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
  color:#f5f6f8; font-size:18px; display:flex; align-items:center; justify-content:center;
  cursor:pointer;
+ /* Canvas (orb) ke upar hamesha click-able rahe, isliye z-index +
+    pointer-events explicit rakhe hain (koi overlap ki wajah se click
+    "miss" na ho). */
+ z-index:20; pointer-events:auto;
 }
 .aiv-top{ text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px; }
 .aiv-eyebrow{ font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#8b9099; font-weight:600; }
@@ -9433,7 +9749,7 @@ function syncAivResultVisibility(){
  <div class="aiv-ui">
   <div class="aiv-top">
    <div class="aiv-eyebrow">DAYTODAY · AI VOICE</div>
-   <div class="aiv-title">Tap the mic to speak</div>
+   <div class="aiv-title">Just start speaking</div>
    <div class="aiv-tabs">
     <button class="aiv-tab active" id="aivTabEntry" onclick="document.getElementById('aivTabEntry').classList.add('active');document.getElementById('aivTabAsk').classList.remove('active');setAivCaption('Tap the mic and speak your entry')">Quick Entry</button>
     <button class="aiv-tab" id="aivTabAsk" onclick="document.getElementById('aivTabAsk').classList.add('active');document.getElementById('aivTabEntry').classList.remove('active');setAivCaption('Tap the mic and ask about your balance')">Ask Balance</button>
