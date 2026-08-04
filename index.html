@@ -6326,20 +6326,38 @@ let aiMicAbortController = null;
 function sanitizeVoiceNotes(rawNotes, transcript){
  const notes = (rawNotes || "").trim();
  const t = (transcript || "").trim();
- if (!notes) return "";
- const wordCount = notes.split(/\s+/).filter(Boolean).length;
- const looksFull = wordCount > 6 || (t && notes.length >= t.length * 0.6);
- if (!looksFull) return notes; // chhota/clean hai, jaisa hai waisa rakho
 
- let m = t.match(/([\u0900-\u097F\w]+(?:\s+[\u0900-\u097F\w]+){0,3}\s+ke\s+liye)/i);
- if (m) return m[1].trim();
- m = t.match(/([\u0900-\u097F\w]+(?:\s+[\u0900-\u097F\w]+){0,3}\s+ki\s+wajah\s+se)/i);
- if (m) return m[1].trim();
- if (/\badvance\b/i.test(t)) return "Advance";
- // BULLETPROOF FALLBACK: koi bhi chhota reason-pattern na mile to poora
- // sentence kabhi bhi notes me nahi jaana chahiye — khaali hi rakho.
- // (Pehle bhi yahi tha, ye extra comment sirf clarity ke liye hai.)
- return "";
+ // ASLI BUG FIX: pehle agar AI "notes" field hi khaali bhejta tha (jaise
+ // "chai khareedne ke liye" jaisa reason clearly bola gaya ho phir bhi
+ // AI ne extract nahi kiya), to ye function turant "" return kar deta
+ // tha — poore transcript me se reason dhoondhne ki koshish hi nahi
+ // karta tha. Ab notes khaali ho tab bhi pehle transcript se hi
+ // "ke liye"/"ki wajah se"/"advance" pattern try karte hain.
+ function extractFromTranscript(){
+  let m = t.match(/([\u0900-\u097F\w]+(?:\s+[\u0900-\u097F\w]+){0,3}\s+ke\s+liye)/i);
+  if (m) return m[1].trim();
+  m = t.match(/([\u0900-\u097F\w]+(?:\s+[\u0900-\u097F\w]+){0,3}\s+ki\s+wajah\s+se)/i);
+  if (m) return m[1].trim();
+  if (/\badvance\b/i.test(t)) return "Advance";
+  return "";
+ }
+
+ if (!notes) return extractFromTranscript();
+
+ const wordCount = notes.split(/\s+/).filter(Boolean).length;
+ // Agar AI ne chhota clean note diya hai (jaisa prompt me maanga gaya
+ // tha — 4-5 shabdon tak), seedha wahi use karo. (Pehle 6 words + ek
+ // length-ratio check tha jo chhote-legit notes ko bhi khaali kar deta
+ // tha, isliye "notes me kuch bhi save nahi hota" wala bug aata tha —
+ // ab threshold thoda relax kiya hai aur ratio-check hata diya hai.)
+ if (wordCount <= 8) return notes;
+ // Bada note mila (shayad AI ne poora sentence de diya) — usme se
+ // "ke liye" / "ki wajah se" / "advance" jaisa chhota reason nikaalne
+ // ki koshish karo, warna safe side pehle 8 shabd hi rakho.
+ const fromTranscript = extractFromTranscript();
+ if (fromTranscript) return fromTranscript;
+ const words = notes.split(/\s+/).filter(Boolean).slice(0, 8);
+ return words.join(" ");
 }
 
 // AI kabhi-kabhi method "upi"/"bank" chhote letters me ya extra space ke
@@ -6535,14 +6553,15 @@ User teen tarah ki cheezein bol sakta hai — pehle decide karo "intent" kya hai
    - transcript: jo bola gaya uska Roman/Hinglish likha hua poora text
    - amount: number, sirf digits
    - party: jisko/jisse paisa gaya/aaya uska naam
-   - method: "Cash"/"UPI"/"Bank" — kuch na bola ho to "Cash"
+   - method: audio me DHYAN SE suno — agar "UPI", "GPay", "PhonePe", "Paytm" jaisa kuch bola gaya ho to "UPI" do; agar "bank", "transfer", "neft", "account se" jaisa kuch bola gaya ho to "Bank" do; agar "cash"/"nakad" bola ho YA method bilkul na bola gaya ho tabhi "Cash" do. GALTI se hamesha "Cash" mat de do — pehle poora audio dhyan se sun kar check karo ki UPI/Bank ka koi mention hai kya, tabhi decide karo.
    - type: "expense" agar paisa diya/pay kiya/kharch kiya, "income" agar paisa mila/receive hua/aaya
    - notes: SIRF reason/purpose (jaise "Chai ke liye", "Advance"). KABHI bhi amount, party ka naam, ya method (cash/upi/bank) notes me repeat MAT karo — wo already alag fields me save hote hain. Poora bola hua sentence copy-paste karke notes me mat daalo — sirf uska "kis liye" wala chhota hissa likho, 4-5 shabdon me. Reason bilkul na bola gaya ho to "" do.
 
 2) QUESTION — user balance, date-wise kharch (aaj/kal/is week/last week/is mahina/last mahina/is saal), payment-method-wise (UPI/Cash/Bank), search (kisi party/keyword/amount se), analytics (top expenses, daily average, weekly trend), budget/goal status, ya money-saving tips/insights maang raha hai. Is case me "intent":"question" do, aur:
    - transcript: jo sawaal poocha gaya
-   - answer: NEECHE diye REAL DATA ke base par chhota, seedha Hinglish jawaab (2-4 lines se zyada nahi). Tips/insights wale sawaal me REAL DATA dekh kar khud reasoning se practical Hinglish tips do (jaise sabse zyada kis party/method pe kharch ho raha hai, wahan kam karne ka suggestion). Data me kuch specific na mile to saaf bolo "ye jaankari mere paas nahi hai" — kabhi bhi number/fact khud se mat banao.
+   - answer: SEEDHA aur SIRF asli jawaab do — koi bhi filler/preamble jaisa "theek hai", "main samajh gaya", "chaliye batata hoon", "achha sawaal hai" KABHI mat likho. Pehle hi shabd se seedha fact/number/answer shuru karo. NEECHE diye REAL DATA ke base par chhota jawaab (2-4 lines se zyada nahi). Tips/insights wale sawaal me REAL DATA dekh kar khud reasoning se practical Hinglish tips do (jaise sabse zyada kis party/method pe kharch ho raha hai, wahan kam karne ka suggestion). Data me kuch specific na mile to saaf bolo "ye jaankari mere paas nahi hai" — kabhi bhi number/fact khud se mat banao.
    - IMPORTANT: entries me "category" (Food/Travel/Petrol jaisa) field STORE nahi hoti — sirf party/method/notes hoti hai. Agar user kisi category ke baare me poochhe (jaise "Food par kitna kharch hua"), to REAL DATA ke party naam/notes me us keyword se milta-julta match dhoondo aur bolo ki ye party/notes ke naam ke base par estimate hai, exact category tracking abhi available nahi hai.
+   - Agar user koi INSTRUCTION/order de (jaise "aage se bar bar 'theek hai' mat bolo", "seedha jawaab do", "chhota jawaab do"), to us instruction ko turant maano aur usi turn se follow karna shuru karo — us par bhi koi filler/acknowledgement mat bolo, bas jo maanga gaya wo seedha karke dikhao.
 
 3) ACTION — user apni AAKHRI (sabse recent) entry ko EDIT ya DELETE karne ko bol raha hai (jaise "last transaction delete karo", "pichli entry hata do", "last expense ka amount 500 kar do", "income update karo 2000 kar do"). Is case me "intent":"action" do, aur:
    - actionType: "delete_last_entry" (delete/hatao/remove bola) YA "update_last_entry" (amount/party/notes/type badalne ko bola)
@@ -6561,6 +6580,13 @@ EXAMPLE 1 (transaction) — "400 ritesh ko cash pay kiye advance me" ->
 EXAMPLE 1B (transaction, notes clean rakhna zaroori) — "20 rupaye office expence me chai ke liye pay kiye cash" ->
 {"intent":"transaction","transcript":"20 rupaye office expence me chai ke liye pay kiye cash","amount":20,"party":"Office Expense","method":"Cash","type":"expense","notes":"Chai ke liye"}
 (GALAT hota agar notes me poora sentence "20 rupaye office expence me chai ke liye pay kiye cash" repeat kar diya jaata — aisa KABHI mat karo.)
+
+EXAMPLE 1C (transaction, method UPI dhyan se pakadna) — "500 rahul ko UPI se bheje" ->
+{"intent":"transaction","transcript":"500 rahul ko UPI se bheje","amount":500,"party":"Rahul","method":"UPI","type":"expense","notes":""}
+(GALAT hota agar "UPI se bheje" sunne ke baad bhi method "Cash" de diya jaata — audio me method ka mention hamesha dhyan se sunna hai.)
+
+EXAMPLE 1D (transaction, method Bank) — "2000 salary bank me aaye" ->
+{"intent":"transaction","transcript":"2000 salary bank me aaye","amount":2000,"party":"Salary","method":"Bank","type":"income","notes":""}
 
 EXAMPLE 2 (question - balance) — "adarsh ka balance kitna hai" ->
 {"intent":"question","transcript":"adarsh ka balance kitna hai","answer":"abc se aapko ₹200 lene hain."}
@@ -6601,7 +6627,8 @@ EXAMPLE 10 (action - update) — "last entry ka amount 500 kar do" ->
   }],
   generationConfig: {
    responseMimeType: "application/json",
-   responseSchema: schema
+   responseSchema: schema,
+   temperature: 0.1 // low temperature = zyada consistent/dhyaan se suna hua output (method/notes jaisi cheezein galti se badalti kam hain)
   }
  };
  aiMicAbortController = new AbortController();
@@ -6732,6 +6759,15 @@ async function startAiMicRecording(){
     }
     const result = await aiMicToEntry(base64Audio, mimeForApi);
 
+    // Agar isi beech user ne "X" dabaakar screen band kar di ho (Gemini
+    // ka jawaab aane tak wait karte hue), to yahin ruk jao — na entry save
+    // karo, na kuch bolo. Isse pehle "close karne ke baad bhi purana
+    // jawaab bolta rehta tha" wala bug fix hota hai.
+    if (!document.getElementById('aiVoiceFullscreen')?.classList.contains('active')) {
+     btn.disabled = false;
+     return;
+    }
+
     if (result.intent === "question") {
      // Ye ek balance/party SAWAAL tha, entry nahi — isi mic se jawaab bhi
      // mil jaata hai, alag Chat kholne ki zaroorat nahi. Entry form ko
@@ -6796,8 +6832,9 @@ async function startAiMicRecording(){
     const cleanNotes = sanitizeVoiceNotes(result.notes, result.transcript || transcript); // sirf extra context, jaise "advance me" — party/method dobara nahi, aur agar AI ne poora sentence de diya to safety-net khud reason nikal leta hai
 
     captionEl.value = transcript;
-    // Notes field me clean note use hota hai (agar Gemini ne diya ho),
-    // warna fallback poora transcript hi save hota hai.
+    // Notes field me clean/sanitized note use hota hai — agar Gemini ne
+    // reason diya tha to wahi (ya uska chhota hissa) save hota hai; kuch
+    // reason bola hi nahi gaya tha to notes khaali rehta hai (bug nahi).
     document.getElementById('qaLine').value = `${amount},${matchedParty},,${method},${cleanNotes}`;
 
     const typeWord = (quickAddVoiceType === "income") ? "receive hua" : "payment kiya";
@@ -6922,6 +6959,7 @@ function closeQuickAdd(){
  // (Pehle ye sabse last me tha, isliye ek chhoti si error aane par overlay
  // kabhi band hi nahi hota tha — "X" dummy jaisa lagta tha.)
  try { document.getElementById('aiVoiceFullscreen')?.classList.remove('active'); } catch(e){}
+ try { aiMicKeepListening = false; } catch(e){} // taaki koi pending speak/callback dobara mic start na kare
  try { document.getElementById("quickAddModal")?.classList.remove("active"); } catch(e){}
  try { qaUserStopped = true; } catch(e){}
  try { if (quickAddActiveRecognition) { quickAddActiveRecognition.abort(); quickAddActiveRecognition = null; } } catch(e){}
