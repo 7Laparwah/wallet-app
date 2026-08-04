@@ -3288,8 +3288,26 @@ function handleGoogleSignInResponse(response) {
   }
 }
 
+// ⚠️ TESTING SWITCH — Login page aur PIN screen ko temporarily skip karne
+// ke liye ye "true" kar do. Wapas normal (real login+PIN) chahiye ho to
+// "false" kar dena — bas itna hi karna hai, aur kahin kuch chhedne ki
+// zaroorat nahi.
+const DEV_SKIP_LOGIN_AND_PIN = false;
+
 // Check if user already logged in (Google OR email)
 function checkUserSession() {
+  if (DEV_SKIP_LOGIN_AND_PIN) {
+    // Testing mode: login aur PIN dono skip, seedha app dikhao.
+    hideLoadingPage();
+    const loginPage = document.getElementById('googleLoginPage');
+    if (loginPage) loginPage.classList.add('hidden');
+    const pinScreen = document.getElementById('pinLockScreen');
+    if (pinScreen) pinScreen.style.display = 'none';
+    const appContainer = document.getElementById('app');
+    if (appContainer) appContainer.style.display = 'block';
+    return;
+  }
+
   const savedGoogle = localStorage.getItem('googleUser');
   const savedEmail  = localStorage.getItem('currentUser');
 
@@ -5981,7 +5999,7 @@ EXAMPLE 4 — "savings goal kitna complete hua?" -> {"intent":"question","answer
 
   const matchedParty = matchPartyName(result.party) || result.party || "";
   const amount = Number(result.amount) || "";
-  const method = normalizeVoiceMethod(result.method);
+  const method = detectMethodFromTranscript(text) || normalizeVoiceMethod(result.method);
   if (result.type === "income" || result.type === "expense") quickAddVoiceType = result.type;
   const cleanNotes = sanitizeVoiceNotes(result.notes, text);
 
@@ -6307,6 +6325,29 @@ function setAivCaption(text){
  setTimeout(() => { el.textContent = text; el.style.opacity = 1; }, 150);
 }
 
+// App/AI-voice-screen band hai ya khuli hai, ye check karne ke liye —
+// speak() ke "khatam hua" callback me use hota hai taaki screen band hone
+// ke baad mic khud-ba-khud dobara ON na ho jaaye (jiski wajah se AI band
+// karne ke baad bhi background me sunta/bolta rehta tha).
+function isAiVoiceScreenOpen(){
+ const overlay = document.getElementById('aiVoiceFullscreen');
+ return !!(overlay && overlay.classList.contains('active'));
+}
+
+// App band ho jaaye ya background me chala jaaye (home button, app-switch,
+// tab close) — chahe X button dabaya ho ya nahi, AI turant chup ho jaana
+// chahiye aur mic band ho jaana chahiye. Bina isके, agar user seedha app
+// minimize kar de (X na dabaye), to AI background me sunta/bolta reh
+// sakta tha.
+function stopAiVoiceEverything(){
+ try { aiMicKeepListening = false; } catch(e){}
+ try { if (aiMicAbortController) { aiMicAbortController.abort(); aiMicAbortController = null; } } catch(e){}
+ try { if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel(); } catch(e){}
+ try { if (aiMicRecorder && aiMicRecorder.state === 'recording') aiMicRecorder.stop(); } catch(e){}
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopAiVoiceEverything(); });
+window.addEventListener('pagehide', stopAiVoiceEverything);
+
 let aiMicRecorder = null;
 let aiMicChunks = [];
 let aiMicActive = false;
@@ -6342,6 +6383,18 @@ function sanitizeVoiceNotes(rawNotes, transcript){
   return "";
  }
 
+ // Chhote connector/filler shabd jo notes ke SHURU me aksar reh jaate
+ // hain (jaise "me mile chai khareedne ke liye" — "me mile" reason ka
+ // hissa nahi hai, sirf transcript ka leftover connector hai). In
+ // shabdon ko notes ke shuru se ek-ek karke hata dete hain jab tak
+ // asli reason wala shabd na aa jaaye.
+ function stripLeadingFillers(s){
+  const fillers = new Set(["me","mein","se","ko","ka","ki","ke","mile","mila","mili","diye","de","hua","hui","kiya","kiye","gaya","gayi","tha","thi","aur","and","for"]);
+  let words = s.split(/\s+/).filter(Boolean);
+  while (words.length > 1 && fillers.has(words[0].toLowerCase())) words.shift();
+  return words.join(" ");
+ }
+
  if (!notes) return extractFromTranscript();
 
  const wordCount = notes.split(/\s+/).filter(Boolean).length;
@@ -6350,14 +6403,14 @@ function sanitizeVoiceNotes(rawNotes, transcript){
  // length-ratio check tha jo chhote-legit notes ko bhi khaali kar deta
  // tha, isliye "notes me kuch bhi save nahi hota" wala bug aata tha —
  // ab threshold thoda relax kiya hai aur ratio-check hata diya hai.)
- if (wordCount <= 8) return notes;
+ if (wordCount <= 8) return stripLeadingFillers(notes);
  // Bada note mila (shayad AI ne poora sentence de diya) — usme se
  // "ke liye" / "ki wajah se" / "advance" jaisa chhota reason nikaalne
  // ki koshish karo, warna safe side pehle 8 shabd hi rakho.
  const fromTranscript = extractFromTranscript();
  if (fromTranscript) return fromTranscript;
  const words = notes.split(/\s+/).filter(Boolean).slice(0, 8);
- return words.join(" ");
+ return stripLeadingFillers(words.join(" "));
 }
 
 // AI kabhi-kabhi method "upi"/"bank" chhote letters me ya extra space ke
@@ -6508,7 +6561,7 @@ function performAiVoiceAction(result){
  if (result.actionType === "update_last_entry") {
   if (result.amount !== undefined && result.amount !== null && !isNaN(result.amount) && result.amount !== 0) target.amount = Number(result.amount);
   if (result.party) target.party = matchPartyName(result.party) || result.party;
-  if (result.method) target.method = normalizeVoiceMethod(result.method);
+  if (result.method) target.method = detectMethodFromTranscript(result.transcript) || normalizeVoiceMethod(result.method);
   if (result.type === "income" || result.type === "expense") target.type = result.type;
   if (result.notes !== undefined && result.notes !== null && result.notes !== "") target.notes = result.notes;
   const idx = entries.findIndex(e => String(e.id) === String(target.id));
@@ -6524,6 +6577,21 @@ function performAiVoiceAction(result){
  }
 
  return "Samajh nahi paaya kaunsa action karna hai.";
+}
+
+// AI kabhi-kabhi transcript me "UPI"/"Bank" saaf sunta hai (transcript
+// field me sahi likha aata hai) lekin apna "method" field phir bhi galti
+// se "Cash" bhej deta hai — do alag fields hain, ek dusre se consistent
+// hona guaranteed nahi hai. Isliye method ko AI ke field par chhodne ke
+// bajaye transcript ke asli shabdon se dobara (deterministically) verify
+// karte hain — jo bhi transcript me clearly bola gaya ho WAHI final
+// maana jaata hai, AI ke apne method field se zyada bharosemand.
+function detectMethodFromTranscript(transcript){
+ const t = (transcript || "").toLowerCase();
+ if (/\b(upi|gpay|g-pay|google\s*pay|phonepe|phone\s*pe|paytm)\b/.test(t)) return "UPI";
+ if (/\b(bank|neft|imps|rtgs|transfer|account\s*se|khaate\s*se)\b/.test(t)) return "Bank";
+ if (/\b(cash|nakad|nakd)\b/.test(t)) return "Cash";
+ return null; // transcript me method ka koi zikr hi nahi — AI ke field par bharosa karo
 }
 
 async function aiMicToEntry(base64Audio, mimeType){
@@ -6789,7 +6857,7 @@ async function startAiMicRecording(){
       if (stateTextEl) { stateTextEl.textContent = "🔴 Sun raha hoon..."; stateTextEl.style.color = "#a855f7"; }
       // Tap ki zaroorat nahi — mic khud dobara on ho jaata hai taaki
       // conversation chalti rahe. Agar cancel karna ho to mic dabao.
-      if (aiMicKeepListening) startAiMicRecording();
+      if (aiMicKeepListening && isAiVoiceScreenOpen()) startAiMicRecording();
      });
      btn.disabled = false;
      return; // transaction wala flow neeche skip
@@ -6817,7 +6885,7 @@ async function startAiMicRecording(){
       setAivState('idle');
       setAivCaption("Agla sawaal poocho, ya entry bolo...");
       if (stateTextEl) { stateTextEl.textContent = "🔴 Sun raha hoon..."; stateTextEl.style.color = "#a855f7"; }
-      if (aiMicKeepListening) startAiMicRecording();
+      if (aiMicKeepListening && isAiVoiceScreenOpen()) startAiMicRecording();
      });
      btn.disabled = false;
      return; // transaction wala flow neeche skip
@@ -6826,10 +6894,13 @@ async function startAiMicRecording(){
     const rawPartyMatch = matchPartyName(result.party); // null agar list me confident match na mila ho
     const matchedParty = rawPartyMatch || result.party || "";
     const amount = Number(result.amount) || "";
-    const method = normalizeVoiceMethod(result.method);
-    if (result.type === "income" || result.type === "expense") quickAddVoiceType = result.type;
     const transcript = result.transcript || "";
-    const cleanNotes = sanitizeVoiceNotes(result.notes, result.transcript || transcript); // sirf extra context, jaise "advance me" — party/method dobara nahi, aur agar AI ne poora sentence de diya to safety-net khud reason nikal leta hai
+    // Transcript ke actual shabdon se method verify karo — agar wahan
+    // clearly UPI/Bank/Cash bola gaya hai to wahi use hoga, chahe AI ke
+    // apne "method" field me kuch aur (galti se) aaya ho.
+    const method = detectMethodFromTranscript(transcript) || normalizeVoiceMethod(result.method);
+    if (result.type === "income" || result.type === "expense") quickAddVoiceType = result.type;
+    const cleanNotes = sanitizeVoiceNotes(result.notes, transcript); // sirf extra context, jaise "advance me" — party/method dobara nahi, aur agar AI ne poora sentence de diya to safety-net khud reason nikal leta hai
 
     captionEl.value = transcript;
     // Notes field me clean/sanitized note use hota hai — agar Gemini ne
