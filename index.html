@@ -5891,7 +5891,20 @@ function parseVoiceToQuickAddLine(said){
  const partyGuess = stripped.split(/\s+/).filter(Boolean)[0] || "";
  const matchedParty = matchPartyName(partyGuess) || partyGuess;
 
- return `${amount},${matchedParty},,${method},${raw}`;
+ // Notes extraction: sirf DO trigger words — "se" aur "for". Jo bhi in
+ // shabdon ke TURANT BAAD bacha hua poora sentence hai, wahi notes hai
+ // (verb samet, chhota nahi karna). Koi aur trigger nahi hai — "ke liye"/
+ // "liye" par trigger NAHI hota.
+ let notes = "";
+ let noteMatch = raw.match(/\bse\b\s+(.+)$/i);
+ if (noteMatch) {
+  notes = noteMatch[1].trim();
+ } else {
+  noteMatch = raw.match(/\bfor\b\s+(.+)$/i);
+  if (noteMatch) notes = noteMatch[1].trim();
+ }
+
+ return `${amount},${matchedParty},,${method},${notes || raw}`;
 }
 
 // Jab user live caption box me khud type/edit karta hai (cursor rakh ke
@@ -5967,7 +5980,7 @@ async function aiImproveQuickAddText(auto){
 
 Pehle decide karo "intent" kya hai:
 1) TRANSACTION — ek expense/income bata raha hai (jaise "200 adarsh ko cash diye"). Is case me "intent":"transaction" do, aur:
-   - amount (number, sirf digits), party (naam), method ("Cash"/"UPI"/"Bank" — na bola ho to "Cash"), type ("expense" agar diya/pay kiya, "income" agar mila/receive hua), notes (sirf extra context, warna "").
+   - amount (number, sirf digits), party (naam), method ("Cash"/"UPI"/"Bank" — na bola ho to "Cash"), type ("expense" agar diya/pay kiya, "income" agar mila/receive hua), notes: sirf DO trigger words hain — "se" aur "for". Jo bhi in shabdon ke turant baad bacha hua poora text hai, wahi word-for-word notes me do (chhota mat karo). Dono me se koi na ho to notes "" do — koi aur trigger use mat karo.
    Existing party names (close match kare to WAHI naam exact spelling ke saath use karo): ${JSON.stringify(partyNames)}
 
 2) QUESTION — balance, is mahine ka analysis/kharch, recent entries, ya goals/targets ke baare me sawaal poochh raha hai (jaise "adarsh ka balance kya hai", "is mahine kitna kharch hua", "mera savings goal kitna complete hua"). Is case me "intent":"question" do, aur:
@@ -5976,7 +5989,9 @@ Pehle decide karo "intent" kya hai:
 REAL DATA (balance, is-mahine ka analysis, recent entries, goals/targets):
 ${balanceSummary}
 
-EXAMPLE 1 — "400 ritesh ko cash pay kiye advance me" -> {"intent":"transaction","amount":400,"party":"Ritesh","method":"Cash","type":"expense","notes":"advance me"}
+EXAMPLE 1 — "400 ritesh ko cash pay kiye advance me" -> {"intent":"transaction","amount":400,"party":"Ritesh","method":"Cash","type":"expense","notes":""}
+EXAMPLE 1B ("se" trigger) — "200 rupees mahi ko upi se pay kiye dawai kharidne ke liye" -> {"intent":"transaction","amount":200,"party":"Mahi","method":"UPI","type":"expense","notes":"pay kiye dawai kharidne ke liye"}
+EXAMPLE 1C ("for" trigger) — "200 rupees for medicine paid to mahi" -> {"intent":"transaction","amount":200,"party":"Mahi","method":"Cash","type":"expense","notes":"medicine paid to mahi"}
 EXAMPLE 2 — "adarsh ka balance kya he?" -> {"intent":"question","answer":"abc se aapko ₹200 lene hain."}
 EXAMPLE 3 — "is mahine kitna kharch hua?" -> {"intent":"question","answer":"Is mahine ab tak ₹4,500 kharch hua hai, sabse zyada Food me."}
 EXAMPLE 4 — "savings goal kitna complete hua?" -> {"intent":"question","answer":"Aapka \\"Monthly Savings Goal\\" ₹6,000 / ₹15,000 (40%) complete hai."}`;
@@ -6364,53 +6379,23 @@ let aiMicAbortController = null;
 // wale notes ko fenk kar transcript se khud hi "... ke liye" / "advance"
 // jaisa chhota reason nikalne ki koshish karta hai, warna khaali chhod
 // deta hai (poora sentence dikhane se behtar hai kuch na dikhana).
+// Notes ko final shape deta hai. RULE: sirf DO trigger words hain — "se"
+// aur "for". AI ne agar notes diya hai to use AS-IS use karte hain (koi
+// truncate/shrink NAHI karna — pehle yahan 8-word limit tha jo lambe notes
+// ko kaat deta tha, jo galat tha; ab poora jo bhi "se"/"for" ke baad bola
+// gaya wahi rakhna hai). Agar AI ne khaali notes diya (kuch extract nahi
+// kiya), tab hi transcript se seedha "se"/"for" regex se khud nikalte hain
+// — safety net, extra shrinking nahi.
 function sanitizeVoiceNotes(rawNotes, transcript){
  const notes = (rawNotes || "").trim();
+ if (notes) return notes; // AI ne diya hai, jaisa hai waisa use karo — koi truncation nahi
+
  const t = (transcript || "").trim();
-
- // ASLI BUG FIX: pehle agar AI "notes" field hi khaali bhejta tha (jaise
- // "chai khareedne ke liye" jaisa reason clearly bola gaya ho phir bhi
- // AI ne extract nahi kiya), to ye function turant "" return kar deta
- // tha — poore transcript me se reason dhoondhne ki koshish hi nahi
- // karta tha. Ab notes khaali ho tab bhi pehle transcript se hi
- // "ke liye"/"ki wajah se"/"advance" pattern try karte hain.
- function extractFromTranscript(){
-  let m = t.match(/([\u0900-\u097F\w]+(?:\s+[\u0900-\u097F\w]+){0,3}\s+ke\s+liye)/i);
-  if (m) return m[1].trim();
-  m = t.match(/([\u0900-\u097F\w]+(?:\s+[\u0900-\u097F\w]+){0,3}\s+ki\s+wajah\s+se)/i);
-  if (m) return m[1].trim();
-  if (/\badvance\b/i.test(t)) return "Advance";
-  return "";
- }
-
- // Chhote connector/filler shabd jo notes ke SHURU me aksar reh jaate
- // hain (jaise "me mile chai khareedne ke liye" — "me mile" reason ka
- // hissa nahi hai, sirf transcript ka leftover connector hai). In
- // shabdon ko notes ke shuru se ek-ek karke hata dete hain jab tak
- // asli reason wala shabd na aa jaaye.
- function stripLeadingFillers(s){
-  const fillers = new Set(["me","mein","se","ko","ka","ki","ke","mile","mila","mili","diye","de","hua","hui","kiya","kiye","gaya","gayi","tha","thi","aur","and","for"]);
-  let words = s.split(/\s+/).filter(Boolean);
-  while (words.length > 1 && fillers.has(words[0].toLowerCase())) words.shift();
-  return words.join(" ");
- }
-
- if (!notes) return extractFromTranscript();
-
- const wordCount = notes.split(/\s+/).filter(Boolean).length;
- // Agar AI ne chhota clean note diya hai (jaisa prompt me maanga gaya
- // tha — 4-5 shabdon tak), seedha wahi use karo. (Pehle 6 words + ek
- // length-ratio check tha jo chhote-legit notes ko bhi khaali kar deta
- // tha, isliye "notes me kuch bhi save nahi hota" wala bug aata tha —
- // ab threshold thoda relax kiya hai aur ratio-check hata diya hai.)
- if (wordCount <= 8) return stripLeadingFillers(notes);
- // Bada note mila (shayad AI ne poora sentence de diya) — usme se
- // "ke liye" / "ki wajah se" / "advance" jaisa chhota reason nikaalne
- // ki koshish karo, warna safe side pehle 8 shabd hi rakho.
- const fromTranscript = extractFromTranscript();
- if (fromTranscript) return fromTranscript;
- const words = notes.split(/\s+/).filter(Boolean).slice(0, 8);
- return stripLeadingFillers(words.join(" "));
+ let m = t.match(/\bse\b\s+(.+)$/i);
+ if (m) return m[1].trim();
+ m = t.match(/\bfor\b\s+(.+)$/i);
+ if (m) return m[1].trim();
+ return "";
 }
 
 // AI kabhi-kabhi method "upi"/"bank" chhote letters me ya extra space ke
@@ -6623,7 +6608,7 @@ User teen tarah ki cheezein bol sakta hai — pehle decide karo "intent" kya hai
    - party: jisko/jisse paisa gaya/aaya uska naam
    - method: audio me DHYAN SE suno — agar "UPI", "GPay", "PhonePe", "Paytm" jaisa kuch bola gaya ho to "UPI" do; agar "bank", "transfer", "neft", "account se" jaisa kuch bola gaya ho to "Bank" do; agar "cash"/"nakad" bola ho YA method bilkul na bola gaya ho tabhi "Cash" do. GALTI se hamesha "Cash" mat de do — pehle poora audio dhyan se sun kar check karo ki UPI/Bank ka koi mention hai kya, tabhi decide karo.
    - type: "expense" agar paisa diya/pay kiya/kharch kiya, "income" agar paisa mila/receive hua/aaya
-   - notes: SIRF reason/purpose (jaise "Chai ke liye", "Advance"). KABHI bhi amount, party ka naam, ya method (cash/upi/bank) notes me repeat MAT karo — wo already alag fields me save hote hain. Poora bola hua sentence copy-paste karke notes me mat daalo — sirf uska "kis liye" wala chhota hissa likho, 4-5 shabdon me. Reason bilkul na bola gaya ho to "" do.
+   - notes: sirf DO trigger words hain — "se" aur "for". Jo bhi in shabdon ke TURANT BAAD bacha hua POORA sentence hai — wahi word-for-word (verb/reason sab samet) notes me daalo, usse chhota mat karo. Example: "upi se pay kiye dawai kharidne ke liye" -> "se" ke baad = "pay kiye dawai kharidne ke liye" — poora yahi notes hai. Example: "200 for medicine paid to mahi" -> "for" ke baad = "medicine paid to mahi". Dono me se koi trigger na ho to notes "" do — koi aur trigger (jaise "ke liye") use mat karo.
 
 2) QUESTION — user balance, date-wise kharch (aaj/kal/is week/last week/is mahina/last mahina/is saal), payment-method-wise (UPI/Cash/Bank), search (kisi party/keyword/amount se), analytics (top expenses, daily average, weekly trend), budget/goal status, ya money-saving tips/insights maang raha hai. Is case me "intent":"question" do, aur:
    - transcript: jo sawaal poocha gaya
@@ -6642,16 +6627,19 @@ Existing party names (transaction match karne ke liye — agar close match kare 
 REAL DATA (balance, date-wise totals, payment-method wise, analytics, entries list, goals/budget):
 ${balanceSummary}
 
-EXAMPLE 1 (transaction) — "400 ritesh ko cash pay kiye advance me" ->
-{"intent":"transaction","transcript":"400 ritesh ko cash pay kiye advance me","amount":400,"party":"Ritesh","method":"Cash","type":"expense","notes":"Advance"}
+EXAMPLE 1 (transaction, no trigger word — notes empty) — "400 ritesh ko cash pay kiye advance me" ->
+{"intent":"transaction","transcript":"400 ritesh ko cash pay kiye advance me","amount":400,"party":"Ritesh","method":"Cash","type":"expense","notes":""}
 
-EXAMPLE 1B (transaction, notes clean rakhna zaroori) — "20 rupaye office expence me chai ke liye pay kiye cash" ->
-{"intent":"transaction","transcript":"20 rupaye office expence me chai ke liye pay kiye cash","amount":20,"party":"Office Expense","method":"Cash","type":"expense","notes":"Chai ke liye"}
-(GALAT hota agar notes me poora sentence "20 rupaye office expence me chai ke liye pay kiye cash" repeat kar diya jaata — aisa KABHI mat karo.)
+EXAMPLE 1B (transaction, "se" trigger — POORA remainder notes me, chhota mat karo) — "200 rupees mahi ko upi se pay kiye dawai kharidne ke liye" ->
+{"intent":"transaction","transcript":"200 rupees mahi ko upi se pay kiye dawai kharidne ke liye","amount":200,"party":"Mahi","method":"UPI","type":"expense","notes":"pay kiye dawai kharidne ke liye"}
+(GALAT hota agar notes sirf "dawai kharidne" ya "dawai" itna hi hota — "se" ke baad ka POORA sentence chahiye, verb "pay kiye" bhi saath me.)
 
-EXAMPLE 1C (transaction, method UPI dhyan se pakadna) — "500 rahul ko UPI se bheje" ->
-{"intent":"transaction","transcript":"500 rahul ko UPI se bheje","amount":500,"party":"Rahul","method":"UPI","type":"expense","notes":""}
+EXAMPLE 1C (transaction, method UPI dhyan se pakadna, "se" ke baad chhota text) — "500 rahul ko UPI se bheje" ->
+{"intent":"transaction","transcript":"500 rahul ko UPI se bheje","amount":500,"party":"Rahul","method":"UPI","type":"expense","notes":"bheje"}
 (GALAT hota agar "UPI se bheje" sunne ke baad bhi method "Cash" de diya jaata — audio me method ka mention hamesha dhyan se sunna hai.)
+
+EXAMPLE 1E (transaction, "for" trigger) — "200 rupees for medicine paid to mahi" ->
+{"intent":"transaction","transcript":"200 rupees for medicine paid to mahi","amount":200,"party":"Mahi","method":"Cash","type":"expense","notes":"medicine paid to mahi"}
 
 EXAMPLE 1D (transaction, method Bank) — "2000 salary bank me aaye" ->
 {"intent":"transaction","transcript":"2000 salary bank me aaye","amount":2000,"party":"Salary","method":"Bank","type":"income","notes":""}
@@ -6900,7 +6888,7 @@ async function startAiMicRecording(){
     // apne "method" field me kuch aur (galti se) aaya ho.
     const method = detectMethodFromTranscript(transcript) || normalizeVoiceMethod(result.method);
     if (result.type === "income" || result.type === "expense") quickAddVoiceType = result.type;
-    const cleanNotes = sanitizeVoiceNotes(result.notes, transcript); // sirf extra context, jaise "advance me" — party/method dobara nahi, aur agar AI ne poora sentence de diya to safety-net khud reason nikal leta hai
+    const cleanNotes = sanitizeVoiceNotes(result.notes, transcript); // sirf "se"/"for" trigger ke baad ka poora text — AI ka diya hua as-is use hota hai, koi truncate nahi
 
     captionEl.value = transcript;
     // Notes field me clean/sanitized note use hota hai — agar Gemini ne
