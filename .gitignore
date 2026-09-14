@@ -1,0 +1,18 @@
+﻿# Private credentials & sensitive configs
+config.js
+
+# OS generated files
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# Logs & crash dumps
+*.log
+*.stackdump
+npm-debug.log*
+
+# Local environment & scratch files
+.env
+.env.local
+scratch/
+node_modules/
