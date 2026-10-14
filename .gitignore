@@ -1,0 +1,10 @@
+# Private application configuration containing API keys and Firebase credentials
+config.js
+
+# Temporary & system files
+*.log
+.DS_Store
+Thumbs.db
+node_modules/
+.env
+.env.local
