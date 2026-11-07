@@ -1,6 +1,6 @@
 // ===== Service Worker =====
 // Offline-first caching for DayToDay Smart Expense & Budget Tracker.
-const CACHE_NAME = 'daytoday-wallet-cache-v61';
+const CACHE_NAME = 'daytoday-wallet-cache-v64';
 
 // Core App Shell files for offline usage
 const CACHE_URLS = [
