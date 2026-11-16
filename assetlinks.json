@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "icom.daytoday.wallet",
+        "sha256_cert_fingerprints": ["1A:70:62:D2:EE:A7:E6:BA:98:A0:9F:53:C8:DA:92:75:8B:55:3C:4D:84:8A:8E:B8:F5:E9:5B:60:E4:DD:6F:2A"]
+      }
+    }]

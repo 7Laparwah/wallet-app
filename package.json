@@ -1,0 +1,25 @@
+{
+  "name": "wallet-app",
+  "version": "1.0.0",
+  "description": "DayToDay Expense Tracker & Financial Goals Manager PWA",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "expense-tracker",
+    "wallet",
+    "pwa",
+    "budget",
+    "finance",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}
